@@ -1,18 +1,18 @@
-        // Create floating particles
+    // Create floating particles
 
-        function createParticles() {
-            const particlesContainer = document.getElementById('particles');
-            const particleCount = 200; // Increased for a "galaxy" effect
-            const particles = [];
+    function createParticles() {
+        const particlesContainer = document.getElementById('particles');
+        const particleCount = 200; // Increased for a "galaxy" effect
+        const particles = [];
 
-            for (let i = 0; i < particleCount; i++) {
-                const particle = document.createElement('div');
-                particle.className = 'particle';
+        for (let i = 0; i < particleCount; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
 
-                // Random starting position
-                particle.style.left = Math.random() * 100 + '%';
-                particle.style.animationDelay = Math.random() * 6 + 's';
-                particle.style.animationDuration = (6 + Math.random() * 4) + 's';
+            // Random starting position
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.animationDelay = Math.random() * 6 + 's';
+            particle.style.animationDuration = (6 + Math.random() * 4) + 's';
 
                 // Random size variation
                 const size = 1 + Math.random() * 2;
@@ -22,6 +22,7 @@
                 particlesContainer.appendChild(particle);
                 particles.push(particle);
             }
+
 
             return { container: particlesContainer, particles };
         }
@@ -35,7 +36,7 @@
                 const clusterSize = Math.random() < 0.5 ? 2 : 3;
                 const indices = [];
                 while (indices.length < clusterSize) {
-                    const idx = Math.floor(Math.random() * particles.length);
+                    const idx = Math.floor(Math.random()* particles.length);
                     if (!indices.includes(idx)) indices.push(idx);
                 }
                 for (let j = 0; j < clusterSize - 1; j++) {
@@ -46,9 +47,9 @@
             }
 
             function updateLines() {
-                const rect = container.getBoundingClientRect();
-                connections.forEach(conn => {
-                    const rectA = conn.a.getBoundingClientRect();
+            const rect = container.getBoundingClientRect();
+            connections.forEach(conn => {
+                const rectA = conn.a.getBoundingClientRect();
                     const rectB = conn.b.getBoundingClientRect();
                     const x1 = rectA.left + rectA.width / 2 - rect.left;
                     const y1 = rectA.top + rectA.height / 2 - rect.top;
@@ -69,6 +70,14 @@
 
         document.addEventListener('DOMContentLoaded', function() {
             // Re-enabled the local, offline-friendly particle animation.
+
+            const style = document.createElement('style');
+            style.textContent = `
+            .particle {
+                background-color: yellow; /* Set the color to yellow */
+            }
+            `;
+            document.head.appendChild(style);
             const { container, particles } = createParticles();
             //createConnections(container, particles);
             
@@ -89,14 +98,14 @@
                     tab.addEventListener('click', () => {
                         // Deactivate all tabs
                         tabs.forEach(t => t.classList.remove('active-tab'));
-                // Hide all panels
-                Object.values(panels).forEach(panel => panel && panel.classList.add('hidden'));
+                        // Hide all panels
+                        Object.values(panels).forEach(panel => panel && panel.classList.add('hidden'));
 
-                // Activate clicked tab
-                tab.classList.add('active-tab');
-                // Show corresponding panel
-                const tabName = tab.dataset.tab;
-                if (panels[tabName]) {
+                        // Activate clicked tab
+                        tab.classList.add('active-tab');
+                        // Show corresponding panel
+                        const tabName = tab.dataset.tab;
+                        if (panels[tabName]) {
                     panels[tabName].classList.remove('hidden');
                 }
                     });
@@ -1234,9 +1243,9 @@ nm                    const rebateConfig = {
         // Initial Load
         loadFromStorage();
         updateCounters();
+
         setupTableEventListeners();
         // Setup search after everything is loaded
         addSearchFunctionality('deathClaimSearch', 'activeDeathClaimsTable', '— No claims match your search', '— No active death claims');
         addSearchFunctionality('specialCaseSearch', 'activeSpecialCasesTable', '— No special cases match your search', '— No active special cases');
     });
-
