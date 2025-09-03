@@ -1,11 +1,11 @@
     // Create floating particles
 
     function createParticles() {
-        const particlesContainer = document.getElementById('particles');
-        const particleCount = 200; // Increased for a "galaxy" effect
-        const particles = [];
+        var particlesContainer = document.getElementById('particles');
+        var particleCount = 200; // Increased for a "galaxy" effect
+        var particles = [];
 
-        for (let i = 0; i < particleCount; i++) {
+        for (var i = 0; i < particleCount; i++) {
             const particle = document.createElement('div');
             particle.className = 'particle';
 
@@ -28,15 +28,15 @@
         }
 
         function createConnections(container, particles) {
-            const svg = document.getElementById('particleLines');
-        const connections = [];
-            const clusterCount = 25; // Increased for a "constellation" effect
+            var svg = document.getElementById('particleLines');
+        var connections = [];
+            var clusterCount = 25; // Increased for a "constellation" effect
 
-            for (let i = 0; i < clusterCount; i++) {
-                const clusterSize = Math.random() < 0.5 ? 2 : 3;
-                const indices = [];
+            for (var i = 0; i < clusterCount; i++) {
+                var clusterSize = Math.random() < 0.5 ? 2 : 3;
+                var indices = [];
                 while (indices.length < clusterSize) {
-                    const idx = Math.floor(Math.random()* particles.length);
+                    var idx = Math.floor(Math.random()* particles.length);
                     if (!indices.includes(idx)) indices.push(idx);
                 }
                 for (let j = 0; j < clusterSize - 1; j++) {
@@ -47,13 +47,13 @@
             }
 
             function updateLines() {
-        const rect = container.getBoundingClientRect();
+        var rect = container.getBoundingClientRect();
             connections.forEach(conn => {
-                const rectA = conn.a.getBoundingClientRect();
-                    const rectB = conn.b.getBoundingClientRect();
-                    const x1 = rectA.left + rectA.width / 2 - rect.left;
-                    const y1 = rectA.top + rectA.height / 2 - rect.top;
-                    const x2 = rectB.left + rectB.width / 2 - rect.left;
+                var rectA = conn.a.getBoundingClientRect();
+                    var rectB = conn.b.getBoundingClientRect();
+                    var x1 = rectA.left + rectA.width / 2 - rect.left;
+                    var y1 = rectA.top + rectA.height / 2 - rect.top;
+                    var x2 = rectB.left + rectB.width / 2 - rect.left;
                     const y2 = rectB.top + rectB.height / 2 - rect.top;
                     conn.line.setAttribute('x1', x1);
                     conn.line.setAttribute('y1', y1);
@@ -72,24 +72,24 @@
             // Re-enabled the local, offline-friendly particle animation.
 
 
-            const style = document.createElement('style');
+            var style = document.createElement('style');
             style.textContent = `
             .particle {
                 background-color: yellow;
             }
             `;
             document.head.appendChild(style);
-            const { container, particles } = createParticles();
+            var { container, particles } = createParticles();
             createConnections(container, particles);
             
-            const toolsPanel = document.querySelector('.dash-right');
+            var toolsPanel = document.querySelector('.dash-right');
             if (toolsPanel) {
-                const tabs = toolsPanel.querySelectorAll('.tool-tab');
-                const panels = {
+                var tabs = toolsPanel.querySelectorAll('.tool-tab');
+                var panels = {
                     todo: document.getElementById('todoPanel'),
                     requirements: document.getElementById('requirementsPanel'),
                     calculator: document.getElementById('calculatorPanel'),
-                    links: document.getElementById('linksPanel')
+                    links: document.getElementById('linksPanel'),
                 };
                 const requirementsTypeSelect = document.getElementById('requirementsType');
                 const letRequirementsTable = document.getElementById('letRequirementsTable');
@@ -105,7 +105,7 @@
                         // Activate clicked tab
                         tab.classList.add('active-tab');
                         // Show corresponding panel
-                        const tabName = tab.dataset.tab;
+                        var tabName = tab.dataset.tab;
                         if (panels[tabName]) {
                     panels[tabName].classList.remove('hidden');
                 }
@@ -113,11 +113,11 @@
                 });
 
                 // 2. To-Do List Logic
-                const todoInput = document.getElementById('todoInput');
-                const addTodoBtn = document.getElementById('addTodoBtn');
-                const todoList = document.getElementById('todoList');
+                var todoInput = document.getElementById('todoInput');
+                var addTodoBtn = document.getElementById('addTodoBtn');
+                var todoList = document.getElementById('todoList');
 
-                let todos = JSON.parse(localStorage.getItem('lic_todos')) || [];
+                var todos = JSON.parse(localStorage.getItem('lic_todos')) || [];
 
                 const saveTodos = () => {
                     localStorage.setItem('lic_todos', JSON.stringify(todos));
@@ -130,7 +130,7 @@
                         return;
                     }
                     todos.forEach((todo, index) => {
-                        const li = document.createElement('li');
+                        var li = document.createElement('li');
                         li.className = `option-card flex items-center justify-between p-3 rounded-lg ${todo.completed ? 'opacity-50' : ''}`;
                         li.innerHTML = `
                             <div class="flex items-center">
@@ -144,7 +144,7 @@
                 };
 
                 addTodoBtn.addEventListener('click', () => {
-                    const text = todoInput.value.trim();
+                    var text = todoInput.value.trim();
                     if (text) {
                         todos.push({ text, completed: false });
                         todoInput.value = '';
@@ -154,7 +154,7 @@
                 });
 
                 todoList.addEventListener('click', (e) => {
-                    const index = e.target.dataset.index;
+                    var index = e.target.dataset.index;
                     if (e.target.tagName === 'BUTTON') { // Delete
                         todos.splice(index, 1);
                         saveTodos();
@@ -171,7 +171,7 @@
                 // 3. Requirements Dropdown Logic
                 if (requirementsTypeSelect && letRequirementsTable) {
                     requirementsTypeSelect.addEventListener('change', (e) => {
-                        letRequirementsTable.style.display = e.target.value === 'LET' ? 'block' : 'none';
+                        letRequirementsTable.style.display = e.target.value === 'LET' ? 'block' : 'none'; // Keep let here because the error happens before this
                     });
                 }
 
@@ -179,10 +179,10 @@
                 const calculateBtn = document.getElementById('calculatePremiumBtn');
                 calculateBtn.addEventListener('click', () => {
                     const plan = document.querySelector('input[name="plan"]:checked').value;
-                    const mode = document.querySelector('input[name="mode"]:checked').value;
-                    const sa = parseFloat(document.getElementById('saInput').value) * 1000;
-                    const tabularPremium = parseFloat(document.getElementById('tabularPremiumInput').value);
-                    const term = parseInt(document.getElementById('termInput').value);
+                    var mode = document.querySelector('input[name="mode"]:checked').value;
+                    var sa = parseFloat(document.getElementById('saInput').value) * 1000;
+                    var tabularPremium = parseFloat(document.getElementById('tabularPremiumInput').value);
+                    var term = parseInt(document.getElementById('termInput').value);
 
                     if (isNaN(sa) || isNaN(tabularPremium) || isNaN(term) || sa <= 0 || tabularPremium <= 0 || term <= 0) {
                         showToast('Please fill all calculator fields with valid numbers.');
@@ -195,11 +195,12 @@
                     // Step 1: Mode Rebate
 nm                    const rebateConfig = {
                         'YLY': { default: { factor: 0.97, text: '3%' }, '179': { factor: 0.98, text: '2%' } },
-                        'HLY': { default: { factor: 0.985, text: '1.5%' }, '179': { factor: 0.99, text: '1%' } }
+                        'HLY': { default: { factor: 0.985, text: '1.5%' }, '179': { factor: 0.99, text: '1%' } },
                     };
 
-                    let modeRebateFactor = 1.0;
-                    const rebateInfo = rebateConfig[mode];
+                    var modeRebateFactor = 1.0;
+                    var rebateInfo = rebateConfig[mode];
+
 
                     if (rebateInfo) {
                         const config = rebateInfo[plan] || rebateInfo.default;
@@ -266,7 +267,7 @@ nm                    const rebateConfig = {
         document.querySelectorAll('.collapsible-header').forEach(header => {
             header.addEventListener('click', function() {
                 const target = document.getElementById(this.dataset.target);
-                const arrow = this.querySelector('span:last-child');
+                var arrow = this.querySelector('span:last-child');
                 
                 target.classList.toggle('active');
                 arrow.style.transform = target.classList.contains('active') ? 'rotate(180deg)' : 'rotate(0deg)';
@@ -282,7 +283,7 @@ nm                    const rebateConfig = {
                 }
                 
                 const target = document.getElementById(this.dataset.target);
-                const arrow = this.querySelector('span:last-child');
+                var arrow = this.querySelector('span:last-child');
                 
                 target.classList.toggle('active');
                 arrow.style.transform = target.classList.contains('active') ? 'rotate(180deg)' : 'rotate(0deg)';
@@ -290,12 +291,12 @@ nm                    const rebateConfig = {
         });
 
         // Form functionality
-        const deathClaimBtn = document.getElementById('deathClaimBtn');
-        const specialCaseBtn = document.getElementById('specialCaseBtn');
-        const deathClaimForm = document.getElementById('deathClaimForm');
-        const specialCaseForm = document.getElementById('specialCaseForm');
-        const cancelForm = document.getElementById('cancelForm');
-        const cancelSpecialForm = document.getElementById('cancelSpecialForm');
+        var deathClaimBtn = document.getElementById('deathClaimBtn');
+        var specialCaseBtn = document.getElementById('specialCaseBtn');
+        var deathClaimForm = document.getElementById('deathClaimForm');
+        var specialCaseForm = document.getElementById('specialCaseForm');
+        var cancelForm = document.getElementById('cancelForm');
+        var cancelSpecialForm = document.getElementById('cancelSpecialForm');
         deathClaimBtn?.addEventListener('click', () => {
             deathClaimForm?.classList.remove('hidden');
         });
@@ -315,19 +316,19 @@ nm                    const rebateConfig = {
         });
 
         // Date calculation
-        const commencementDate = document.getElementById('commencementDate');
-        const deathDate = document.getElementById('deathDate');
-        const durationDisplay = document.getElementById('durationDisplay');
-        const durationText = document.getElementById('durationText');
+        var commencementDate = document.getElementById('commencementDate');
+        var deathDate = document.getElementById('deathDate');
+        var durationDisplay = document.getElementById('durationDisplay');
+        var durationText = document.getElementById('durationText');
 
-        const suggestionBox = document.getElementById('suggestionBox');
-        const suggestionText = document.getElementById('suggestionText');
-        const timeBarWarning = document.getElementById('timeBarWarning');
-        const manualSelection = document.getElementById('manualSelection');
+        var suggestionBox = document.getElementById('suggestionBox');
+        var suggestionText = document.getElementById('suggestionText');
+        var timeBarWarning = document.getElementById('timeBarWarning');
+        var manualSelection = document.getElementById('manualSelection');
 
         function showToast(message) {
-            const toast = document.getElementById('toast');
-            toast.textContent = message;
+            var toast = document.getElementById('toast');
+            toast.textContent = message; // Keep let here because the error happens before this
             toast.classList.remove('hidden');
             setTimeout(() => toast.classList.add('hidden'), 3000);
         }
@@ -336,7 +337,7 @@ nm                    const rebateConfig = {
 
         // Auto-format date inputs
         function formatDateInput(input) {
-            let value = input.value.replace(/\D/g, ''); // Remove non-digits
+            var value = input.value.replace(/\D/g, ''); // Remove non-digits
             if (value.length >= 2) {
                 value = value.substring(0, 2) + '/' + value.substring(2);
             }
@@ -362,17 +363,17 @@ nm                    const rebateConfig = {
 
 
         function calculateDuration() {
-            const commDate = commencementDate.value.replace(/\//g, '');
-            const deathDateVal = deathDate.value.replace(/\//g, '');
+            var commDate = commencementDate.value.replace(/\//g, '');
+            var deathDateVal = deathDate.value.replace(/\//g, '');
 
             if (commDate.length === 8 && deathDateVal.length === 8) {
-                const commYear = parseInt(commDate.substring(4, 8));
-                const commMonth = parseInt(commDate.substring(2, 4));
-                const commDay = parseInt(commDate.substring(0, 2));
+                var commYear = parseInt(commDate.substring(4, 8));
+                var commMonth = parseInt(commDate.substring(2, 4));
+                var commDay = parseInt(commDate.substring(0, 2));
 
-                const deathYear = parseInt(deathDateVal.substring(4, 8));
-                const deathMonth = parseInt(deathDateVal.substring(2, 4));
-                const deathDay = parseInt(deathDateVal.substring(0, 2));
+                var deathYear = parseInt(deathDateVal.substring(4, 8));
+                var deathMonth = parseInt(deathDateVal.substring(2, 4));
+                var deathDay = parseInt(deathDateVal.substring(0, 2));
 
                 const commDateObj = new Date(commYear, commMonth - 1, commDay);
                 const deathDateObj = new Date(deathYear, deathMonth - 1, deathDay);
