@@ -29,7 +29,7 @@
 
         function createConnections(container, particles) {
             const svg = document.getElementById('particleLines');
-            const connections = [];
+        const connections = [];
             const clusterCount = 25; // Increased for a "constellation" effect
 
             for (let i = 0; i < clusterCount; i++) {
@@ -47,7 +47,7 @@
             }
 
             function updateLines() {
-            const rect = container.getBoundingClientRect();
+        const rect = container.getBoundingClientRect();
             connections.forEach(conn => {
                 const rectA = conn.a.getBoundingClientRect();
                     const rectB = conn.b.getBoundingClientRect();
@@ -71,15 +71,16 @@
         document.addEventListener('DOMContentLoaded', function() {
             // Re-enabled the local, offline-friendly particle animation.
 
+
             const style = document.createElement('style');
             style.textContent = `
             .particle {
-                background-color: yellow; /* Set the color to yellow */
+                background-color: yellow;
             }
             `;
             document.head.appendChild(style);
             const { container, particles } = createParticles();
-            //createConnections(container, particles);
+            createConnections(container, particles);
             
             const toolsPanel = document.querySelector('.dash-right');
             if (toolsPanel) {
