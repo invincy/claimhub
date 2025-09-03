@@ -6,7 +6,7 @@
         var particles = [];
 
         for (var i = 0; i < particleCount; i++) {
-            const particle = document.createElement('div');
+            var particle = document.createElement('div');
             particle.className = 'particle';
 
             // Random starting position
@@ -15,7 +15,7 @@
             particle.style.animationDuration = (6 + Math.random() * 4) + 's';
 
                 // Random size variation
-                const size = 1 + Math.random() * 2;
+                var size = 1 + Math.random() * 2;
                 particle.style.width = size + 'px';
                 particle.style.height = size + 'px';
 
@@ -40,7 +40,7 @@
                     if (!indices.includes(idx)) indices.push(idx);
                 }
                 for (let j = 0; j < clusterSize - 1; j++) {
-                    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                    var line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
                     svg.appendChild(line);
                     connections.push({ a: particles[indices[j]], b: particles[indices[j + 1]], line });
                 }
@@ -91,8 +91,8 @@
                     calculator: document.getElementById('calculatorPanel'),
                     links: document.getElementById('linksPanel'),
                 };
-                const requirementsTypeSelect = document.getElementById('requirementsType');
-                const letRequirementsTable = document.getElementById('letRequirementsTable');
+                var requirementsTypeSelect = document.getElementById('requirementsType');
+                var letRequirementsTable = document.getElementById('letRequirementsTable');
 
                 // 1. Tab Switching Logic
                 tabs.forEach(tab => {
@@ -119,11 +119,11 @@
 
                 var todos = JSON.parse(localStorage.getItem('lic_todos')) || [];
 
-                const saveTodos = () => {
+                var saveTodos = () => {
                     localStorage.setItem('lic_todos', JSON.stringify(todos));
                 };
 
-                const renderTodos = () => {
+                var renderTodos = () => {
                     todoList.innerHTML = '';
                     if (todos.length === 0) {
                         todoList.innerHTML = '<li class="text-gray-500 text-center py-4">No tasks yet.</li>';
@@ -176,13 +176,13 @@
                 }
 
                 // 4. Premium Calculator Logic
-                const calculateBtn = document.getElementById('calculatePremiumBtn');
+                var calculateBtn = document.getElementById('calculatePremiumBtn');
                 calculateBtn.addEventListener('click', () => {
-                    const plan = document.querySelector('input[name="plan"]:checked').value;
+                    var plan = document.querySelector('input[name="plan"]:checked').value;
                     var mode = document.querySelector('input[name="mode"]:checked').value;
                     var sa = parseFloat(document.getElementById('saInput').value) * 1000;
                     var tabularPremium = parseFloat(document.getElementById('tabularPremiumInput').value);
-                    var term = parseInt(document.getElementById('termInput').value);
+                    var term = parseInt(document.getElementById('termInput').value); // Keep let here because the error happens before this
 
                     if (isNaN(sa) || isNaN(tabularPremium) || isNaN(term) || sa <= 0 || tabularPremium <= 0 || term <= 0) {
                         showToast('Please fill all calculator fields with valid numbers.');
@@ -194,7 +194,7 @@
 
                     // Step 1: Mode Rebate
 nm                    const rebateConfig = {
-                        'YLY': { default: { factor: 0.97, text: '3%' }, '179': { factor: 0.98, text: '2%' } },
+nm                      'YLY': { default: { factor: 0.97, text: '3%' }, '179': { factor: 0.98, text: '2%' } },
                         'HLY': { default: { factor: 0.985, text: '1.5%' }, '179': { factor: 0.99, text: '1%' } },
                     };
 
@@ -203,12 +203,12 @@ nm                    const rebateConfig = {
 
 
                     if (rebateInfo) {
-                        const config = rebateInfo[plan] || rebateInfo.default;
+                        var config = rebateInfo[plan] || rebateInfo.default;
                         modeRebateFactor = config.factor;
                         if (modeRebateFactor !== 1) {
-                            const calculatedRebate = (tabularPremium * modeRebateFactor).toFixed(2);
+                            var calculatedRebate = (tabularPremium * modeRebateFactor).toFixed(2);
                             breakdown.push(`Mode Rebate (${mode} ${config.text}): ${tabularPremium.toFixed(2)} * ${config.factor} = ${calculatedRebate}`);
-                        }
+                       }
                     }
                     rate *= modeRebateFactor;
 
@@ -227,10 +227,10 @@ nm                    const rebateConfig = {
                     }
 
                     // Step 3: Base Premium
-                    const basePremium = rate * (sa / 1000);
+                    var basePremium = rate * (sa / 1000);
                     breakdown.push(`Base Premium: ${rate.toFixed(4)} * ${sa/1000} = ${basePremium.toFixed(2)}`);
 
-                    // Step 4: Modal Premium
+                  // Step 4: Modal Premium
                     let modalPremium = basePremium;
                     let paymentsPerYear = 1;
                     if (mode === 'HLY') { paymentsPerYear = 2; }
@@ -239,7 +239,7 @@ nm                    const rebateConfig = {
                     modalPremium = basePremium / paymentsPerYear;
 
                     // Step 5: Total Premium
-                    const totalPremium = modalPremium * term * paymentsPerYear;
+                    var totalPremium = modalPremium * term * paymentsPerYear;
 
                     // Display results
                     document.getElementById('modalPremiumResult').textContent = `₹ ${modalPremium.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
@@ -371,15 +371,15 @@ nm                    const rebateConfig = {
                 var commMonth = parseInt(commDate.substring(2, 4));
                 var commDay = parseInt(commDate.substring(0, 2));
 
-                var deathYear = parseInt(deathDateVal.substring(4, 8));
+               var deathYear = parseInt(deathDateVal.substring(4, 8));
                 var deathMonth = parseInt(deathDateVal.substring(2, 4));
                 var deathDay = parseInt(deathDateVal.substring(0, 2));
 
-                const commDateObj = new Date(commYear, commMonth - 1, commDay);
-                const deathDateObj = new Date(deathYear, deathMonth - 1, deathDay);
+                var commDateObj = new Date(commYear, commMonth - 1, commDay);
+                var deathDateObj = new Date(deathYear, deathMonth - 1, deathDay);
 
-                const diffTime = Math.abs(deathDateObj - commDateObj);
-                const diffYears = diffTime / (1000 * 60 * 60 * 24 * 365.25);
+                var diffTime = Math.abs(deathDateObj - commDateObj);
+                var diffYears = diffTime / (1000 * 60 * 60 * 24 * 365.25);
 
                 durationText.textContent = `${diffYears.toFixed(2)} years`;
                 durationDisplay.classList.remove('hidden');
@@ -405,8 +405,8 @@ nm                    const rebateConfig = {
                 manualSelection.classList.remove('hidden');
 
                 // Time-bar check using current date as intimation
-                const today = new Date();
-                const intimationDiff = (today - deathDateObj) / (1000 * 60 * 60 * 24);
+                var today = new Date();
+                var intimationDiff = (today - deathDateObj) / (1000 * 60 * 60 * 24);
                 let timeBarMessage = '';
                 if (commDateObj < new Date(2020, 0, 1)) {
                     if (intimationDiff > 365 * 3) {
@@ -433,8 +433,8 @@ nm                    const rebateConfig = {
 
 
         function removeRow(button) {
-            const row = button.closest('tr');
-            const tableBody = row.parentNode;
+            var row = button.closest('tr');
+            var tableBody = row.parentNode;
             row.remove();
             
             if (tableBody.children.length === 0) {
@@ -462,8 +462,8 @@ nm                    const rebateConfig = {
         // Update counters for all sections
         function updateCounters() {
             // Count active death claims
-            const activeDeathRows = document.querySelectorAll('#activeDeathClaimsTable tr:not([colspan])');
-            const activeDeathCount = activeDeathRows.length > 0 && !activeDeathRows[0].querySelector('td[colspan]') ? activeDeathRows.length : 0;
+            var activeDeathRows = document.querySelectorAll('#activeDeathClaimsTable tr:not([colspan])');
+            var activeDeathCount = activeDeathRows.length > 0 && !activeDeathRows[0].querySelector('td[colspan]') ? activeDeathRows.length : 0;
             document.getElementById('activeDeathClaimsCounter').textContent = activeDeathCount;
 
             // Count active special cases
@@ -543,8 +543,8 @@ nm                    const rebateConfig = {
         // Special Case Save functionality
         document.getElementById('saveSpecialCase')?.addEventListener('click', function() {
 
-            const policyNo = document.getElementById('specialPolicyNumber').value;
-            const name = document.getElementById('specialName').value;
+            var policyNo = document.getElementById('specialPolicyNumber').value;
+            var name = document.getElementById('specialName').value;
             const type = document.getElementById('specialType').value;
             const issue = document.getElementById('specialIssue').value;
             const resolved = document.getElementById('specialResolved').checked;
@@ -557,12 +557,12 @@ nm                    const rebateConfig = {
 
             if (resolved) {
                 // Add to completed special cases
-                const completedTableBody = document.getElementById('completedSpecialCasesTable');
+                var completedTableBody = document.getElementById('completedSpecialCasesTable');
                 if (completedTableBody.querySelector('td[colspan="5"]')) {
                     completedTableBody.innerHTML = '';
                 }
 
-                const completedRow = document.createElement('tr');
+                var completedRow = document.createElement('tr');
                 completedRow.className = 'lic-table-row border-t transition-all duration-300';
                 completedRow.innerHTML = `
                     <td class="px-6 py-4 font-semibold text-gray-300">${policyNo}</td>
@@ -578,8 +578,8 @@ nm                    const rebateConfig = {
                 completedTableBody.appendChild(completedRow);
 
                 // Remove from active cases
-                const activeTableBody = document.getElementById('activeSpecialCasesTable');
-                const rows = activeTableBody.querySelectorAll('tr');
+                var activeTableBody = document.getElementById('activeSpecialCasesTable');
+                var rows = activeTableBody.querySelectorAll('tr');
                 rows.forEach(row => {
                     const policyCell = row.querySelector('td:first-child');
                     if (policyCell && policyCell.textContent === policyNo) {
@@ -596,8 +596,8 @@ nm                    const rebateConfig = {
 
             } else {
                 // Save to active special cases
-                const tableBody = document.getElementById('activeSpecialCasesTable');
-                if (tableBody.querySelector('td[colspan="5"]')) {
+                var tableBody = document.getElementById('activeSpecialCasesTable');
+               if (tableBody.querySelector('td[colspan="5"]')) {
                     tableBody.innerHTML = '';
                 }
 
@@ -623,7 +623,7 @@ nm                    const rebateConfig = {
                 if (existingRow) {
                     updateSpecialCaseRow(existingRow, policyNo, name, type, issue);
                 } else {
-                    const newRow = createSpecialCaseRow(policyNo, name, type, issue);
+                    var newRow = createSpecialCaseRow(policyNo, name, type, issue);
                     tableBody.appendChild(newRow);
                 }
 
@@ -635,7 +635,7 @@ nm                    const rebateConfig = {
         });
 
         function createSpecialCaseRow(policyNo, name, type, issue) {
-            const row = document.createElement('tr');
+            var row = document.createElement('tr');
             row.className = 'dark-table-row border-t transition-all duration-300';
             row.style.cursor = 'pointer';
             row.dataset.policyNo = policyNo;
@@ -692,7 +692,7 @@ nm                    const rebateConfig = {
             // Restore workflow state if exists
             if (savedWorkflowStates[policyNo]) {
                 const workflowState = savedWorkflowStates[policyNo];
-                
+
                 // Restore all form inputs
                 Object.keys(workflowState).forEach(inputId => {
                     const input = document.getElementById(inputId);
@@ -715,8 +715,8 @@ nm                    const rebateConfig = {
         }
 
         function removeSpecialRow(button) {
-            const row = button.closest('tr');
-            const tableBody = row.parentNode;
+            var row = button.closest('tr');
+            var tableBody = row.parentNode;
             row.remove();
             
             if (tableBody.children.length === 0) {
@@ -875,7 +875,7 @@ nm                    const rebateConfig = {
                 const investigationSection = document.getElementById('investigation').parentElement;
                 if (this.value === 'Early') {
                     doDecisionSection.classList.remove('hidden');
-                    investigationSection.classList.remove('hidden');
+               investigationSection.classList.remove('hidden');
                 } else if (this.value === 'Non-Early (4–5 Yrs)') {
                     doDecisionSection.classList.add('hidden');
                     investigationSection.classList.remove('hidden');
@@ -1017,8 +1017,8 @@ nm                    const rebateConfig = {
                 if (policyNo && name && selectedType) {
                     // Add to completed claims
                     const completedTableBody = document.getElementById('completedDeathClaimsTable');
-                    if (completedTableBody.querySelector('td[colspan="5"]')) {
-                        completedTableBody.innerHTML = '';
+                  if (completedTableBody.querySelector('td[colspan="5"]')) {
+                      completedTableBody.innerHTML = '';
                     }
 
                     const completedRow = document.createElement('tr');
@@ -1096,7 +1096,7 @@ nm                    const rebateConfig = {
 
             // Update or add to active claims table
             const tableBody = document.getElementById('activeDeathClaimsTable');
-            if (tableBody.querySelector('td[colspan="5"]')) {
+          if (tableBody.querySelector('td[colspan="5"]')) {
                 tableBody.innerHTML = '';
             }
 
@@ -1111,10 +1111,10 @@ nm                    const rebateConfig = {
             });
 
             const stage = getClaimStage();
-
+ // Keep let here because the error happens before this
             if (existingRow) {
                 updateDeathClaimRow(existingRow, policyNo, name, selectedType.value, stage);
-            } else {
+           } else {
                 const newRow = createDeathClaimRow(policyNo, name, selectedType.value, stage);
                 tableBody.appendChild(newRow);
             }
@@ -1156,8 +1156,8 @@ nm                    const rebateConfig = {
         }
 
         function removeCompletedRow(button) {
-            const row = button.closest('tr');
-            const tableBody = row.parentNode;
+            var row = button.closest('tr');
+            var tableBody = row.parentNode;
             row.remove();
             
             if (tableBody.children.length === 0) {
@@ -1167,8 +1167,7 @@ nm                    const rebateConfig = {
         }
 
         function removeCompletedSpecialRow(button) {
-            const row = button.closest('tr');
-            const tableBody = row.parentNode;
+            var row = button.closest
             row.remove();
             
             if (tableBody.children.length === 0) {
