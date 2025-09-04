@@ -1,7 +1,8 @@
     // Create floating particles
     
     function createParticles() {
-        var particleCount = 200; // Increased for a "galaxy" effect
+        var particlesContainer = document.getElementById('particles');
+        var particleCount = 200;
         var particles = [];
 
         for (var i = 0; i < particleCount; i++) {
@@ -14,7 +15,7 @@
             particle.style.animationDuration = (6 + Math.random() * 4) + 's';
 
             // Random size variation
-                var size = 1 + Math.random() * 2;
+            var size = 1 + Math.random() * 2;
                 particle.style.width = size + 'px';
                 particle.style.height = size + 'px';
                 particlesContainer.appendChild(particle);
