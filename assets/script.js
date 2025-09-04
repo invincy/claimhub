@@ -93,14 +93,13 @@
                     } else {
                         conn.line.style.display = 'none'; // Hide line if too far
                     }
-                }
                 requestAnimationFrame(updateLines);
             }
             
             requestAnimationFrame(updateLines);
         }
-        
-        // Initialize particles and connections when page loads
+
+      // Initialize particles and connections when page loads
         
 
         document.addEventListener('DOMContentLoaded', function() {
