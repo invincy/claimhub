@@ -36,7 +36,7 @@
     function createConnections(particles) {
             var svg = document.getElementById('particleLines');
             var clusterCount = particles.length; // Connect each particle to its neighbors
-            
+
             for (var i = 0; i < clusterCount; i++) {
                 for (var j = i + 1; j < particles.length; j++) {
                     var line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
@@ -47,7 +47,7 @@
 
                 }
             }
-                
+
             function updateParticlePhysics() {
                var canvasRect = document.getElementById('particles').getBoundingClientRect();
                 particles.forEach(particle => {
@@ -90,7 +90,7 @@
 
                 });
             }
-                });requestAnimationFrame(updateLines);
+                requestAnimationFrame(updateLines);
             }
 
    // Initialize particles and connections when page loads
@@ -100,7 +100,7 @@
            var particlesContainer = document.getElementById('particles');
             // Re-enabled the local, offline-friendly particle animation.
             var { particles } = createParticles();
-            createConnections(particles);
+           createConnections(particles);
             
             var toolsPanel = document.querySelector('.dash-right');
             if (toolsPanel) {
