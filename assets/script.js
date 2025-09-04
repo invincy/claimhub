@@ -508,7 +508,8 @@
             // Load active special cases
             const activeSpecialCases = localStorage.getItem('licActiveSpecialCases');
             if (activeSpecialCases)
-                document.getElementById('activeSpecialCasesTable').innerHTML = activeSpecialCases;
+              document.getElementById('activeSpecialCasesTable').innerHTML = activeSpecialCases;
+
 
 
         }
