@@ -17,7 +17,6 @@
                 var size = 1 + Math.random() * 2;
                 particle.style.width = size + 'px';
                 particle.style.height = size + 'px';
-                
                 particlesContainer.appendChild(particle);
                 particles.push(particle);
             }
@@ -26,6 +25,7 @@
             return { particles };
         }
         
+
         function createConnections(particles) {
             var svg = document.getElementById('particleLines');
             var connections = [];
