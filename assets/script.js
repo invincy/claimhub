@@ -1147,7 +1147,7 @@
 
             if (!policyNo || !name || !selectedType) {
                 showToast('Please fill basic claim information first.');
-                return;
+               return;
             }
 
 
@@ -1340,3 +1340,4 @@
         addSearchFunctionality('deathClaimSearch', 'activeDeathClaimsTable', '— No claims match your search', '— No active death claims');
         addSearchFunctionality('specialCaseSearch', 'activeSpecialCasesTable', '— No special cases match your search', '— No active special cases');
     });
+ 
