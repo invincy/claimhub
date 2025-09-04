@@ -93,9 +93,9 @@
                     } else {
                         conn.line.style.display = 'none'; // Hide line if too far
                     }
+                });
                 requestAnimationFrame(updateLines);
             }
-            
             requestAnimationFrame(updateLines);
         }
 
@@ -563,7 +563,7 @@
         // Load data from localStorage
         function loadFromStorage() { // Keep let here because the error happens before this
            // Rebuild Active Death Claims table from savedCases object
-            const activeDeathClaimsTable = document.getElementById('activeDeathClaimsTable');
+           const activeDeathClaimsTable = document.getElementById('activeDeathClaimsTable');
             if (activeDeathClaimsTable) {
                 activeDeathClaimsTable.innerHTML = ''; // Clear existing
                 const cases = Object.keys(savedCases);
