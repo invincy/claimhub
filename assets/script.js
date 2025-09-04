@@ -563,8 +563,10 @@
             // Populate Completed Death Cases Table
             populateCompletedCases('completedDeathClaimsTable', completedDeathCases, createCompletedDeathCaseRow);
 
-            // Populate Completed Special Cases Table (assuming you'll create a similar create function)
-            populateCompletedCases('completedSpecialCasesTable', completedSpecialCases, createSpecialCaseRow);
+             // Populate Completed Special Cases Table
+            populateCompletedCases('completedSpecialCasesTable', completedSpecialCases, function(caseData) {
+                return createSpecialCaseRow(caseData.policyNo, caseData.name, caseData.type, caseData.issue);
+            });
         }
 
         // Special Case Save functionality
@@ -668,6 +670,7 @@
             var row = document.createElement('tr');
             row.className = 'dark-table-row border-t transition-all duration-300';
             row.style.cursor = 'pointer';
+
             // Ensure dataset.policyNo is set
             row.dataset.policyNo = policyNo;
             updateSpecialCaseRow(row, policyNo, name, type, issue);
