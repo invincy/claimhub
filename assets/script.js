@@ -519,6 +519,7 @@
             catch (error) {
                 console.error("Error loading active special cases from localStorage:", error);
             }
+        }
 
         // Special Case Save functionality
         document.getElementById('saveSpecialCase')?.addEventListener('click', function() {
