@@ -7,7 +7,7 @@
         var canvasRect = particlesContainer.getBoundingClientRect(); // Canvas dimensions
 
         for (var i = 0; i < particleCount; i++) {
-           var particle = document.createElement('div');
+            var particle = document.createElement('div');
             particle.className = 'particle';
 
             particle.vx = (Math.random() - 0.5) * 0.5; // X velocity
@@ -16,7 +16,7 @@
             // Color variant
             particle.isBlueVariant = Math.random() < 0.1; // 10% chance of being blue
             var color = particle.isBlueVariant ? 'rgba(0, 85, 164, 0.7)' : 'rgba(255, 210, 0, 0.85)';
-            particle.style.background = color;
+           particle.style.background = color;
            particle.style.boxShadow = `0 0 8px rgba(255, 210, 0, 0.25)`;
             particle.x = Math.random() * canvasRect.width;
             particle.y = Math.random() * canvasRect.height;
@@ -29,15 +29,16 @@
 
                 particlesContainer.appendChild(particle);
                 particles.push(particle);
-            }
-            return { particles };
         }
+        return { particles };
+    }
 
     function createConnections(particles) {
             var svg = document.getElementById('particleLines');
             var clusterCount = particles.length; // Connect each particle to its neighbors
+            window.connections = [];
 
-            for (var i = 0; i < clusterCount; i++) {
+            for (let i = 0; i < clusterCount; i++) {
                 for (var j = i + 1; j < particles.length; j++) {
                     var line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
                     line.setAttribute('stroke', 'rgba(121, 167, 232, 0.15)');
@@ -48,32 +49,36 @@
                 }
             }
 
+    }
+
+    function updateLines() {
+        var particlesContainer = document.getElementById('particles');
+        var canvasRect = particlesContainer.getBoundingClientRect();
+
+        if(typeof connections !== 'undefined') {
+          connections.forEach(conn => {
                 var dx = conn.a.x - conn.b.x;
                 var dy = conn.a.y - conn.b.y;
                 var distance = Math.sqrt(dx * dx + dy * dy);
 
                 if (distance < 75) { // Show line if within 75px distance
                     conn.line.setAttribute('x1', conn.a.x);
-                    conn.line.setAttribute('y1', conn.a.y);
+                  conn.line.setAttribute('y1', conn.a.y);
                     conn.line.setAttribute('x2', conn.b.x);
                     conn.line.setAttribute('y2', conn.b.y);
                     conn.line.style.display = ''; // Make line visible
                 } else {
-                    conn.line.style.display = 'none'; // Hide line if too far
+                  conn.line.style.display = 'none'; // Hide line if too far
                 }
             });
-    }
+        }
 
-    function updateLines() {
-
-            requestAnimationFrame(updateParticlePhysics);
+       requestAnimationFrame(updateParticlePhysics);
             requestAnimationFrame(updateLines);
 
     }
 
-    function updateParticlePhysics() {
-        var canvasRect = document.getElementById('particles').getBoundingClientRect();
-        particles.forEach(particle => {
+function updateParticlePhysics() {
             // Update position
             particle.x += particle.vx;
             particle.y += particle.vy;
@@ -86,15 +91,15 @@
                 particle.vy = -particle.vy;
             }
 
-                    // Apply position to element
-                    particle.style.left = particle.x + 'px';
-                    particle.style.top = particle.y + 'px';
-                });
-                requestAnimationFrame(updateParticlePhysics);
-            }
+           // Apply position to element
+           particle.style.left = particle.x + 'px';
+           particle.style.top = particle.y + 'px';
+        });
+       requestAnimationFrame(updateParticlePhysics);
+
+
 
     }
-
 
 
    // Initialize particles and connections when page loads
@@ -105,6 +110,8 @@
             // Re-enabled the local, offline-friendly particle animation.
             var { particles } = createParticles();
             createConnections(particles);
+           updateLines();
+
             
             var toolsPanel = document.querySelector('.dash-right');
             if (toolsPanel) {
