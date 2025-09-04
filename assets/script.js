@@ -91,7 +91,7 @@
                 });
             }
                 requestAnimationFrame(updateLines);
-            }
+            
 
    // Initialize particles and connections when page loads
 
