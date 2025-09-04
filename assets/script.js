@@ -48,6 +48,30 @@
                 }
             }
 
+                var rect = document.getElementById('particles').getBoundingClientRect();
+                connections.forEach(conn => {
+                   var dx = conn.a.x - conn.b.x;
+                    var dy = conn.a.y - conn.b.y;
+                    var distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance < 75) { // Show line if within 75px distance
+                        conn.line.setAttribute('x1', conn.a.x);
+                        conn.line.setAttribute('y1', conn.a.y);
+                        conn.line.setAttribute('x2', conn.b.x);
+                        conn.line.setAttribute('y2', conn.b.y);
+                        conn.line.style.display = ''; // Make line visible
+                    } else {
+                        conn.line.style.display = 'none'; // Hide line if too far
+                    }
+
+                });
+            
+                requestAnimationFrame(updateLines);
+            
+
+    }
+
+   function updateLines() {
             function updateParticlePhysics() {
                var canvasRect = document.getElementById('particles').getBoundingClientRect();
                 particles.forEach(particle => {
@@ -69,29 +93,7 @@
                 });
                 requestAnimationFrame(updateParticlePhysics);
             }
-
-            requestAnimationFrame(updateParticlePhysics);
-
-                var rect = document.getElementById('particles').getBoundingClientRect();
-                connections.forEach(conn => {
-                   var dx = conn.a.x - conn.b.x;
-                    var dy = conn.a.y - conn.b.y;
-                    var distance = Math.sqrt(dx * dx + dy * dy);
-
-                    if (distance < 75) { // Show line if within 75px distance
-                        conn.line.setAttribute('x1', conn.a.x);
-                        conn.line.setAttribute('y1', conn.a.y);
-                        conn.line.setAttribute('x2', conn.b.x);
-                        conn.line.setAttribute('y2', conn.b.y);
-                        conn.line.style.display = ''; // Make line visible
-                    } else {
-                        conn.line.style.display = 'none'; // Hide line if too far
-                    }
-
-                });
-            }
-                requestAnimationFrame(updateLines);
-            
+}
 
    // Initialize particles and connections when page loads
 
@@ -100,7 +102,7 @@
            var particlesContainer = document.getElementById('particles');
             // Re-enabled the local, offline-friendly particle animation.
             var { particles } = createParticles();
-           createConnections(particles);
+            createConnections(particles);
             
             var toolsPanel = document.querySelector('.dash-right');
             if (toolsPanel) {
