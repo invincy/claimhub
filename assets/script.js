@@ -111,11 +111,11 @@
 
                 var todos = JSON.parse(localStorage.getItem('lic_todos')) || [];
 
-                var saveTodos = () => {
+                var saveTodos = function() {
                     localStorage.setItem('lic_todos', JSON.stringify(todos));
                 };
 
-                var renderTodos = () => {
+                var renderTodos = function() {
                     todoList.innerHTML = '';
                     if (todos.length === 0) {
                         todoList.innerHTML = '<li class="text-gray-500 text-center py-4">No tasks yet.</li>';
@@ -135,7 +135,7 @@
                     });
                 };
 
-                addTodoBtn.addEventListener('click', () => {
+                addTodoBtn.addEventListener('click', function() {
                     var text = todoInput.value.trim();
                     if (text) {
                         todos.push({ text, completed: false });
@@ -145,7 +145,7 @@
                     }
                 });
 
-                todoList.addEventListener('click', (e) => {
+                todoList.addEventListener('click', function(e) {
                     var index = e.target.dataset.index;
                     if (e.target.tagName === 'BUTTON') { // Delete
                         todos.splice(index, 1);
@@ -162,19 +162,19 @@
 
                 // 3. Requirements Dropdown Logic
                 if (requirementsTypeSelect && letRequirementsTable) {
-                    requirementsTypeSelect.addEventListener('change', (e) => {
+                    requirementsTypeSelect.addEventListener('change', function(e) {
                         letRequirementsTable.style.display = e.target.value === 'LET' ? 'block' : 'none'; // Keep let here because the error happens before this
                     });
                 }
 
                 // 4. Premium Calculator Logic
                 var calculateBtn = document.getElementById('calculatePremiumBtn');
-                calculateBtn.addEventListener('click', () => {
+                calculateBtn.addEventListener('click', function() {
                     var plan = document.querySelector('input[name="plan"]:checked').value;
                     var mode = document.querySelector('input[name="mode"]:checked').value;
                     var sa = parseFloat(document.getElementById('saInput').value) * 1000;
                     var tabularPremium = parseFloat(document.getElementById('tabularPremiumInput').value);
-                    var term = parseInt(document.getElementById('termInput').value); // Keep let here because the error happens before this
+                    var term = parseInt(document.getElementById('termInput').value);
 
                     if (isNaN(sa) || isNaN(tabularPremium) || isNaN(term) || sa <= 0 || tabularPremium <= 0 || term <= 0) {
                         showToast('Please fill all calculator fields with valid numbers.');
@@ -185,8 +185,8 @@
                     let rate = tabularPremium;
 
                     // Step 1: Mode Rebate
-nm                    const rebateConfig = {
-nm                      'YLY': { default: { factor: 0.97, text: '3%' }, '179': { factor: 0.98, text: '2%' } },
+                    var rebateConfig = {
+                        'YLY': { default: { factor: 0.97, text: '3%' }, '179': { factor: 0.98, text: '2%' } },
                         'HLY': { default: { factor: 0.985, text: '1.5%' }, '179': { factor: 0.99, text: '1%' } },
                     };
 
@@ -242,7 +242,7 @@ nm                      'YLY': { default: { factor: 0.97, text: '3%' }, '179': {
 
                 // Custom radio button styling logic
                 document.querySelectorAll('.option-card input[type="radio"]').forEach(radio => {
-                    radio.addEventListener('change', () => {
+                    radio.addEventListener('change', function() {
                         // Find all radios in the same group
                         document.querySelectorAll(`input[name="${radio.name}"]`).forEach(r => {
                             r.parentElement.classList.remove('selected');
@@ -257,7 +257,7 @@ nm                      'YLY': { default: { factor: 0.97, text: '3%' }, '179': {
         
         // Collapsible functionality
         document.querySelectorAll('.collapsible-header').forEach(header => {
-            header.addEventListener('click', function() {
+            header.addEventListener('click', function () {
                 const target = document.getElementById(this.dataset.target);
                 var arrow = this.querySelector('span:last-child');
                 
@@ -268,7 +268,7 @@ nm                      'YLY': { default: { factor: 0.97, text: '3%' }, '179': {
 
         // Workflow collapsible functionality with disabled state check
         document.querySelectorAll('.workflow-header').forEach(header => {
-            header.addEventListener('click', function() {
+            header.addEventListener('click', function () {
                 // Don't allow clicking if section is disabled
                 if (this.style.pointerEvents === 'none') {
                     return;
@@ -289,20 +289,20 @@ nm                      'YLY': { default: { factor: 0.97, text: '3%' }, '179': {
         var specialCaseForm = document.getElementById('specialCaseForm');
         var cancelForm = document.getElementById('cancelForm');
         var cancelSpecialForm = document.getElementById('cancelSpecialForm');
-        deathClaimBtn?.addEventListener('click', () => {
+        deathClaimBtn?.addEventListener('click', function() {
             deathClaimForm?.classList.remove('hidden');
         });
 
-        specialCaseBtn?.addEventListener('click', () => {
+        specialCaseBtn?.addEventListener('click', function() {
             specialCaseForm?.classList.remove('hidden');
         });
 
-        cancelForm?.addEventListener('click', () => {
+        cancelForm?.addEventListener('click', function() {
             deathClaimForm?.classList.add('hidden');
             resetForm();
         });
 
-        cancelSpecialForm?.addEventListener('click', () => {
+        cancelSpecialForm?.addEventListener('click', function() {
             specialCaseForm?.classList.add('hidden');
             resetSpecialForm();
         });
@@ -459,8 +459,8 @@ nm                      'YLY': { default: { factor: 0.97, text: '3%' }, '179': {
             document.getElementById('activeDeathClaimsCounter').textContent = activeDeathCount;
 
             // Count active special cases
-            const activeSpecialRows = document.querySelectorAll('#activeSpecialCasesTable tr:not([colspan])');
-            const activeSpecialCount = activeSpecialRows.length > 0 && !activeSpecialRows[0].querySelector('td[colspan]') ? activeSpecialRows.length : 0;
+            var activeSpecialRows = document.querySelectorAll('#activeSpecialCasesTable tr:not([colspan])');
+            var activeSpecialCount = activeSpecialRows.length > 0 && !activeSpecialRows[0].querySelector('td[colspan]') ? activeSpecialRows.length : 0;
             document.getElementById('activeSpecialCasesCounter').textContent = activeSpecialCount;
 
 
@@ -478,11 +478,11 @@ nm                      'YLY': { default: { factor: 0.97, text: '3%' }, '179': {
             for (const tableId in tables) {
                 const tableElement = document.getElementById(tableId);
                 if (tableElement) {
-                    tableElement.addEventListener('click', (e) => {
+                    tableElement.addEventListener('click', function(e) {
                         const row = e.target.closest('tr');
                         if (!row || !row.dataset.policyNo) return;
 
-                        const policyNo = row.dataset.policyNo;
+                        var policyNo = row.dataset.policyNo;
                         const config = tables[tableId];
 
                         // Check if a remove button was clicked
@@ -537,9 +537,9 @@ nm                      'YLY': { default: { factor: 0.97, text: '3%' }, '179': {
 
             var policyNo = document.getElementById('specialPolicyNumber').value;
             var name = document.getElementById('specialName').value;
-            const type = document.getElementById('specialType').value;
-            const issue = document.getElementById('specialIssue').value;
-            const resolved = document.getElementById('specialResolved').checked;
+            var type = document.getElementById('specialType').value;
+            var issue = document.getElementById('specialIssue').value;
+            var resolved = document.getElementById('specialResolved').checked;
 
             if (!policyNo || !name || !type || !issue) {
                 showToast('Please fill all fields.');
@@ -572,7 +572,7 @@ nm                      'YLY': { default: { factor: 0.97, text: '3%' }, '179': {
                 // Remove from active cases
                 var activeTableBody = document.getElementById('activeSpecialCasesTable');
                 var rows = activeTableBody.querySelectorAll('tr');
-                rows.forEach(row => {
+                rows.forEach(function(row) {
                     const policyCell = row.querySelector('td:first-child');
                     if (policyCell && policyCell.textContent === policyNo) {
                         row.remove();
@@ -596,7 +596,7 @@ nm                      'YLY': { default: { factor: 0.97, text: '3%' }, '179': {
                 // Check if case already exists
                 let existingRow = null;
                 const rows = tableBody.querySelectorAll('tr');
-                rows.forEach(row => {
+                rows.forEach(function(row) {
                     const policyCell = row.querySelector('td:first-child');
                     if (policyCell && policyCell.textContent === policyNo) {
                         existingRow = row;
@@ -658,7 +658,7 @@ nm                      'YLY': { default: { factor: 0.97, text: '3%' }, '179': {
             
             // Restore all saved data if exists
             if (savedCases[policyNo]) {
-                const savedData = savedCases[policyNo];
+                var savedData = savedCases[policyNo];
                 
                 // Restore basic form data
                 if (savedData.commencementDate) document.getElementById('commencementDate').value = savedData.commencementDate;
@@ -672,7 +672,7 @@ nm                      'YLY': { default: { factor: 0.97, text: '3%' }, '179': {
             }
             
             // Select the claim type
-            const claimTypeRadio = document.querySelector(`input[name="claimType"][value="${caseData.claimType}"]`);
+            var claimTypeRadio = document.querySelector(`input[name="claimType"][value="${caseData.claimType}"]`);
             if (claimTypeRadio) {
                 claimTypeRadio.checked = true;
                 claimTypeRadio.dispatchEvent(new Event('change'));
@@ -683,11 +683,11 @@ nm                      'YLY': { default: { factor: 0.97, text: '3%' }, '179': {
             
             // Restore workflow state if exists
             if (savedWorkflowStates[policyNo]) {
-                const workflowState = savedWorkflowStates[policyNo];
+                var workflowState = savedWorkflowStates[policyNo];
 
                 // Restore all form inputs
-                Object.keys(workflowState).forEach(inputId => {
-                    const input = document.getElementById(inputId);
+                Object.keys(workflowState).forEach(function(inputId) {
+                    var input = document.getElementById(inputId);
                     if (input) {
                         if (input.type === 'checkbox' || input.type === 'radio') {
                             input.checked = workflowState[inputId];
@@ -729,7 +729,7 @@ nm                      'YLY': { default: { factor: 0.97, text: '3%' }, '179': {
             // Restore full issue text and resolved status from saved data
 
             if (savedSpecialCases[policyNo]) {
-                const specialCaseData = savedSpecialCases[policyNo];
+                var specialCaseData = savedSpecialCases[policyNo];
                 document.getElementById('specialIssue').value = savedSpecialCases[policyNo].issue;
                 document.getElementById('specialResolved').checked = savedSpecialCases[policyNo].resolved;
                 document.getElementById('specialName').value = specialCaseData.name;
@@ -750,21 +750,21 @@ nm                      'YLY': { default: { factor: 0.97, text: '3%' }, '179': {
 
         // Workflow logic
 
-        const nomineeAvailable = document.getElementById('nomineeAvailable');
-        const nomineeNotAvailable = document.getElementById('nomineeNotAvailable');
-        const investigationRadios = document.querySelectorAll('input[name="investigationType"]');
-        const investigationDetails = document.getElementById('investigationDetails');
-        const investigationDate = document.getElementById('investigationDate');
-        const daysSinceAllotted = document.getElementById('daysSinceAllotted');
-        const daysCount = document.getElementById('daysCount');
-        const doSentDate = document.getElementById('doSentDate');
-        const daysSinceSent = document.getElementById('daysSinceSent');
-        const doSentDaysCount = document.getElementById('doSentDaysCount');
-        const doDecisionSection = document.getElementById('doDecisionSection');
-        const paymentDone = document.getElementById('paymentDone');
+        var nomineeAvailable = document.getElementById('nomineeAvailable');
+        var nomineeNotAvailable = document.getElementById('nomineeNotAvailable');
+        var investigationRadios = document.querySelectorAll('input[name="investigationType"]');
+        var investigationDetails = document.getElementById('investigationDetails');
+        var investigationDate = document.getElementById('investigationDate');
+        var daysSinceAllotted = document.getElementById('daysSinceAllotted');
+        var daysCount = document.getElementById('daysCount');
+        var doSentDate = document.getElementById('doSentDate');
+        var daysSinceSent = document.getElementById('daysSinceSent');
+        var doSentDaysCount = document.getElementById('doSentDaysCount');
+        var doDecisionSection = document.getElementById('doDecisionSection');
+        var paymentDone = document.getElementById('paymentDone');
 
         // Nominee checkbox logic (mutually exclusive) with completion tracking
-        nomineeAvailable?.addEventListener('change', function() {
+        nomineeAvailable?.addEventListener('change', function () {
 
             if (this.checked) {
                 nomineeNotAvailable.checked = false;
@@ -774,7 +774,7 @@ nm                      'YLY': { default: { factor: 0.97, text: '3%' }, '179': {
         });
 
 
-        nomineeNotAvailable?.addEventListener('change', function() {
+        nomineeNotAvailable?.addEventListener('change', function () {
 
             if (this.checked) {
                 nomineeAvailable.checked = false;
@@ -787,11 +787,11 @@ nm                      'YLY': { default: { factor: 0.97, text: '3%' }, '179': {
 
         // Documents completion tracking
 
-        document.getElementById('deathClaimFormDocs')?.addEventListener('change', function() {
+        document.getElementById('deathClaimFormDocs')?.addEventListener('change', function () {
             checkSectionCompletion('documentsRequired');
         });
 
-        document.getElementById('letForms')?.addEventListener('change', function() {
+        document.getElementById('letForms')?.addEventListener('change', function () {
 
             checkSectionCompletion('documentsRequired');
         });
@@ -807,21 +807,21 @@ nm                      'YLY': { default: { factor: 0.97, text: '3%' }, '179': {
         });
 
         // Investigation received completion tracking
-        document.getElementById('investigationReceived')?.addEventListener('change', function() {
+        document.getElementById('investigationReceived')?.addEventListener('change', function () {
 
             checkSectionCompletion('investigation');
         });
 
         // D.O. Decision completion tracking
 
-        document.getElementById('doDecisionReceived')?.addEventListener('change', function() {
+        document.getElementById('doDecisionReceived')?.addEventListener('change', function () {
 
             checkSectionCompletion('doDecision');
         });
 
         // Investigation date calculation
 
-        investigationDate?.addEventListener('change', function() {
+        investigationDate?.addEventListener('change', function () {
 
             if (this.value) {
                 const allottedDate = new Date(this.value);
@@ -835,7 +835,7 @@ nm                      'YLY': { default: { factor: 0.97, text: '3%' }, '179': {
         });
 
         // D.O. sent date calculation
-        doSentDate?.addEventListener('change', function() {
+        doSentDate?.addEventListener('change', function () {
 
             if (this.value) {
                 const sentDate = new Date(this.value);
@@ -850,7 +850,7 @@ nm                      'YLY': { default: { factor: 0.97, text: '3%' }, '179': {
 
         // Progressive workflow logic based on claim type
         document.querySelectorAll('input[name="claimType"]').forEach(radio => {
-            radio.addEventListener('change', function() {
+            radio.addEventListener('change', function () {
                 // Show workflow sections when claim type is selected
                 document.getElementById('workflowSections').classList.remove('hidden');
                 
@@ -890,7 +890,7 @@ nm                      'YLY': { default: { factor: 0.97, text: '3%' }, '179': {
             });
             
             // Disable all sections except the first one
-            const sections = ['checkNominee', 'documentsRequired', 'investigation', 'doDecision', 'proceedPayment'];
+            var sections = ['checkNominee', 'documentsRequired', 'investigation', 'doDecision', 'proceedPayment'];
             sections.forEach(sectionId => {
                 disableSection(sectionId);
             });
@@ -898,8 +898,8 @@ nm                      'YLY': { default: { factor: 0.97, text: '3%' }, '179': {
 
         function enableSection(sectionId) {
             const section = document.getElementById(sectionId);
-            const header = document.querySelector(`[data-target="${sectionId}"]`);
-            
+            var header = document.querySelector(`[data-target="${sectionId}"]`);
+
             if (section && header) {
                 header.classList.remove('opacity-50', 'cursor-not-allowed');
                 header.classList.add('hover:bg-gray-50');
@@ -909,8 +909,8 @@ nm                      'YLY': { default: { factor: 0.97, text: '3%' }, '179': {
 
         function disableSection(sectionId) {
             const section = document.getElementById(sectionId);
-            const header = document.querySelector(`[data-target="${sectionId}"]`);
-            
+            var header = document.querySelector(`[data-target="${sectionId}"]`);
+
             if (section && header) {
                 header.classList.add('opacity-50', 'cursor-not-allowed');
                 header.classList.remove('hover:bg-gray-50');
@@ -933,10 +933,10 @@ nm                      'YLY': { default: { factor: 0.97, text: '3%' }, '179': {
                     break;
                     
                 case 'documentsRequired':
-                    const deathClaimFormChecked = document.getElementById('deathClaimFormDocs').checked;
-                    const letFormsChecked = document.getElementById('letForms').checked;
-                    const letFormsRequired = !document.getElementById('letFormsSection').classList.contains('hidden');
-                    
+                    var deathClaimFormChecked = document.getElementById('deathClaimFormDocs').checked;
+                    var letFormsChecked = document.getElementById('letForms').checked;
+                    var letFormsRequired = !document.getElementById('letFormsSection').classList.contains('hidden');
+
                     isComplete = deathClaimFormChecked && (!letFormsRequired || letFormsChecked);
                     if (isComplete) {
                         if (window.selectedClaimType === 'Non-Early') {
@@ -951,9 +951,9 @@ nm                      'YLY': { default: { factor: 0.97, text: '3%' }, '179': {
                     break;
                     
                 case 'investigation':
-                    const investigationTypeSelected = document.querySelector('input[name="investigationType"]:checked');
-                    const investigationReceived = document.getElementById('investigationReceived').checked;
-                    
+                    var investigationTypeSelected = document.querySelector('input[name="investigationType"]:checked');
+                    var investigationReceived = document.getElementById('investigationReceived').checked;
+
                     isComplete = investigationTypeSelected && investigationReceived;
                     if (isComplete) {
                         if (window.selectedClaimType === 'Early') {
@@ -967,7 +967,7 @@ nm                      'YLY': { default: { factor: 0.97, text: '3%' }, '179': {
                     break;
                     
                 case 'doDecision':
-                    const doDecisionReceived = document.getElementById('doDecisionReceived').checked;
+                    var doDecisionReceived = document.getElementById('doDecisionReceived').checked;
                     isComplete = doDecisionReceived;
                     if (isComplete) {
                         nextSectionId = 'proceedPayment';
@@ -978,7 +978,7 @@ nm                      'YLY': { default: { factor: 0.97, text: '3%' }, '179': {
             
             // Auto-expand next section when current section is completed
             if (isComplete && nextSectionId) {
-                setTimeout(() => {
+                setTimeout(function() {
                     autoExpandSection(nextSectionId);
                 }, 300); // Small delay for smooth transition
             }
@@ -988,9 +988,9 @@ nm                      'YLY': { default: { factor: 0.97, text: '3%' }, '179': {
 
         function autoExpandSection(sectionId) {
             const section = document.getElementById(sectionId);
-            const header = document.querySelector(`[data-target="${sectionId}"]`);
-            const arrow = header.querySelector('span:last-child');
-            
+            var header = document.querySelector(`[data-target="${sectionId}"]`);
+            var arrow = header.querySelector('span:last-child');
+
             if (section && header && !section.classList.contains('active')) {
                 section.classList.add('active');
                 arrow.style.transform = 'rotate(180deg)';
@@ -999,12 +999,12 @@ nm                      'YLY': { default: { factor: 0.97, text: '3%' }, '179': {
 
         // Payment done - move to completed claims
 
-        paymentDone?.addEventListener('change', function() {
+        paymentDone?.addEventListener('change', function () {
 
             if (this.checked) {
                 const policyNo = document.getElementById('policyNumber').value;
                 const name = document.getElementById('claimantName').value;
-                const selectedType = document.querySelector('input[name="claimType"]:checked');
+                var selectedType = document.querySelector('input[name="claimType"]:checked');
                 
                 if (policyNo && name && selectedType) {
                     // Add to completed claims
@@ -1027,7 +1027,7 @@ nm                      'YLY': { default: { factor: 0.97, text: '3%' }, '179': {
                     // Remove from active claims
                     const activeTableBody = document.getElementById('activeDeathClaimsTable');
                     const rows = activeTableBody.querySelectorAll('tr');
-                    rows.forEach(row => {
+                    rows.forEach(function(row) {
                         const policyCell = row.querySelector('td:first-child');
                         if (policyCell && policyCell.textContent === policyNo) {
                             row.remove();
@@ -1050,11 +1050,11 @@ nm                      'YLY': { default: { factor: 0.97, text: '3%' }, '179': {
 
         // Save progress functionality
 
-        document.getElementById('saveProgress')?.addEventListener('click', function() {
+        document.getElementById('saveProgress')?.addEventListener('click', function () {
 
             const policyNo = document.getElementById('policyNumber').value;
             const name = document.getElementById('claimantName').value;
-            const selectedType = document.querySelector('input[name="claimType"]:checked');
+            var selectedType = document.querySelector('input[name="claimType"]:checked');
 
 
             if (!policyNo || !name || !selectedType) {
@@ -1065,7 +1065,7 @@ nm                      'YLY': { default: { factor: 0.97, text: '3%' }, '179': {
 
 
             // Save all form data
-            const formData = {
+            var formData = {
                 commencementDate: document.getElementById('commencementDate').value,
                 deathDate: document.getElementById('deathDate').value,
                 query: document.getElementById('queryText').value,
@@ -1075,9 +1075,9 @@ nm                      'YLY': { default: { factor: 0.97, text: '3%' }, '179': {
             savedCases[policyNo] = formData;
 
             // Save workflow state
-            const workflowState = {};
-            const allInputs = document.querySelectorAll('#workflowSections input, #workflowSections select, #workflowSections textarea');
-            allInputs.forEach(input => {
+            var workflowState = {};
+            var allInputs = document.querySelectorAll('#workflowSections input, #workflowSections select, #workflowSections textarea');
+            allInputs.forEach(function(input) {
                 if (input.type === 'checkbox' || input.type === 'radio') {
                     workflowState[input.id] = input.checked;
                 } else {
@@ -1095,7 +1095,7 @@ nm                      'YLY': { default: { factor: 0.97, text: '3%' }, '179': {
             // Check if claim already exists
             let existingRow = null;
             const rows = tableBody.querySelectorAll('tr');
-            rows.forEach(row => {
+            rows.forEach(function(row) {
                 const policyCell = row.querySelector('td:first-child');
                 if (policyCell && policyCell.textContent === policyNo) {
                     existingRow = row;
@@ -1119,7 +1119,7 @@ nm                      'YLY': { default: { factor: 0.97, text: '3%' }, '179': {
         });
 
         function createDeathClaimRow(policyNo, name, claimType, stage) {
-            const row = document.createElement('tr');
+            var row = document.createElement('tr');
             row.className = 'dark-table-row border-t transition-all duration-300';
             row.style.cursor = 'pointer';
             row.dataset.policyNo = policyNo;
@@ -1197,15 +1197,15 @@ nm                      'YLY': { default: { factor: 0.97, text: '3%' }, '179': {
 
         // NEW: Search functionality for tables
         function addSearchFunctionality(inputId, tableId, noResultsText, defaultPlaceholderText) {
-            const searchInput = document.getElementById(inputId);
-            const tableBody = document.getElementById(tableId);
-            
+            var searchInput = document.getElementById(inputId);
+            var tableBody = document.getElementById(tableId);
+
             if (!searchInput || !tableBody) return;
 
-            searchInput.addEventListener('input', function() {
-                const searchTerm = this.value.toLowerCase();
-                const dataRows = tableBody.querySelectorAll('tr[data-policy-no]');
-                const placeholderRow = tableBody.querySelector('tr:not([data-policy-no])');
+            searchInput.addEventListener('input', function () {
+                var searchTerm = this.value.toLowerCase();
+                var dataRows = tableBody.querySelectorAll('tr[data-policy-no]');
+                var placeholderRow = tableBody.querySelector('tr:not([data-policy-no])');
                 let visibleRows = 0;
 
                 dataRows.forEach(row => {
