@@ -588,7 +588,7 @@
                     completedTableBody.innerHTML = '';
                 }
 
-                // Save completed case to array
+                // Save the completed case data
                 completedSpecialCases.push({
                     policyNo: policyNo,
                     name: name,
@@ -600,7 +600,7 @@
                 var activeTableBody = document.getElementById('activeSpecialCasesTable');
                 var rows = activeTableBody.querySelectorAll('tr');
                 rows.forEach(function(row) {
-                    const policyCell = row.querySelector('td:first-child');
+                    const policyCell = row.querySelector('td:first-child'); // corrected typo here
                     if (policyCell && row.dataset.policyNo === policyNo) {
                         // Remove the case from savedSpecialCases
                         if (savedSpecialCases[policyNo]) {
@@ -1061,14 +1061,22 @@
                     `;
                     completedTableBody.appendChild(completedRow);
 
+                     // Save the completed case data
+                     completedDeathCases.push({
+                         policyNo: policyNo,
+                         name: name,
+                         claimType: selectedType.value,
+                         completionDate: new Date().toLocaleDateString()
+                     });
+
                     // Remove from active claims
                     const activeTableBody = document.getElementById('activeDeathClaimsTable');
                     const rows = activeTableBody.querySelectorAll('tr');
                     rows.forEach(function(row) {
                         const policyCell = row.querySelector('td:first-child');
-                        if (policyCell && policyCell.textContent === policyNo) {
+                        if (policyCell && row.dataset.policyNo === policyNo) {
                             row.remove();
-                        }
+                         }
                     });
 
                     if (activeTableBody.children.length === 0) {
@@ -1076,7 +1084,7 @@
                     }
 
 
-                    saveToStorage();
+                     saveToStorage();
                     showToast('Claim completed and moved to completed claims!');
                     deathClaimForm.classList.add('hidden');
                     resetForm();
@@ -1109,13 +1117,6 @@
                 name: name,
                 claimType: selectedType.value
             };
-                completedDeathCases.push({
-                    policyNo: policyNo,
-                    name: name,
-                    claimType: selectedType.value,
-                    completionDate: new Date().toLocaleDateString()
-                });
-
 
             savedCases[policyNo] = formData;
 
@@ -1194,6 +1195,7 @@
         function removeCompletedRow(button) {
             var row = button.closest('tr');
             var tableBody = row.parentNode;
+
             row.remove();
             
             if (tableBody.children.length === 0) {
