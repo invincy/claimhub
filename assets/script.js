@@ -568,7 +568,6 @@
                 });
 
                 // Also remove the data object from storage
-                const policyNo = row.dataset.policyNo;
                 if (policyNo && savedSpecialCases[policyNo]) {
                     delete savedSpecialCases[policyNo];
                 }
@@ -579,6 +578,7 @@
 
                 saveToStorage();
                 showToast('Special case marked as resolved and moved to completed cases!');
+
 
             } else {
                 // Save to active special cases
