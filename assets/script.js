@@ -502,29 +502,13 @@
         function loadFromStorage() {
             // Load active death claims
             const activeClaims = localStorage.getItem('licActiveClaims');
-            if (activeClaims) {
+            if (activeClaims)
                 document.getElementById('activeDeathClaimsTable').innerHTML = activeClaims;
-                // Re-attach event listeners to loaded rows
-                document.querySelectorAll('#activeDeathClaimsTable tr').forEach(row => {
-                    if (row.querySelector('td:first-child') && !row.querySelector('td[colspan]')) {
-                        row.style.cursor = 'pointer';
-                        row.onclick = function() { openCase(this); };
-                    }
-                });
-            }
 
             // Load active special cases
             const activeSpecialCases = localStorage.getItem('licActiveSpecialCases');
-            if (activeSpecialCases) {
+            if (activeSpecialCases)
                 document.getElementById('activeSpecialCasesTable').innerHTML = activeSpecialCases;
-                // Re-attach event listeners to loaded rows
-                document.querySelectorAll('#activeSpecialCasesTable tr').forEach(row => {
-                    if (row.querySelector('td:first-child') && !row.querySelector('td[colspan]')) {
-                        row.style.cursor = 'pointer';
-                        row.onclick = function() { openSpecialCase(this); };
-                    }
-                });
-            }
 
 
         }
@@ -718,26 +702,19 @@
         }
 
         function openSpecialCase(policyNo) {
+            const caseData = savedSpecialCases[policyNo];
+            if (!caseData) return;
+
             // Show the form
             specialCaseForm.classList.remove('hidden');
             
             // Populate fields
             document.getElementById('specialPolicyNumber').value = policyNo;
-            document.getElementById('specialName').value = name;
-            document.getElementById('specialType').value = type;
-            
-            // Restore full issue text and resolved status from saved data
-
-            if (savedSpecialCases[policyNo]) {
-                var specialCaseData = savedSpecialCases[policyNo];
-                document.getElementById('specialIssue').value = savedSpecialCases[policyNo].issue;
-                document.getElementById('specialResolved').checked = savedSpecialCases[policyNo].resolved;
-                document.getElementById('specialName').value = specialCaseData.name;
-                document.getElementById('specialType').value = specialCaseData.type;
-                document.getElementById('specialIssue').value = issue;
-                document.getElementById('specialResolved').checked = false;
-            }
-            
+            document.getElementById('specialName').value = caseData.name;
+            document.getElementById('specialType').value = caseData.type;
+            document.getElementById('specialIssue').value = caseData.issue;
+            // Restore the 'resolved' checkbox state from saved data
+            document.getElementById('specialResolved').checked = caseData.resolved || false;
         }
 
         function resetSpecialForm() {
@@ -1159,7 +1136,7 @@
         }
 
         function removeCompletedSpecialRow(button) {
-            var row = button.closest
+            var row = button.closest('tr');
             row.remove();
             
             if (tableBody.children.length === 0) {
