@@ -687,7 +687,7 @@
             const caseData = savedCases[policyNo];
             if (!caseData) return;
             
-            // Show the form
+             // Show the form
             deathClaimForm.classList.remove('hidden');
             
             // Populate basic fields
@@ -741,7 +741,6 @@
                     }
                 });
             }
-            
         }
 
         function removeSpecialRow(button) {
@@ -1037,7 +1036,7 @@
         // Payment done - move to completed claims
 
         paymentDone?.addEventListener('change', function () {
-
+        
             if (this.checked) {
                 const policyNo = document.getElementById('policyNumber').value;
                 const name = document.getElementById('claimantName').value;
@@ -1049,7 +1048,7 @@
                   if (completedTableBody.querySelector('td[colspan="5"]')) {
                       completedTableBody.innerHTML = '';
                     }
-
+        
                     const completedRow = document.createElement('tr');
                     completedRow.className = 'lic-table-row border-t transition-all duration-300';
                     completedRow.innerHTML = `
@@ -1067,16 +1066,21 @@
                          name: name,
                          claimType: selectedType.value,
                          completionDate: new Date().toLocaleDateString()
-                     });
+                    });
+        
+                     // Remove from savedCases (active cases)
+                     if (savedCases[policyNo]) {
+                        delete savedCases[policyNo];
+                    }
 
                     // Remove from active claims
                     const activeTableBody = document.getElementById('activeDeathClaimsTable');
                     const rows = activeTableBody.querySelectorAll('tr');
                     rows.forEach(function(row) {
                         const policyCell = row.querySelector('td:first-child');
-                        if (policyCell && row.dataset.policyNo === policyNo) {
+                        if (row.dataset.policyNo === policyNo) {
                             row.remove();
-                         }
+                        }
                     });
 
                     if (activeTableBody.children.length === 0) {
@@ -1117,6 +1121,7 @@
                 name: name,
                 claimType: selectedType.value
             };
+
 
             savedCases[policyNo] = formData;
 
@@ -1183,7 +1188,7 @@
         }
 
         function getClaimStage() {
-            if (document.getElementById('paymentDone').checked) return 'Payment Done';
+           if (document.getElementById('paymentDone').checked) return 'Payment Done';
             if (document.getElementById('doDecisionReceived') && document.getElementById('doDecisionReceived').checked) return 'D.O. Decision Received';
             if (document.getElementById('investigationReceived').checked) return 'Investigation Complete';
             if (document.getElementById('investigationDate').value) return 'Under Investigation';
