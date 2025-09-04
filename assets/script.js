@@ -456,12 +456,12 @@
         // Update counters for all sections
         function updateCounters() {
             // Count active death claims
-
             var activeDeathRows = document.querySelectorAll('#activeDeathClaimsTable tr:not([colspan])');
             var activeDeathCount = activeDeathRows.length > 0 && !activeDeathRows[0].querySelector('td[colspan]') ? activeDeathRows.length : 0;
             document.getElementById('activeDeathClaimsCounter').textContent = activeDeathCount;
 
             // Count active special cases
+
             var activeSpecialRows = document.querySelectorAll('#activeSpecialCasesTable tr:not([colspan])');
             var activeSpecialCount = activeSpecialRows.length > 0 && !activeSpecialRows[0].querySelector('td[colspan]') ? activeSpecialRows.length : 0;
             document.getElementById('activeSpecialCasesCounter').textContent = activeSpecialCount;
@@ -483,7 +483,7 @@
                 if (tableElement) {
                     tableElement.addEventListener('click', function(e) {
                         const row = e.target.closest('tr');
-                        if (!row || !row.dataset.policyNo) return; // Make sure it has policyNo
+                        if (!row || !row.dataset.policyNo) return;
 
                         var policyNo = row.dataset.policyNo;
                         const config = tables[tableId];
