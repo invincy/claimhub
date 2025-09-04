@@ -1216,13 +1216,13 @@ function updateParticlePhysics() {
             row.className = 'dark-table-row border-t transition-all duration-300';
             row.style.cursor = 'pointer';
             row.dataset.policyNo = policyNo;
+            row.dataset.policyNo = policyNo;
             updateDeathClaimRow(row, policyNo, name, claimType, stage);
             return row;
         }
 
         function updateDeathClaimRow(row, policyNo, name, claimType, stage) {
             row.innerHTML = `
-                <td class="px-6 py-4 font-semibold text-gray-300">${policyNo}</td>
                 <td class="px-6 py-4 font-semibold text-gray-300">${name}</td>
                 <td class="px-6 py-4 font-semibold text-gray-300">${claimType}</td>
                 <td class="px-6 py-4 font-semibold text-gray-300">${stage}</td>
@@ -1239,6 +1239,7 @@ function updateParticlePhysics() {
             if (document.getElementById('nomineeAvailable').checked || document.getElementById('nomineeNotAvailable').checked) return 'Nominee Verified';
             return 'Initial Review';
         }
+
 
         function removeCompletedRow(button) {
             var row = button.closest('tr');
