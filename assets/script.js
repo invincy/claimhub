@@ -48,8 +48,6 @@
                 }
             }
 
-            var rect = document.getElementById('particles').getBoundingClientRect();
-            connections.forEach(conn => {
                 var dx = conn.a.x - conn.b.x;
                 var dy = conn.a.y - conn.b.y;
                 var distance = Math.sqrt(dx * dx + dy * dy);
@@ -63,10 +61,15 @@
                 } else {
                     conn.line.style.display = 'none'; // Hide line if too far
                 }
+   function updateLines() {
+
+            requestAnimationFrame(updateParticlePhysics);
+            requestAnimationFrame(updateLines);
 
             });
 
     }
+
 
     function updateParticlePhysics() {
         var canvasRect = document.getElementById('particles').getBoundingClientRect();
@@ -89,10 +92,6 @@
                 });
                 requestAnimationFrame(updateParticlePhysics);
             }
-   function updateLines() {
-
-            requestAnimationFrame(updateParticlePhysics);
-            requestAnimationFrame(updateLines);
 
     }
 
