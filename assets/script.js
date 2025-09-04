@@ -1,5 +1,5 @@
     // Create floating particles
-
+    
     function createParticles() {
         var particlesContainer = document.getElementById('particles');
         var particleCount = 200; // Increased for a "galaxy" effect
@@ -18,56 +18,56 @@
                 var size = 1 + Math.random() * 2;
                 particle.style.width = size + 'px';
                 particle.style.height = size + 'px';
-
+                
                 particlesContainer.appendChild(particle);
                 particles.push(particle);
             }
-
-
+            
+            
             return { container: particlesContainer, particles };
         }
-
+        
         function createConnections(container, particles) {
             var svg = document.getElementById('particleLines');
-        var connections = [];
+            var connections = [];
             var clusterCount = 25; // Increased for a "constellation" effect
-
+            
             for (var i = 0; i < clusterCount; i++) {
                 var clusterSize = Math.random() < 0.5 ? 2 : 3;
                 var indices = [];
                 while (indices.length < clusterSize) {
-                    var idx = Math.floor(Math.random()* particles.length);
+                    var idx = Math.floor(Math.random() * particles.length);
                     if (!indices.includes(idx)) indices.push(idx);
                 }
                 for (let j = 0; j < clusterSize - 1; j++) {
                     var line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
                     svg.appendChild(line);
                     connections.push({ a: particles[indices[j]], b: particles[indices[j + 1]], line });
+                    }
                 }
-            }
-
-            function updateLines() {
-        var rect = container.getBoundingClientRect();
-            connections.forEach(conn => {
-                var rectA = conn.a.getBoundingClientRect(); // rect for particle A
-                var rectB = conn.b.getBoundingClientRect(); // rect for particle B
-                var x1 = rectA.left + rectA.width / 2 - rect.left;
-                var y1 = rectA.top + rectA.height / 2 - rect.top;
-                var x2 = rectB.left + rectB.width / 2 - rect.left;
-                var y2 = rectB.top + rectB.height / 2 - rect.top;
-                conn.line.setAttribute('x1', x1);
-                conn.line.setAttribute('y1', y1);
-                conn.line.setAttribute('x2', x2);
-                conn.line.setAttribute('y2', y2);
+                
+                function updateLines() {
+                    var rect = container.getBoundingClientRect();
+                    connections.forEach(conn => {
+                        var rectA = conn.a.getBoundingClientRect(); // rect for particle A
+                        var rectB = conn.b.getBoundingClientRect(); // rect for particle B
+                        var x1 = rectA.left + rectA.width / 2 - rect.left;
+                        var y1 = rectA.top + rectA.height / 2 - rect.top;
+                        var x2 = rectB.left + rectB.width / 2 - rect.left;
+                        var y2 = rectB.top + rectB.height / 2 - rect.top;
+                        conn.line.setAttribute('x1', x1);
+                        conn.line.setAttribute('y1', y1);
+                        conn.line.setAttribute('x2', x2);
+                        conn.line.setAttribute('y2', y2);
                 });
                 requestAnimationFrame(updateLines);
             }
-
+            
             requestAnimationFrame(updateLines);
         }
-
+        
         // Initialize particles when page loads
-
+        
         document.addEventListener('DOMContentLoaded', function() {
             // Re-enabled the local, offline-friendly particle animation.
 
@@ -99,9 +99,9 @@
                         // Show corresponding panel
                         var tabName = tab.dataset.tab;
                         if (panels[tabName]) {
-                    panels[tabName].classList.remove('hidden');
-                }
-                    });
+                            panels[tabName].classList.remove('hidden');
+                        }
+                        });
                 });
 
                 // 2. To-Do List Logic
