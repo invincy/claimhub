@@ -511,16 +511,14 @@
 
             // Load active special cases
             try {
-            const activeSpecialCases = localStorage.getItem('licActiveSpecialCases');
+                const activeSpecialCases = localStorage.getItem('licActiveSpecialCases');
 
-            if (activeSpecialCases)
-              document.getElementById('activeSpecialCasesTable').innerHTML = activeSpecialCases;
-
+                if (activeSpecialCases)
+                    document.getElementById('activeSpecialCasesTable').innerHTML = activeSpecialCases;
+            }
             catch (error) {
                 console.error("Error loading active special cases from localStorage:", error);
             }
-
-
 
         // Special Case Save functionality
         document.getElementById('saveSpecialCase')?.addEventListener('click', function() {
