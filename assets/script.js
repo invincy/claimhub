@@ -501,19 +501,27 @@
         // Load data from localStorage
         function loadFromStorage() {
             // Load active death claims
-            const activeClaims = localStorage.getItem('licActiveClaims');
-            if (activeClaims)
-                document.getElementById('activeDeathClaimsTable').innerHTML = activeClaims;
+            try {
+                const activeClaims = localStorage.getItem('licActiveClaims');
+                if (activeClaims)
+                    document.getElementById('activeDeathClaimsTable').innerHTML = activeClaims;
+            } catch (error) {
+                console.error("Error loading active death claims from localStorage:", error);
+            }
 
             // Load active special cases
+            try {
             const activeSpecialCases = localStorage.getItem('licActiveSpecialCases');
+
             if (activeSpecialCases)
               document.getElementById('activeSpecialCasesTable').innerHTML = activeSpecialCases;
 
 
 
         }
-
+            catch (error) {
+                console.error("Error loading active special cases from localStorage:", error);
+            }
 
 
 
@@ -621,6 +629,7 @@
             var row = document.createElement('tr');
             row.className = 'dark-table-row border-t transition-all duration-300';
             row.style.cursor = 'pointer';
+            // Ensure dataset.policyNo is set
             row.dataset.policyNo = policyNo;
             updateSpecialCaseRow(row, policyNo, name, type, issue);
             return row;
