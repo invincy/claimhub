@@ -499,25 +499,38 @@
             }
         }
         // Load data from localStorage
-        function loadFromStorage() {
-            // Load active death claims
-            try {
-                const activeClaims = localStorage.getItem('licActiveClaims');
-                if (activeClaims)
-                    document.getElementById('activeDeathClaimsTable').innerHTML = activeClaims;
-            } catch (error) {
-                console.error("Error loading active death claims from localStorage:", error);
+        function loadFromStorage() { // Keep let here because the error happens before this
+            // Rebuild Active Death Claims table from savedCases object
+            const activeDeathClaimsTable = document.getElementById('activeDeathClaimsTable');
+            if (activeDeathClaimsTable) {
+                activeDeathClaimsTable.innerHTML = ''; // Clear existing
+                const cases = Object.keys(savedCases);
+                if (cases.length > 0) {
+                    cases.forEach(policyNo => {
+                        const caseData = savedCases[policyNo];
+                        const stage = getClaimStage(policyNo); // Pass policyNo to get specific stage
+                        const newRow = createDeathClaimRow(policyNo, caseData.name, caseData.claimType, stage);
+                        activeDeathClaimsTable.appendChild(newRow);
+                    });
+                } else {
+                    activeDeathClaimsTable.innerHTML = '<tr><td colspan="5" class="px-4 py-8 text-center text-gray-500">No active death claims</td></tr>';
+                }
             }
 
-            // Load active special cases
-            try {
-                const activeSpecialCases = localStorage.getItem('licActiveSpecialCases');
-
-                if (activeSpecialCases)
-                    document.getElementById('activeSpecialCasesTable').innerHTML = activeSpecialCases;
-            }
-            catch (error) {
-                console.error("Error loading active special cases from localStorage:", error);
+            // Rebuild Active Special Cases table from savedSpecialCases object
+            const activeSpecialCasesTable = document.getElementById('activeSpecialCasesTable');
+            if (activeSpecialCasesTable) {
+                activeSpecialCasesTable.innerHTML = ''; // Clear existing
+                const specialCases = Object.keys(savedSpecialCases);
+                if (specialCases.length > 0) {
+                    specialCases.forEach(policyNo => {
+                        const caseData = savedSpecialCases[policyNo];
+                        const newRow = createSpecialCaseRow(policyNo, caseData.name, caseData.type, caseData.issue);
+                        activeSpecialCasesTable.appendChild(newRow);
+                    });
+                } else {
+                    activeSpecialCasesTable.innerHTML = '<tr><td colspan="5" class="px-4 py-8 text-center text-gray-500">No active special cases</td></tr>';
+                }
             }
         }
 
@@ -1097,14 +1110,20 @@
                 }
             });
 
-            const stage = getClaimStage();
- // Keep let here because the error happens before this
+            const stage = getClaimStage(policyNo);
+            // Keep let here because the error happens before this
             if (existingRow) {
                 updateDeathClaimRow(existingRow, policyNo, name, selectedType.value, stage);
            } else {
                 const newRow = createDeathClaimRow(policyNo, name, selectedType.value, stage);
                 tableBody.appendChild(newRow);
             }
+            // This is a good point to also save the raw HTML for compatibility,
+            // though the new loadFromStorage doesn't strictly need it.
+            // It acts as a fallback and keeps behavior consistent.
+            localStorage.setItem('licActiveClaims', document.getElementById('activeDeathClaimsTable').innerHTML);
+            localStorage.setItem('licActiveSpecialCases', document.getElementById('activeSpecialCasesTable').innerHTML);
+
 
             saveToStorage();
 
