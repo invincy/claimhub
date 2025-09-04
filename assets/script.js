@@ -61,15 +61,15 @@
                 } else {
                     conn.line.style.display = 'none'; // Hide line if too far
                 }
-   function updateLines() {
+            });
+    }
+
+    function updateLines() {
 
             requestAnimationFrame(updateParticlePhysics);
             requestAnimationFrame(updateLines);
 
-            });
-
     }
-
 
     function updateParticlePhysics() {
         var canvasRect = document.getElementById('particles').getBoundingClientRect();
