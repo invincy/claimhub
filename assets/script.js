@@ -1154,6 +1154,7 @@
 
         function removeCompletedSpecialRow(button) {
             var row = button.closest('tr');
+            var tableBody = row.parentNode;
             row.remove();
             
             if (tableBody.children.length === 0) {
