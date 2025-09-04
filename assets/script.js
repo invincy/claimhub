@@ -49,16 +49,16 @@
             function updateLines() {
         var rect = container.getBoundingClientRect();
             connections.forEach(conn => {
-                var rectA = conn.a.getBoundingClientRect();
-                    var rectB = conn.b.getBoundingClientRect();
-                    var x1 = rectA.left + rectA.width / 2 - rect.left;
-                    var y1 = rectA.top + rectA.height / 2 - rect.top;
-                    var x2 = rectB.left + rectB.width / 2 - rect.left;
-                    const y2 = rectB.top + rectB.height / 2 - rect.top;
-                    conn.line.setAttribute('x1', x1);
-                    conn.line.setAttribute('y1', y1);
-                    conn.line.setAttribute('x2', x2);
-                    conn.line.setAttribute('y2', y2);
+                var rectA = conn.a.getBoundingClientRect(); // rect for particle A
+                var rectB = conn.b.getBoundingClientRect(); // rect for particle B
+                var x1 = rectA.left + rectA.width / 2 - rect.left;
+                var y1 = rectA.top + rectA.height / 2 - rect.top;
+                var x2 = rectB.left + rectB.width / 2 - rect.left;
+                var y2 = rectB.top + rectB.height / 2 - rect.top;
+                conn.line.setAttribute('x1', x1);
+                conn.line.setAttribute('y1', y1);
+                conn.line.setAttribute('x2', x2);
+                conn.line.setAttribute('y2', y2);
                 });
                 requestAnimationFrame(updateLines);
             }
@@ -71,14 +71,6 @@
         document.addEventListener('DOMContentLoaded', function() {
             // Re-enabled the local, offline-friendly particle animation.
 
-
-            var style = document.createElement('style');
-            style.textContent = `
-            .particle {
-                background-color: yellow;
-            }
-            `;
-            document.head.appendChild(style);
             var { container, particles } = createParticles();
             createConnections(container, particles);
             
