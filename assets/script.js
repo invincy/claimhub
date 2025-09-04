@@ -1,7 +1,6 @@
     // Create floating particles
     
     function createParticles() {
-        var particlesContainer = document.getElementById('particles');
         var particleCount = 200; // Increased for a "galaxy" effect
         var particles = [];
 
@@ -14,7 +13,7 @@
             particle.style.animationDelay = Math.random() * 6 + 's';
             particle.style.animationDuration = (6 + Math.random() * 4) + 's';
 
-                // Random size variation
+            // Random size variation
                 var size = 1 + Math.random() * 2;
                 particle.style.width = size + 'px';
                 particle.style.height = size + 'px';
@@ -24,10 +23,10 @@
             }
             
             
-            return { container: particlesContainer, particles };
+            return { particles };
         }
         
-        function createConnections(container, particles) {
+        function createConnections(particles) {
             var svg = document.getElementById('particleLines');
             var connections = [];
             var clusterCount = 25; // Increased for a "constellation" effect
@@ -47,7 +46,7 @@
                 }
                 
                 function updateLines() {
-                    var rect = container.getBoundingClientRect();
+                    var rect = document.getElementById('particles').getBoundingClientRect();
                     connections.forEach(conn => {
                         var rectA = conn.a.getBoundingClientRect(); // rect for particle A
                         var rectB = conn.b.getBoundingClientRect(); // rect for particle B
@@ -68,12 +67,14 @@
         
         // Initialize particles when page loads
         
-        document.addEventListener('DOMContentLoaded', function() {
-            // Re-enabled the local, offline-friendly particle animation.
 
-            var { container, particles } = createParticles();
-            createConnections(container, particles);
+        document.addEventListener('DOMContentLoaded', function() {
+            var particlesContainer = document.getElementById('particles');
+            // Re-enabled the local, offline-friendly particle animation.
+            var { particles } = createParticles();
+            createConnections(particles);
             
+
             var toolsPanel = document.querySelector('.dash-right');
             if (toolsPanel) {
                 var tabs = toolsPanel.querySelectorAll('.tool-tab');
