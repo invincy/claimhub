@@ -48,44 +48,40 @@
                 }
             }
 
-                var rect = document.getElementById('particles').getBoundingClientRect();
-                connections.forEach(conn => {
-                   var dx = conn.a.x - conn.b.x;
-                    var dy = conn.a.y - conn.b.y;
-                    var distance = Math.sqrt(dx * dx + dy * dy);
+            var rect = document.getElementById('particles').getBoundingClientRect();
+            connections.forEach(conn => {
+                var dx = conn.a.x - conn.b.x;
+                var dy = conn.a.y - conn.b.y;
+                var distance = Math.sqrt(dx * dx + dy * dy);
 
-                    if (distance < 75) { // Show line if within 75px distance
-                        conn.line.setAttribute('x1', conn.a.x);
-                        conn.line.setAttribute('y1', conn.a.y);
-                        conn.line.setAttribute('x2', conn.b.x);
-                        conn.line.setAttribute('y2', conn.b.y);
-                        conn.line.style.display = ''; // Make line visible
-                    } else {
-                        conn.line.style.display = 'none'; // Hide line if too far
-                    }
+                if (distance < 75) { // Show line if within 75px distance
+                    conn.line.setAttribute('x1', conn.a.x);
+                    conn.line.setAttribute('y1', conn.a.y);
+                    conn.line.setAttribute('x2', conn.b.x);
+                    conn.line.setAttribute('y2', conn.b.y);
+                    conn.line.style.display = ''; // Make line visible
+                } else {
+                    conn.line.style.display = 'none'; // Hide line if too far
+                }
 
-                });
-            
-                requestAnimationFrame(updateLines);
-            
+            });
 
     }
 
-   function updateLines() {
-            function updateParticlePhysics() {
-               var canvasRect = document.getElementById('particles').getBoundingClientRect();
-                particles.forEach(particle => {
-                    // Update position
-                    particle.x += particle.vx;
-                    particle.y += particle.vy;
+    function updateParticlePhysics() {
+        var canvasRect = document.getElementById('particles').getBoundingClientRect();
+        particles.forEach(particle => {
+            // Update position
+            particle.x += particle.vx;
+            particle.y += particle.vy;
 
-                    // Bounce off edges
-                    if (particle.x < 0 || particle.x > canvasRect.width) {
-                        particle.vx = -particle.vx;
-                    }
-                    if (particle.y < 0 || particle.y > canvasRect.height) {
-                        particle.vy = -particle.vy;
-                    }
+            // Bounce off edges
+            if (particle.x < 0 || particle.x > canvasRect.width) {
+                particle.vx = -particle.vx;
+            }
+            if (particle.y < 0 || particle.y > canvasRect.height) {
+                particle.vy = -particle.vy;
+            }
 
                     // Apply position to element
                     particle.style.left = particle.x + 'px';
@@ -93,7 +89,14 @@
                 });
                 requestAnimationFrame(updateParticlePhysics);
             }
-}
+   function updateLines() {
+
+            requestAnimationFrame(updateParticlePhysics);
+            requestAnimationFrame(updateLines);
+
+    }
+
+
 
    // Initialize particles and connections when page loads
 
