@@ -327,7 +327,7 @@
         deathClaimBtn?.addEventListener('click', function() {
             deathClaimForm?.classList.remove('hidden');
         });
-
+ 
         specialCaseBtn?.addEventListener('click', function() {
             specialCaseForm?.classList.remove('hidden');
         });
@@ -1169,7 +1169,7 @@
             var allInputs = document.querySelectorAll('#workflowSections input, #workflowSections select, #workflowSections textarea');
             allInputs.forEach(function(input) {
                 if (input.type === 'checkbox' || input.type === 'radio') {
-                    workflowState[input.id] = input.checked;
+                   workflowState[input.id] = input.checked;
                 } else {
                     workflowState[input.id] = input.value;
                 }
@@ -1340,4 +1340,3 @@
         addSearchFunctionality('deathClaimSearch', 'activeDeathClaimsTable', '— No claims match your search', '— No active death claims');
         addSearchFunctionality('specialCaseSearch', 'activeSpecialCasesTable', '— No special cases match your search', '— No active special cases');
     });
- 
