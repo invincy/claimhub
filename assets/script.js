@@ -10,10 +10,6 @@
            var particle = document.createElement('div');
             particle.className = 'particle';
 
-            // Random starting position
-            particle.style.left = Math.random() * 100 + '%';
-            particle.style.animationDelay = Math.random() * 6 + 's';
-            particle.style.animationDuration = (6 + Math.random() * 4) + 's';
 
              // Physics properties
             particle.x = Math.random() * canvasRect.width;
@@ -25,13 +21,13 @@
             particle.isBlueVariant = Math.random() < 0.1; // 10% chance of being blue
             var color = particle.isBlueVariant ? 'rgba(0, 85, 164, 0.7)' : 'rgba(255, 210, 0, 0.85)';
             particle.style.background = color;
-            particle.style.boxShadow = `0 0 8px rgba(255, 210, 0, 0.25)`;
+           particle.style.boxShadow = `0 0 8px rgba(255, 210, 0, 0.25)`;
 
              // Random size variation
             var size = 1 + Math.random() * 2;
                 particle.style.width = size + 'px';
                 particle.style.height = size + 'px';
-            
+
                 particlesContainer.appendChild(particle);
                 particles.push(particle);
             }
@@ -102,8 +98,8 @@
       // Initialize particles and connections when page loads
         
 
-        document.addEventListener('DOMContentLoaded', function() {
-            var particlesContainer = document.getElementById('particles');
+      document.addEventListener('DOMContentLoaded', function() {
+           var particlesContainer = document.getElementById('particles');
             // Re-enabled the local, offline-friendly particle animation.
             var { particles } = createParticles();
             createConnections(particles);
