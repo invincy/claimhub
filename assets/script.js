@@ -94,7 +94,6 @@
                         conn.line.style.display = 'none'; // Hide line if too far
                     }
                 }
-                });
                 requestAnimationFrame(updateLines);
             }
             
