@@ -439,6 +439,9 @@
         let savedCases = JSON.parse(localStorage.getItem('licSavedCases') || '{}');
         let savedSpecialCases = JSON.parse(localStorage.getItem('licSavedSpecialCases') || '{}');
         let savedWorkflowStates = JSON.parse(localStorage.getItem('licWorkflowStates') || '{}');
+        // Load completed cases from localStorage
+        let completedDeathCases = JSON.parse(localStorage.getItem('licCompletedDeathCases') || '[]');
+        let completedSpecialCases = JSON.parse(localStorage.getItem('licCompletedSpecialCases') || '[]');
 
         // Save data to localStorage
         function saveToStorage() {
@@ -446,6 +449,8 @@
             localStorage.setItem('licSavedSpecialCases', JSON.stringify(savedSpecialCases));
             localStorage.setItem('licWorkflowStates', JSON.stringify(savedWorkflowStates));
             updateCounters();
+            localStorage.setItem('licCompletedDeathCases', JSON.stringify(completedDeathCases));
+            localStorage.setItem('licCompletedSpecialCases', JSON.stringify(completedSpecialCases));
         }
 
         // Update counters for all sections
@@ -495,6 +500,31 @@
                 }
             }
         }
+
+        function populateCompletedCases(tableId, casesArray, createRowFunction) {
+            const tableBody = document.getElementById(tableId);
+            if (tableBody) {
+                tableBody.innerHTML = ''; // Clear existing content
+
+                if (casesArray.length > 0) {
+                    casesArray.forEach(caseData => {
+                        // Assuming caseData contains all necessary info, adapt as needed
+                        const newRow = createRowFunction(caseData);
+                        tableBody.appendChild(newRow);
+                    });
+                } else {
+                    tableBody.innerHTML = '<tr><td colspan="5" class="px-4 py-8 text-center text-gray-500">No completed cases</td></tr>';
+                }
+            }
+        }
+
+        function createCompletedDeathCaseRow(caseData) {
+            const row = document.createElement('tr');
+            row.className = 'lic-table-row border-t transition-all duration-300';
+            row.innerHTML = `<td class="px-6 py-4 font-semibold text-gray-300">${caseData.policyNo}</td><td class="px-6 py-4 font-semibold text-gray-300">${caseData.name}</td><td class="px-6 py-4 font-semibold text-gray-300">${caseData.claimType}</td><td class="px-6 py-4 font-semibold text-gray-300">${caseData.completionDate}</td><td class="px-6 py-4"><button class="btn-danger btn-remove px-4 py-2 rounded-lg text-sm font-bold" onclick="removeCompletedRow(this)">Remove</button></td>`;
+            return row;
+        }
+
         // Load data from localStorage
         function loadFromStorage() { // Keep let here because the error happens before this
             // Rebuild Active Death Claims table from savedCases object
@@ -529,6 +559,11 @@
                     activeSpecialCasesTable.innerHTML = '<tr><td colspan="5" class="px-4 py-8 text-center text-gray-500">No active special cases</td></tr>';
                 }
             }
+            // Populate Completed Death Cases Table
+            populateCompletedCases('completedDeathClaimsTable', completedDeathCases, createCompletedDeathCaseRow);
+
+            // Populate Completed Special Cases Table (assuming you'll create a similar create function)
+            populateCompletedCases('completedSpecialCasesTable', completedSpecialCases, createSpecialCaseRow);
         }
 
         // Special Case Save functionality
@@ -553,27 +588,24 @@
                     completedTableBody.innerHTML = '';
                 }
 
-                var completedRow = document.createElement('tr');
-                completedRow.className = 'lic-table-row border-t transition-all duration-300';
-                completedRow.innerHTML = `
-                    <td class="px-6 py-4 font-semibold text-gray-300">${policyNo}</td>
-                    <td class="px-6 py-4 font-semibold text-gray-300">${name}</td>
-                    <td class="px-6 py-4 font-semibold text-gray-300">${type}</td>
-                    <td class="px-6 py-4 font-semibold text-gray-300">${issue.length > 50 ? issue.substring(0, 50) + '...' : issue}</td>
-                    <td class="px-6 py-4">
-                        <button class="btn-danger px-4 py-2 rounded-lg text-sm font-bold" onclick="removeCompletedSpecialRow(this)">
-                            Remove
-                        </button>
-                    </td>
-                `;
-                completedTableBody.appendChild(completedRow);
+                // Save completed case to array
+                completedSpecialCases.push({
+                    policyNo: policyNo,
+                    name: name,
+                    type: type,
+                    issue: issue
+                });
 
                 // Remove from active cases
                 var activeTableBody = document.getElementById('activeSpecialCasesTable');
                 var rows = activeTableBody.querySelectorAll('tr');
                 rows.forEach(function(row) {
                     const policyCell = row.querySelector('td:first-child');
-                    if (policyCell && policyCell.textContent === policyNo) {
+                    if (policyCell && row.dataset.policyNo === policyNo) {
+                        // Remove the case from savedSpecialCases
+                        if (savedSpecialCases[policyNo]) {
+                            delete savedSpecialCases[policyNo];
+                        }
                         row.remove();
                     }
                 });
@@ -1077,6 +1109,14 @@
                 name: name,
                 claimType: selectedType.value
             };
+                completedDeathCases.push({
+                    policyNo: policyNo,
+                    name: name,
+                    claimType: selectedType.value,
+                    completionDate: new Date().toLocaleDateString()
+                });
+
+
             savedCases[policyNo] = formData;
 
             // Save workflow state
@@ -1103,7 +1143,7 @@
             rows.forEach(function(row) {
                 const policyCell = row.querySelector('td:first-child');
                 if (policyCell && policyCell.textContent === policyNo) {
-                    existingRow = row;
+                   existingRow = row;
                 }
             });
 
