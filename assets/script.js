@@ -94,12 +94,9 @@ function updateParticlePhysics() {
            // Apply position to element
            particle.style.left = particle.x + 'px';
            particle.style.top = particle.y + 'px';
-        });
+        };
        requestAnimationFrame(updateParticlePhysics);
 
-
-
-    }
 
 
    // Initialize particles and connections when page loads
