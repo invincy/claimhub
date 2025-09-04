@@ -516,9 +516,6 @@
             if (activeSpecialCases)
               document.getElementById('activeSpecialCasesTable').innerHTML = activeSpecialCases;
 
-
-
-        }
             catch (error) {
                 console.error("Error loading active special cases from localStorage:", error);
             }
