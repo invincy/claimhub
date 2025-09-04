@@ -10,10 +10,6 @@
            var particle = document.createElement('div');
             particle.className = 'particle';
 
-
-             // Physics properties
-            particle.x = Math.random() * canvasRect.width;
-            particle.y = Math.random() * canvasRect.height;
             particle.vx = (Math.random() - 0.5) * 0.5; // X velocity
             particle.vy = (Math.random() - 0.5) * 0.5; // Y velocity
 
@@ -22,11 +18,14 @@
             var color = particle.isBlueVariant ? 'rgba(0, 85, 164, 0.7)' : 'rgba(255, 210, 0, 0.85)';
             particle.style.background = color;
            particle.style.boxShadow = `0 0 8px rgba(255, 210, 0, 0.25)`;
+            particle.x = Math.random() * canvasRect.width;
+            particle.y = Math.random() * canvasRect.height;
 
              // Random size variation
             var size = 1 + Math.random() * 2;
                 particle.style.width = size + 'px';
                 particle.style.height = size + 'px';
+
 
                 particlesContainer.appendChild(particle);
                 particles.push(particle);
@@ -36,7 +35,6 @@
 
     function createConnections(particles) {
             var svg = document.getElementById('particleLines');
-            var connections = [];
             var clusterCount = particles.length; // Connect each particle to its neighbors
             
             for (var i = 0; i < clusterCount; i++) {
@@ -46,11 +44,12 @@
                     line.setAttribute('stroke-width', '0.7');
                     svg.appendChild(line);
                     connections.push({ a: particles[i], b: particles[j], line });
+
                 }
             }
                 
             function updateParticlePhysics() {
-                var canvasRect = document.getElementById('particles').getBoundingClientRect();
+               var canvasRect = document.getElementById('particles').getBoundingClientRect();
                 particles.forEach(particle => {
                     // Update position
                     particle.x += particle.vx;
@@ -73,7 +72,6 @@
 
             requestAnimationFrame(updateParticlePhysics);
 
-            function updateLines() {
                 var rect = document.getElementById('particles').getBoundingClientRect();
                 connections.forEach(conn => {
                    var dx = conn.a.x - conn.b.x;
@@ -89,14 +87,15 @@
                     } else {
                         conn.line.style.display = 'none'; // Hide line if too far
                     }
+
                 });
                 requestAnimationFrame(updateLines);
             }
             requestAnimationFrame(updateLines);
         }
 
-      // Initialize particles and connections when page loads
-        
+   // Initialize particles and connections when page loads
+
 
       document.addEventListener('DOMContentLoaded', function() {
            var particlesContainer = document.getElementById('particles');
