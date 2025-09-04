@@ -456,6 +456,7 @@
         // Update counters for all sections
         function updateCounters() {
             // Count active death claims
+
             var activeDeathRows = document.querySelectorAll('#activeDeathClaimsTable tr:not([colspan])');
             var activeDeathCount = activeDeathRows.length > 0 && !activeDeathRows[0].querySelector('td[colspan]') ? activeDeathRows.length : 0;
             document.getElementById('activeDeathClaimsCounter').textContent = activeDeathCount;
@@ -482,7 +483,7 @@
                 if (tableElement) {
                     tableElement.addEventListener('click', function(e) {
                         const row = e.target.closest('tr');
-                        if (!row || !row.dataset.policyNo) return;
+                        if (!row || !row.dataset.policyNo) return; // Make sure it has policyNo
 
                         var policyNo = row.dataset.policyNo;
                         const config = tables[tableId];
@@ -1188,7 +1189,7 @@
         }
 
         function getClaimStage() {
-           if (document.getElementById('paymentDone').checked) return 'Payment Done';
+            if (document.getElementById('paymentDone').checked) return 'Payment Done';
             if (document.getElementById('doDecisionReceived') && document.getElementById('doDecisionReceived').checked) return 'D.O. Decision Received';
             if (document.getElementById('investigationReceived').checked) return 'Investigation Complete';
             if (document.getElementById('investigationDate').value) return 'Under Investigation';
