@@ -563,6 +563,12 @@
                     }
                 });
 
+                // Also remove the data object from storage
+                const policyNo = row.dataset.policyNo;
+                if (policyNo && savedSpecialCases[policyNo]) {
+                    delete savedSpecialCases[policyNo];
+                }
+
                 if (activeTableBody.children.length === 0) {
                     activeTableBody.innerHTML = '<tr><td colspan="5" class="px-4 py-8 text-center text-gray-500">No active special cases</td></tr>';
                 }
@@ -693,6 +699,12 @@
         function removeSpecialRow(button) {
             var row = button.closest('tr');
             var tableBody = row.parentNode;
+            const policyNo = row.dataset.policyNo;
+
+            // Remove the data object from storage first
+            if (policyNo && savedSpecialCases[policyNo]) {
+                delete savedSpecialCases[policyNo];
+            }
             row.remove();
             
             if (tableBody.children.length === 0) {
