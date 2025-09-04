@@ -1,12 +1,13 @@
-    // Create floating particles
-    
+    // Create floating particles with physics and connections
+
     function createParticles() {
         var particlesContainer = document.getElementById('particles');
-        var particleCount = 200;
+        var particleCount = 100;
         var particles = [];
+        var canvasRect = particlesContainer.getBoundingClientRect(); // Canvas dimensions
 
         for (var i = 0; i < particleCount; i++) {
-            var particle = document.createElement('div');
+           var particle = document.createElement('div');
             particle.className = 'particle';
 
             // Random starting position
@@ -14,51 +15,85 @@
             particle.style.animationDelay = Math.random() * 6 + 's';
             particle.style.animationDuration = (6 + Math.random() * 4) + 's';
 
-            // Random size variation
+             // Physics properties
+            particle.x = Math.random() * canvasRect.width;
+            particle.y = Math.random() * canvasRect.height;
+            particle.vx = (Math.random() - 0.5) * 0.5; // X velocity
+            particle.vy = (Math.random() - 0.5) * 0.5; // Y velocity
+
+            // Color variant
+            particle.isBlueVariant = Math.random() < 0.1; // 10% chance of being blue
+            var color = particle.isBlueVariant ? 'rgba(0, 85, 164, 0.7)' : 'rgba(255, 210, 0, 0.85)';
+            particle.style.background = color;
+            particle.style.boxShadow = `0 0 8px rgba(255, 210, 0, 0.25)`;
+
+             // Random size variation
             var size = 1 + Math.random() * 2;
                 particle.style.width = size + 'px';
                 particle.style.height = size + 'px';
+            
                 particlesContainer.appendChild(particle);
                 particles.push(particle);
             }
-            
-            
             return { particles };
         }
-        
 
-        function createConnections(particles) {
+    function createConnections(particles) {
             var svg = document.getElementById('particleLines');
             var connections = [];
-            var clusterCount = 25; // Increased for a "constellation" effect
+            var clusterCount = particles.length; // Connect each particle to its neighbors
             
             for (var i = 0; i < clusterCount; i++) {
-                var clusterSize = Math.random() < 0.5 ? 2 : 3;
-                var indices = [];
-                while (indices.length < clusterSize) {
-                    var idx = Math.floor(Math.random() * particles.length);
-                    if (!indices.includes(idx)) indices.push(idx);
-                }
-                for (let j = 0; j < clusterSize - 1; j++) {
+                for (var j = i + 1; j < particles.length; j++) {
                     var line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                    line.setAttribute('stroke', 'rgba(121, 167, 232, 0.15)');
+                    line.setAttribute('stroke-width', '0.7');
                     svg.appendChild(line);
-                    connections.push({ a: particles[indices[j]], b: particles[indices[j + 1]], line });
+                    connections.push({ a: particles[i], b: particles[j], line });
+                }
+            }
+                
+            function updateParticlePhysics() {
+                var canvasRect = document.getElementById('particles').getBoundingClientRect();
+                particles.forEach(particle => {
+                    // Update position
+                    particle.x += particle.vx;
+                    particle.y += particle.vy;
+
+                    // Bounce off edges
+                    if (particle.x < 0 || particle.x > canvasRect.width) {
+                        particle.vx = -particle.vx;
+                    }
+                    if (particle.y < 0 || particle.y > canvasRect.height) {
+                        particle.vy = -particle.vy;
+                    }
+
+                    // Apply position to element
+                    particle.style.left = particle.x + 'px';
+                    particle.style.top = particle.y + 'px';
+                });
+                requestAnimationFrame(updateParticlePhysics);
+            }
+
+            requestAnimationFrame(updateParticlePhysics);
+
+            function updateLines() {
+                var rect = document.getElementById('particles').getBoundingClientRect();
+                connections.forEach(conn => {
+                   var dx = conn.a.x - conn.b.x;
+                    var dy = conn.a.y - conn.b.y;
+                    var distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance < 75) { // Show line if within 75px distance
+                        conn.line.setAttribute('x1', conn.a.x);
+                        conn.line.setAttribute('y1', conn.a.y);
+                        conn.line.setAttribute('x2', conn.b.x);
+                        conn.line.setAttribute('y2', conn.b.y);
+                        conn.line.style.display = ''; // Make line visible
+                    } else {
+                        conn.line.style.display = 'none'; // Hide line if too far
                     }
                 }
-                
-                function updateLines() {
-                    var rect = document.getElementById('particles').getBoundingClientRect();
-                    connections.forEach(conn => {
-                        var rectA = conn.a.getBoundingClientRect(); // rect for particle A
-                        var rectB = conn.b.getBoundingClientRect(); // rect for particle B
-                        var x1 = rectA.left + rectA.width / 2 - rect.left;
-                        var y1 = rectA.top + rectA.height / 2 - rect.top;
-                        var x2 = rectB.left + rectB.width / 2 - rect.left;
-                        var y2 = rectB.top + rectB.height / 2 - rect.top;
-                        conn.line.setAttribute('x1', x1);
-                        conn.line.setAttribute('y1', y1);
-                        conn.line.setAttribute('x2', x2);
-                        conn.line.setAttribute('y2', y2);
                 });
                 requestAnimationFrame(updateLines);
             }
@@ -66,7 +101,7 @@
             requestAnimationFrame(updateLines);
         }
         
-        // Initialize particles when page loads
+        // Initialize particles and connections when page loads
         
 
         document.addEventListener('DOMContentLoaded', function() {
@@ -75,7 +110,6 @@
             var { particles } = createParticles();
             createConnections(particles);
             
-
             var toolsPanel = document.querySelector('.dash-right');
             if (toolsPanel) {
                 var tabs = toolsPanel.querySelectorAll('.tool-tab');
