@@ -445,9 +445,6 @@
             localStorage.setItem('licSavedCases', JSON.stringify(savedCases));
             localStorage.setItem('licSavedSpecialCases', JSON.stringify(savedSpecialCases));
             localStorage.setItem('licWorkflowStates', JSON.stringify(savedWorkflowStates));
-            localStorage.setItem('licActiveClaims', document.getElementById('activeDeathClaimsTable').innerHTML);
-            localStorage.setItem('licActiveSpecialCases', document.getElementById('activeSpecialCasesTable').innerHTML);
-
             updateCounters();
         }
 
@@ -1118,13 +1115,6 @@
                 const newRow = createDeathClaimRow(policyNo, name, selectedType.value, stage);
                 tableBody.appendChild(newRow);
             }
-            // This is a good point to also save the raw HTML for compatibility,
-            // though the new loadFromStorage doesn't strictly need it.
-            // It acts as a fallback and keeps behavior consistent.
-            localStorage.setItem('licActiveClaims', document.getElementById('activeDeathClaimsTable').innerHTML);
-            localStorage.setItem('licActiveSpecialCases', document.getElementById('activeSpecialCasesTable').innerHTML);
-
-
             saveToStorage();
 
             showToast('Progress saved successfully!');
