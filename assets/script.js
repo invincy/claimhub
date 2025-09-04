@@ -87,11 +87,11 @@
                     } else {
                         conn.line.style.display = 'none'; // Hide line if too far
                     }
+
                 });
+            }
                 });requestAnimationFrame(updateLines);
             }
-            requestAnimationFrame(updateLines);
-        }
 
    // Initialize particles and connections when page loads
 
