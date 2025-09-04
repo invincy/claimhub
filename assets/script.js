@@ -563,7 +563,7 @@
 
         // Load data from localStorage
         function loadFromStorage() { // Keep let here because the error happens before this
-            // Rebuild Active Death Claims table from savedCases object
+           // Rebuild Active Death Claims table from savedCases object
             const activeDeathClaimsTable = document.getElementById('activeDeathClaimsTable');
             if (activeDeathClaimsTable) {
                 activeDeathClaimsTable.innerHTML = ''; // Clear existing
@@ -1076,7 +1076,7 @@
 
         paymentDone?.addEventListener('change', function () {
         
-            if (this.checked) {
+           if (this.checked) {
                 const policyNo = document.getElementById('policyNumber').value;
                 const name = document.getElementById('claimantName').value;
                 var selectedType = document.querySelector('input[name="claimType"]:checked');
