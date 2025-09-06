@@ -53,7 +53,7 @@
 
     function updateLines() {
         var particlesContainer = document.getElementById('particles');
-        var canvasRect = particlesContainer.getBoundingClientRect();
+        let canvasRect = particlesContainer.getBoundingClientRect();
 
         if(typeof connections !== 'undefined') {
           connections.forEach(conn => {
@@ -73,13 +73,12 @@
             });
         }
 
-       requestAnimationFrame(updateParticlePhysics);
             requestAnimationFrame(updateLines);
 
     }
 
 function updateParticlePhysics() {
-            // Update position
+            let canvasRect = document.getElementById('particles').getBoundingClientRect();        // Update position
             particle.x += particle.vx;
             particle.y += particle.vy;
 
@@ -95,7 +94,7 @@ function updateParticlePhysics() {
            particle.style.left = particle.x + 'px';
            particle.style.top = particle.y + 'px';
         };
-       requestAnimationFrame(updateParticlePhysics);
+
 
 
 
@@ -106,7 +105,8 @@ function updateParticlePhysics() {
            var particlesContainer = document.getElementById('particles');
             // Re-enabled the local, offline-friendly particle animation.
             var { particles } = createParticles();
-            createConnections(particles);
+        createConnections(particles);
+        requestAnimationFrame(updateParticlePhysics);
            updateLines();
 
             
