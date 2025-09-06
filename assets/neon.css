@@ -354,6 +354,8 @@
             padding: 0.75rem; /* 12px */
             border-radius: 0.75rem; /* 12px */
             font-weight: 500;
+            width: 100%; /* Make the link fill its container */
+            height: 100%; /* Make the link fill its container */
         }
         .quick-link-item:hover {
             border-color: rgba(0, 255, 255, 0.6);
