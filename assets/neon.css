@@ -355,6 +355,13 @@
             border-radius: 0.75rem; /* 12px */
             font-weight: 500;
         }
+        .quick-link-item:hover {
+            border-color: rgba(0, 255, 255, 0.6);
+            background: rgba(0, 100, 150, 0.2);
+            color: #00ffff;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+            text-shadow: 0 0 8px rgba(0, 255, 255, 0.4);
+        }
         .counter-badge {
             background: rgba(99, 102, 241, 0.7);
             color: white;
