@@ -1220,10 +1220,13 @@ function updateParticlePhysics() {
 
         function updateDeathClaimRow(row, policyNo, name, claimType, stage) {
             row.innerHTML = `
+                <td class="px-6 py-4 font-semibold text-gray-300">${policyNo}</td>
                 <td class="px-6 py-4 font-semibold text-gray-300">${name}</td>
                 <td class="px-6 py-4 font-semibold text-gray-300">${claimType}</td>
                 <td class="px-6 py-4 font-semibold text-gray-300">${stage}</td>
-                <td class="px-6 py-4"><button class="btn-danger btn-remove px-4 py-2 rounded-lg text-sm font-bold">Remove</button></td>
+                <td class="px-6 py-4">
+                    <button class="btn-danger btn-remove px-3 py-1 rounded-lg text-xs">Remove</button>
+                </td>
             `;
         }
 
