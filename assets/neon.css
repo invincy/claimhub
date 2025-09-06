@@ -328,6 +328,7 @@
             cursor: pointer;
             backdrop-filter: blur(10px);
             color: #9ca3af; /* gray-400 */
+            display: block; /* Ensure it fills its container */
         }
         .option-card:hover {
             border-color: rgba(99, 102, 241, 0.5);
