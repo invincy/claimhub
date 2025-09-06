@@ -364,19 +364,6 @@
             box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
             text-shadow: 0 0 8px rgba(0, 255, 255, 0.4);
         }
-        .todo-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: rgba(30, 30, 30, 0.6);
-            border: 1px solid rgba(75, 85, 99, 0.3);
-            padding: 0.75rem;
-            border-radius: 0.75rem;
-            transition: all 0.3s ease;
-        }
-        .todo-item:hover {
-            border-color: rgba(99, 102, 241, 0.5);
-        }
         .counter-badge {
             background: rgba(99, 102, 241, 0.7);
             color: white;
