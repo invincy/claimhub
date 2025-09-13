@@ -347,6 +347,12 @@
             </div>
         </div>
 
+        <!-- Global Search Bar -->
+        <div class="mb-6 px-6">
+            <label for="globalSearchInput" class="block text-sm font-medium text-gray-400 mb-2">Search All Cases</label>
+            <input type="text" id="globalSearchInput" placeholder="Enter Policy No, Name, etc..." class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+
         <!-- Collapsible Sections Container -->
         <div class="glass-header rounded-2xl p-6">
             <div class="space-y-6">
@@ -363,9 +369,6 @@
                     </button>
                     <div id="activeDeathClaims" class="collapsible-content">
                         <div class="p-6 pt-0">
-                            <div class="mb-4">
-                                <input type="search" id="deathClaimSearch" class="dark-input w-full px-4 py-3 rounded-xl font-medium" placeholder="🔍 Search by Policy No, Name, Type, or Stage...">
-                            </div>
                             <div class="dark-table rounded-2xl overflow-hidden shadow-2xl">
                                 <table class="w-full">
                                     <thead class="dark-table-header">
@@ -401,9 +404,6 @@
                     </button>
                     <div id="activeSpecialCases" class="collapsible-content">
                         <div class="p-6 pt-0">
-                            <div class="mb-4">
-                                <input type="search" id="specialCaseSearch" class="dark-input w-full px-4 py-3 rounded-xl font-medium" placeholder="🔍 Search by Policy No, Name, Type, or Issue...">
-                            </div>
                             <div class="dark-table rounded-2xl overflow-hidden shadow-2xl">
                                 <table class="w-full">
                                     <thead class="dark-table-header">
