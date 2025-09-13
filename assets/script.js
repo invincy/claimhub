@@ -1,68 +1,5 @@
     // Create floating particles with physics and connections
 
-            particle.vx = (Math.random() - 0.5) * 0.5; // X velocity
-            particle.vy = (Math.random() - 0.5) * 0.5; // Y velocity
-
-            // Color variant
-            particle.isBlueVariant = Math.random() < 0.1; // 10% chance of being blue
-            var color = particle.isBlueVariant ? 'rgba(0, 85, 164, 0.7)' : 'rgba(255, 210, 0, 0.85)';
-            particle.style.background = color;
-           particle.style.boxShadow = `0 0 8px rgba(255, 210, 0, 0.25)`;
-            particle.x = Math.random() * canvasRect.width;
-            particle.y = Math.random() * canvasRect.height;
-
-             // Random size variation
-            var size = 1 + Math.random() * 2;
-                particle.style.width = size + 'px';
-                particle.style.height = size + 'px';
-
-
-                particlesContainer.appendChild(particle);
-                particles.push(particle);
-        }
-        return { particles };
-    }
-
-                if (distance < 75) { // Show line if within 75px distance
-                    conn.line.setAttribute('x1', conn.a.x);
-                  conn.line.setAttribute('y1', conn.a.y);
-                    conn.line.setAttribute('x2', conn.b.x);
-                    conn.line.setAttribute('y2', conn.b.y);
-                    conn.line.style.display = ''; // Make line visible
-                } else {
-                  conn.line.style.display = 'none'; // Hide line if too far
-                }
-            });
-        }
-    }
-
-    function updateParticlePhysics() {
-        var particlesContainer = document.getElementById('particles');
-        let canvasRect = particlesContainer.getBoundingClientRect();
-
-        var particles = document.querySelectorAll('.particle'); // Select all particle elements
-        particles.forEach(particle => {
-            // Update position
-            particle.x += particle.vx;
-            particle.y += particle.vy;
-
-        // Bounce off edges
-                if (particle.x < 0 || particle.x > canvasRect.width) {
-                    particle.vx = -particle.vx;
-                }
-                if (particle.y < 0 || particle.y > canvasRect.height) {
-                    particle.vy = -particle.vy;
-                }
-
-               // Apply position to element
-               particle.style.left = particle.x + 'px';
-               particle.style.top = particle.y + 'px';
-            });
-        requestAnimationFrame(updateParticlePhysics);
-    }
-
-   // Initialize particles and connections when page loads
-
       document.addEventListener('DOMContentLoaded', function() {
            var particlesContainer = document.getElementById('particles');
             
@@ -1300,10 +1237,4 @@
         // Setup search after everything is loaded
         addSearchFunctionality('deathClaimSearch', 'activeDeathClaimsTable', '— No claims match your search', '— No active death claims');
         addSearchFunctionality('specialCaseSearch', 'activeSpecialCasesTable', '— No special cases match your search', '— No active special cases');
-    });
-
-    document.addEventListener('DOMContentLoaded', function() {
-        const bodyElement = document.querySelector('body');
-        const bodyPointerEvents = window.getComputedStyle(bodyElement).pointerEvents;
-        console.log('Body pointer-events:', bodyPointerEvents);
     });
