@@ -52,7 +52,7 @@
                     }
                     todos.forEach((todo, index) => {
                         var li = document.createElement('li');
-                        li.className = `option-card flex items-center justify-between p-3 rounded-lg ${todo.completed ? 'opacity-50' : ''}`;
+                        li.className = `option-card flex items-start justify-between p-3 rounded-lg ${todo.completed ? 'opacity-50' : ''}`;
                         li.innerHTML = ` 
                             <div class="flex items-center flex-shrink min-w-0">
                                 <input type="checkbox" data-index="${index}" class="checkbox-modern mr-3" ${todo.completed ? 'checked' : ''}>
