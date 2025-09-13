@@ -52,13 +52,11 @@
                     }
                     todos.forEach((todo, index) => {
                         var li = document.createElement('li');
-                        li.className = `option-card flex items-center justify-between p-3 rounded-lg ${todo.completed ? 'opacity-50' : ''}`;
+                        li.className = `option-card grid grid-cols-[auto_1fr_auto] items-center gap-x-3 p-3 rounded-lg ${todo.completed ? 'opacity-50' : ''}`;
                         li.innerHTML = ` 
-                            <div class="flex items-center min-w-0">
-                                <input type="checkbox" data-index="${index}" class="checkbox-modern mr-3 flex-shrink-0" ${todo.completed ? 'checked' : ''}>
-                                <span class="font-medium text-gray-300 truncate ${todo.completed ? 'line-through' : ''}">${todo.text}</span>
-                            </div>
-                            <button data-index="${index}" class="btn-danger text-xs px-2 py-1 rounded-md ml-4 flex-shrink-0">[X]</button>
+                            <input type="checkbox" data-index="${index}" class="checkbox-modern" ${todo.completed ? 'checked' : ''}>
+                            <span class="font-medium text-gray-300 min-w-0 break-words ${todo.completed ? 'line-through' : ''}">${todo.text}</span>
+                            <button data-index="${index}" class="btn-danger text-xs px-2 py-1 rounded-md">[X]</button>
                         `;
                         todoList.appendChild(li);
                     });
