@@ -16,7 +16,7 @@
             // Color variant
             particle.isBlueVariant = Math.random() < 0.1; // 10% chance of being blue
             var color = particle.isBlueVariant ? 'rgba(0, 85, 164, 0.7)' : 'rgba(255, 210, 0, 0.85)';
-           particle.style.background = color;
+            particle.style.background = color;
            particle.style.boxShadow = `0 0 8px rgba(255, 210, 0, 0.25)`;
             particle.x = Math.random() * canvasRect.width;
             particle.y = Math.random() * canvasRect.height;
@@ -36,7 +36,7 @@
     function createConnections(particles) {
             var svg = document.getElementById('particleLines');
             var clusterCount = particles.length; // Connect each particle to its neighbors
-            window.connections = [];
+            var connections = [];
 
             for (let i = 0; i < clusterCount; i++) {
                 for (var j = i + 1; j < particles.length; j++) {
@@ -48,6 +48,7 @@
 
                 }
             }
+          return { connections };
 
     }
 
@@ -55,8 +56,7 @@
         var particlesContainer = document.getElementById('particles');
         let canvasRect = particlesContainer.getBoundingClientRect();
 
-        if(typeof connections !== 'undefined') {
-          connections.forEach(conn => {
+        window.connections.forEach(conn => {
                 var dx = conn.a.x - conn.b.x;
                 var dy = conn.a.y - conn.b.y;
                 var distance = Math.sqrt(dx * dx + dy * dy);
@@ -72,34 +72,34 @@
                 }
             });
         }
-
-            requestAnimationFrame(updateLines);
-
     }
 
-function updateParticlePhysics() {
-            let canvasRect = document.getElementById('particles').getBoundingClientRect();        // Update position
+    function updateParticlePhysics() {
+        var particlesContainer = document.getElementById('particles');
+        let canvasRect = particlesContainer.getBoundingClientRect();
+
+        var particles = document.querySelectorAll('.particle'); // Select all particle elements
+        particles.forEach(particle => {
+            // Update position
             particle.x += particle.vx;
             particle.y += particle.vy;
 
-            // Bounce off edges
-            if (particle.x < 0 || particle.x > canvasRect.width) {
-                particle.vx = -particle.vx;
-            }
-            if (particle.y < 0 || particle.y > canvasRect.height) {
-                particle.vy = -particle.vy;
-            }
+        // Bounce off edges
+                if (particle.x < 0 || particle.x > canvasRect.width) {
+                    particle.vx = -particle.vx;
+                }
+                if (particle.y < 0 || particle.y > canvasRect.height) {
+                    particle.vy = -particle.vy;
+                }
 
-           // Apply position to element
-           particle.style.left = particle.x + 'px';
-           particle.style.top = particle.y + 'px';
-        };
-
-
-
+               // Apply position to element
+               particle.style.left = particle.x + 'px';
+               particle.style.top = particle.y + 'px';
+            });
+        requestAnimationFrame(updateParticlePhysics);
+    }
 
    // Initialize particles and connections when page loads
-
 
       document.addEventListener('DOMContentLoaded', function() {
            var particlesContainer = document.getElementById('particles');
@@ -108,7 +108,7 @@ function updateParticlePhysics() {
         createConnections(particles);
         requestAnimationFrame(updateParticlePhysics);
            updateLines();
-
+                requestAnimationFrame(updateLines);
             
             var toolsPanel = document.querySelector('.dash-right');
             if (toolsPanel) {
@@ -175,11 +175,11 @@ function updateParticlePhysics() {
                     var text = todoInput.value.trim();
                     if (text) {
                         todos.push({ text, completed: false });
-                        todoInput.value = '';
+                        todoInput.value = ''; // Keep let here because the error happens before this
                         saveTodos();
                         renderTodos();
                     }
-                });
+                }); // Keep let here because the error happens before this
 
                 todoList.addEventListener('click', function(e) {
                     var index = e.target.dataset.index;

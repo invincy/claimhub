@@ -342,12 +342,44 @@
             color: #ffffff;
         }
         
+        /* Styles specifically for the smaller calculator buttons */
+        .premium-calculator .option-card {
+            padding: 0.5rem; /* 8px */
+            font-size: 0.875rem; /* 14px */
+            text-align: center;
+        }
+
+        /* Styles specifically for the smaller calculator buttons */
+        .premium-calculator .calc-btn {
+            padding: 0.5rem; /* 8px */
+            font-size: 0.875rem; /* 14px */
+            text-align: center;
+        }
+
+        /* Styles specifically for the smaller calculator buttons */
+            padding: 0.5rem; /* 8px */
+            font-size: 0.875rem; /* 14px */
+            text-align: center;
+        }
+
+        /* New dedicated class for calculator buttons */
+            background: rgba(30, 30, 30, 0.6);
+            border: 1px solid rgba(75, 85, 99, 0.3);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        .premium-calculator .calc-btn.selected {
+            color: #9ca3af; /* gray-400 */
+            padding: 0.5rem; /* 8px */
+            font-size: 0.875rem; /* 14px */
+            text-align: center;
+            border-radius: 0.5rem; /* 8px */
+        .premium-calculator .calc-btn.selected {
         .calc-btn:hover {
             border-color: rgba(99, 102, 241, 0.5);
             background: rgba(30, 30, 30, 0.8);
             color: #e5e7eb; /* gray-200 */
         }
-        .calc-btn.selected {
+        .premium-calculator .calc-btn.selected {
             border-color: #6366f1;
             background: rgba(99, 102, 241, 0.1);
             color: #ffffff;

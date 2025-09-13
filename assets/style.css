@@ -199,7 +199,7 @@ img, video { max-width: 100%; height: auto; }
 
 .particle {
     position: absolute;
-   width: 2px;
+    width: 2px;
     height: 2px;
     background: rgba(0, 255, 255, 0.6);
    border-radius: 50%;
@@ -208,7 +208,7 @@ img, video { max-width: 100%; height: auto; }
 }
 
 @keyframes float {
-   0% {
+    0% {
         transform: translateY(100vh) translateX(0px);
         opacity: 0;
     }
@@ -225,19 +225,19 @@ img, video { max-width: 100%; height: auto; }
 }
 
 .particle:nth-child(2n) {
-   animation-duration: 8s;
+    animation-duration: 8s;
     background: rgba(255, 255, 102, 0.6);
     box-shadow: 0 0 7px 1px rgba(255, 255, 102, 0.8);
 }
 
 .particle:nth-child(3n) {
-   animation-duration: 10s;
+    animation-duration: 10s;
     background: rgba(255, 255, 51, 0.5);
     box-shadow: 0 0 6px 1px rgba(255, 255, 51, 0.7);
 }
 
 .particle-lines line {
-    stroke: rgba(255, 255, 204, 0.15);
+    stroke: rgba(255, 255, 204, 0.15);;
     stroke-width: 0.5px;
     filter: drop-shadow(0 0 3px rgba(255, 255, 204, 0.4));
 }
