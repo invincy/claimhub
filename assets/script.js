@@ -1238,3 +1238,25 @@
         addSearchFunctionality('deathClaimSearch', 'activeDeathClaimsTable', '— No claims match your search', '— No active death claims');
         addSearchFunctionality('specialCaseSearch', 'activeSpecialCasesTable', '— No special cases match your search', '— No active special cases');
     });
+
+    document.addEventListener('DOMContentLoaded', function() {
+        function checkForOverlays() {
+            const allElements = document.querySelectorAll('*');
+
+            allElements.forEach(element => {
+                const style = window.getComputedStyle(element);
+                const rect = element.getBoundingClientRect();
+
+                const isVisible = rect.width > 0 && rect.height > 0;
+                const hasPointerEventsAuto = style.pointerEvents === 'auto';
+                const isInvisible = style.opacity === '0' || style.visibility === 'hidden';
+
+                if (isVisible && hasPointerEventsAuto && isInvisible) {
+                    console.log('Invisible overlay element found:', element);
+                }
+            });
+        }
+
+        // Execute the function after the DOM is fully loaded
+        checkForOverlays();
+    });
