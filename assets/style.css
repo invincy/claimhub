@@ -179,10 +179,6 @@ img, video { max-width: 100%; height: auto; }
     z-index: 0;
 }
 
-.particles {
-    position: fixed;
-    top: 0;
-    left: 0;
     width: 100%;
     height: 100%;
     pointer-events: none; /* This is the crucial fix */
@@ -240,8 +236,6 @@ img, video { max-width: 100%; height: auto; }
     stroke: rgba(255, 255, 204, 0.15);;
     stroke-width: 0.5px;
     filter: drop-shadow(0 0 3px rgba(255, 255, 204, 0.4));
-}
-
 .matte-card { 
    background: rgba(51, 43, 0, 0.1);
     border: 1px solid rgba(255, 255, 153, 0.3);

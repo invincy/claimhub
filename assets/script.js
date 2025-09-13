@@ -1,15 +1,5 @@
     // Create floating particles with physics and connections
 
-    function createParticles() {
-        var particlesContainer = document.getElementById('particles');
-        var particleCount = 100;
-        var particles = [];
-        var canvasRect = particlesContainer.getBoundingClientRect(); // Canvas dimensions
-
-        for (var i = 0; i < particleCount; i++) {
-            var particle = document.createElement('div');
-            particle.className = 'particle';
-
             particle.vx = (Math.random() - 0.5) * 0.5; // X velocity
             particle.vy = (Math.random() - 0.5) * 0.5; // Y velocity
 
@@ -32,34 +22,6 @@
         }
         return { particles };
     }
-
-    function createConnections(particles) {
-            var svg = document.getElementById('particleLines');
-            var clusterCount = particles.length; // Connect each particle to its neighbors
-            var connections = [];
-
-            for (let i = 0; i < clusterCount; i++) {
-                for (var j = i + 1; j < particles.length; j++) {
-                    var line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-                    line.setAttribute('stroke', 'rgba(121, 167, 232, 0.15)');
-                    line.setAttribute('stroke-width', '0.7');
-                    svg.appendChild(line);
-                    connections.push({ a: particles[i], b: particles[j], line });
-
-                }
-            }
-          return { connections };
-
-    }
-
-    function updateLines() {
-        var particlesContainer = document.getElementById('particles');
-        let canvasRect = particlesContainer.getBoundingClientRect();
-
-        window.connections.forEach(conn => {
-                var dx = conn.a.x - conn.b.x;
-                var dy = conn.a.y - conn.b.y;
-                var distance = Math.sqrt(dx * dx + dy * dy);
 
                 if (distance < 75) { // Show line if within 75px distance
                     conn.line.setAttribute('x1', conn.a.x);
@@ -103,12 +65,6 @@
 
       document.addEventListener('DOMContentLoaded', function() {
            var particlesContainer = document.getElementById('particles');
-            // Re-enabled the local, offline-friendly particle animation.
-            var { particles } = createParticles();
-        createConnections(particles);
-        requestAnimationFrame(updateParticlePhysics);
-           updateLines();
-                requestAnimationFrame(updateLines);
             
             var toolsPanel = document.querySelector('.dash-right');
             if (toolsPanel) {
