@@ -125,12 +125,10 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             todos.forEach((todo, index) => {
                 var li = document.createElement('li');
-                li.className = `option-card flex items-center justify-between p-3 rounded-lg ${todo.completed ? 'opacity-50' : ''}`;
+                li.className = `option-card flex items-center p-3 rounded-lg ${todo.completed ? 'opacity-50' : ''}`;
                 li.innerHTML = `
-                    <div class="flex items-center min-w-0">
-                        <input type="checkbox" data-index="${index}" class="checkbox-modern flex-shrink-0" ${todo.completed ? 'checked' : ''}>
-                        <span class="font-medium text-gray-300 flex-grow px-3 min-w-0 break-words ${todo.completed ? 'line-through' : ''}">${todo.text}</span>
-                    </div>
+                    <input type="checkbox" data-index="${index}" class="checkbox-modern flex-shrink-0" ${todo.completed ? 'checked' : ''}>
+                    <span class="font-medium text-gray-300 flex-grow px-3 min-w-0 break-words ${todo.completed ? 'line-through' : ''}">${todo.text}</span>
                     <button data-index="${index}" class="btn-danger text-xs px-2 py-1 rounded-md flex-shrink-0">[X]</button>
                 `;
                 todoList.appendChild(li);
