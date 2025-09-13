@@ -90,7 +90,7 @@
                 renderTodos();
 
                 // 3. Requirements Dropdown Logic
-                if (requirementsTypeSelect && letRequirementsTable) {
+                if (requirementsTypeSelect && letRequirementsTable) { // Keep let here because the error happens before this
                     requirementsTypeSelect.addEventListener('change', function(e) {
                         letRequirementsTable.style.display = e.target.value === 'LET' ? 'block' : 'none'; // Keep let here because the error happens before this
                     });
@@ -212,7 +212,7 @@
         });
 
         // Form functionality
-        var deathClaimBtn = document.getElementById('deathClaimBtn');
+        var deathClaimBtn = document.getElementById('deathClaimBtn'); // Keep let here because the error happens before this
         var specialCaseBtn = document.getElementById('specialCaseBtn');
         var deathClaimForm = document.getElementById('deathClaimForm');
         var specialCaseForm = document.getElementById('specialCaseForm');
@@ -456,7 +456,7 @@
         }
 
         // Load data from localStorage
-        function loadFromStorage() { // Keep let here because the error happens before this
+        function loadFromStorage() {
            // Rebuild Active Death Claims table from savedCases object
            const activeDeathClaimsTable = document.getElementById('activeDeathClaimsTable');
             if (activeDeathClaimsTable) {
@@ -820,7 +820,7 @@
         // Progressive workflow logic based on claim type
         document.querySelectorAll('input[name="claimType"]').forEach(radio => {
             radio.addEventListener('change', function () {
-                // Show workflow sections when claim type is selected
+                // Show workflow sections when claim type is selected // Keep let here because the error happens before this
                 document.getElementById('workflowSections').classList.remove('hidden');
                 
                 // Reset all sections to collapsed and disabled
@@ -1229,17 +1229,6 @@
             });
         }
 
-        // Initial Load
-        loadFromStorage();
-        updateCounters();
-
-        setupTableEventListeners();
-        // Setup search after everything is loaded
-        addSearchFunctionality('deathClaimSearch', 'activeDeathClaimsTable', '— No claims match your search', '— No active death claims');
-        addSearchFunctionality('specialCaseSearch', 'activeSpecialCasesTable', '— No special cases match your search', '— No active special cases');
-    });
-
-    document.addEventListener('DOMContentLoaded', function() {
         function checkForOverlays() {
             const allElements = document.querySelectorAll('*');
 
@@ -1256,6 +1245,15 @@
                 }
             });
         }
+
+        // Initial Load
+        loadFromStorage();
+        updateCounters();
+        setupTableEventListeners();
+
+        // Setup search after everything is loaded
+        addSearchFunctionality('deathClaimSearch', 'activeDeathClaimsTable', '— No claims match your search', '— No active death claims');
+        addSearchFunctionality('specialCaseSearch', 'activeSpecialCasesTable', '— No special cases match your search', '— No active special cases');
 
         // Execute the function after the DOM is fully loaded
         checkForOverlays();
