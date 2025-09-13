@@ -1301,3 +1301,9 @@
         addSearchFunctionality('deathClaimSearch', 'activeDeathClaimsTable', '— No claims match your search', '— No active death claims');
         addSearchFunctionality('specialCaseSearch', 'activeSpecialCasesTable', '— No special cases match your search', '— No active special cases');
     });
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const bodyElement = document.querySelector('body');
+        const bodyPointerEvents = window.getComputedStyle(bodyElement).pointerEvents;
+        console.log('Body pointer-events:', bodyPointerEvents);
+    });
