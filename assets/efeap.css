@@ -242,7 +242,6 @@ a:last-child, .quick-link-item:last-child {
 }
 
 /* Make "New Death Claim" and "New Special Case" buttons font bigger and blue */
-.btn-primary,
 .death-claim-btn,
 .add-special-case-btn {
     font-size: 1.25rem !important;
