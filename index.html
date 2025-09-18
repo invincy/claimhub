@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -655,5 +654,41 @@
 
     <!-- IMPORTANT: You may need to remove the old particle animation logic from assets/script.js to prevent conflicts. -->
     <script src="assets/script.js" defer></script>
+<script>
+(function() {
+    const html = document.documentElement;
+    const toggleBtn = document.getElementById('themeToggle');
+    const THEME_KEY = 'themeChoice';
+    const NEON = 'theme-neon';
+    const EFEAP = 'theme-efeap';
+
+    // On load, set theme from localStorage
+    const saved = localStorage.getItem(THEME_KEY);
+    if (saved === EFEAP) {
+        html.classList.remove(NEON);
+        html.classList.add(EFEAP);
+        document.getElementById('themeStylesheet').href = 'assets/efeap.css';
+    } else {
+        html.classList.remove(EFEAP);
+        html.classList.add(NEON);
+        document.getElementById('themeStylesheet').href = 'assets/neon.css';
+    }
+
+    // Toggle theme on button click
+    toggleBtn.addEventListener('click', function() {
+        if (html.classList.contains(NEON)) {
+            html.classList.remove(NEON);
+            html.classList.add(EFEAP);
+            document.getElementById('themeStylesheet').href = 'assets/efeap.css';
+            localStorage.setItem(THEME_KEY, EFEAP);
+        } else {
+            html.classList.remove(EFEAP);
+            html.classList.add(NEON);
+            document.getElementById('themeStylesheet').href = 'assets/neon.css';
+            localStorage.setItem(THEME_KEY, NEON);
+        }
+    });
+})();
+</script>
 </body>
 </html>
