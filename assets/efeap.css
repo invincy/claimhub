@@ -217,3 +217,22 @@ a, .quick-link-item {
 a:last-child, .quick-link-item:last-child {
     margin-right: 0;
 }
+
+/* To-Do items: make text LIC blue and background white */
+.todo-item,
+.todo-list li,
+.todo-list .completed {
+    color: #1a237e !important;
+    background: #fff !important;
+    border: 1px solid #dbeafe !important;
+}
+
+/* Headings for Tools and Requirement */
+.tools-panel-container h2,
+.requirement-panel h2,
+.tools-panel-container .panel-title,
+.requirement-panel .panel-title {
+    color: #1a237e !important;
+    font-weight: bold;
+    text-shadow: none !important;
+}
