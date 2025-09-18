@@ -229,7 +229,29 @@ a:last-child, .quick-link-item:last-child {
     font-weight: 500 !important;
 }
 
-/* Headings for Tools and Requirement (make blue and readable) */
+/* Main action buttons: bigger, blue, bold */
+#deathClaimBtn,
+#specialCaseBtn {
+    font-size: 1.35rem !important;
+    font-weight: 700 !important;
+    color: #1a237e !important;
+    background: #e3f2fd !important;
+    border: 2px solid #b3c6e6 !important;
+}
+
+/* To-Do blocks: white background, blue text */
+.todo-item,
+.todo-list li,
+.todo-list .completed {
+    background: #fff !important;
+    color: #1a237e !important;
+    border: 1px solid #dbeafe !important;
+    font-size: 1.1rem !important;
+    font-weight: 500 !important;
+}
+
+/* Tools & Requirements heading: blue, bold, readable */
+.tools-panel-container h3,
 .tools-panel-container h2,
 .requirement-panel h2,
 .tools-panel-container .panel-title,
@@ -241,14 +263,74 @@ a:last-child, .quick-link-item:last-child {
     letter-spacing: 0.5px;
 }
 
-/* Make "New Death Claim" and "New Special Case" buttons font bigger and blue */
-.death-claim-btn,
-.add-special-case-btn,
-.death-claim-btn *,
-.add-special-case-btn * {
-    font-size: 1.25rem !important;
-    font-weight: 600 !important;
+/* Form headings: blue, bold */
+#specialCaseForm h3,
+#deathClaimForm h3 {
     color: #1a237e !important;
-    font-family: inherit !important;
-    vertical-align: middle;
+    font-weight: bold !important;
+    text-shadow: none !important;
+}
+
+/* Form labels: blue, readable */
+#specialCaseForm label,
+#deathClaimForm label {
+    color: #1a237e !important;
+    font-weight: 500 !important;
+}
+
+/* Form inputs: blue text, white background */
+#specialCaseForm input,
+#specialCaseForm textarea,
+#specialCaseForm select,
+#deathClaimForm input,
+#deathClaimForm textarea,
+#deathClaimForm select {
+    background: #fff !important;
+    color: #1a237e !important;
+    border: 1px solid #b3c6e6 !important;
+    font-weight: 500 !important;
+}
+
+/* Option cards in forms: blue text, white background */
+.option-card span {
+    color: #1a237e !important;
+    background: #fff !important;
+    font-weight: 500 !important;
+}
+
+/* Collapsible headers: blue text, white background */
+.collapsible-header {
+    background: #fff !important;
+    color: #1a237e !important;
+    border: 1px solid #ffe066 !important;
+    font-weight: 600 !important;
+}
+
+/* Table headers and cells: blue text, white background */
+.dark-table-header th,
+.dark-table-row td {
+    color: #1a237e !important;
+    background: #fff !important;
+    border-bottom: 1px solid #ffe066 !important;
+}
+
+/* Remove any leftover dark backgrounds */
+.bg-gray-900,
+.bg-gray-900\/40,
+.bg-gray-900\/60,
+.backdrop-blur-sm {
+    background: #fff !important;
+    backdrop-filter: none !important;
+    box-shadow: none !important;
+}
+
+/* Misc: ensure all text is readable */
+.text-gray-300,
+.text-gray-400,
+.text-gray-500,
+.text-gray-200,
+label,
+.option-card span,
+.counter-badge {
+    color: #1a237e !important;
 }
