@@ -163,3 +163,33 @@ label,
     background: none !important;
     color: inherit !important;
 }
+
+/* Fix neon font colors to LIC blue */
+.text-cyan-300,
+.text-cyan-400,
+.text-cyan-500,
+.text-cyan-200,
+.glow-text {
+    color: #1a237e !important;
+    text-shadow: none !important;
+}
+
+/* Main heading style */
+h1 {
+    color: #1a237e !important;
+    text-shadow: none !important;
+}
+
+/* Space out links */
+a, .quick-link-item {
+    margin-right: 16px;
+    margin-bottom: 8px;
+    color: #1a237e;
+    text-decoration: none;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+}
+
+a:last-child, .quick-link-item:last-child {
+    margin-right: 0;
+}
