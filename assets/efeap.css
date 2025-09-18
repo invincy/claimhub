@@ -218,12 +218,12 @@ a:last-child, .quick-link-item:last-child {
     margin-right: 0;
 }
 
-/* To-Do items: make text LIC blue and background white */
+/* To-Do items: make text white inside the task block */
 .todo-item,
 .todo-list li,
 .todo-list .completed {
-    color: #1a237e !important;
-    background: #fff !important;
+    color: #fff !important;
+    background: #6b7280 !important; /* muted gray background */
     border: 1px solid #dbeafe !important;
     font-size: 1.1rem !important;
     font-weight: 500 !important;
@@ -245,7 +245,7 @@ a:last-child, .quick-link-item:last-child {
 .btn-primary,
 .death-claim-btn,
 .add-special-case-btn {
-    font-size: 1.15rem !important;
+    font-size: 1.25rem !important;
     font-weight: 600 !important;
     color: #1a237e !important;
 }
