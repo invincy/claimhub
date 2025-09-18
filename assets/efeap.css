@@ -223,7 +223,7 @@ a:last-child, .quick-link-item:last-child {
 .todo-list li,
 .todo-list .completed {
     color: #fff !important;
-    background: #6b7280 !important; /* muted gray background */
+    background: #6b7280 !important;
     border: 1px solid #dbeafe !important;
     font-size: 1.1rem !important;
     font-weight: 500 !important;
