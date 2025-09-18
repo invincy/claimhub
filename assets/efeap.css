@@ -229,9 +229,11 @@ a:last-child, .quick-link-item:last-child {
     font-weight: 500 !important;
 }
 
-/* Main action buttons: bigger, blue, bold */
+/* Main action buttons and their children */
 #deathClaimBtn,
-#specialCaseBtn {
+#specialCaseBtn,
+#deathClaimBtn *,
+#specialCaseBtn * {
     font-size: 1.35rem !important;
     font-weight: 700 !important;
     color: #1a237e !important;
@@ -239,13 +241,15 @@ a:last-child, .quick-link-item:last-child {
     border: 2px solid #b3c6e6 !important;
 }
 
-/* To-Do blocks: white background, blue text */
+/* To-Do blocks and all children: white background, blue text */
 .todo-item,
 .todo-list li,
-.todo-list .completed {
+.todo-list .completed,
+.todo-item *,
+.todo-list li *,
+.todo-list .completed * {
     background: #fff !important;
     color: #1a237e !important;
-    border: 1px solid #dbeafe !important;
     font-size: 1.1rem !important;
     font-weight: 500 !important;
 }
@@ -263,19 +267,22 @@ a:last-child, .quick-link-item:last-child {
     letter-spacing: 0.5px;
 }
 
-/* Form headings: blue, bold */
-#specialCaseForm h3,
-#deathClaimForm h3 {
-    color: #1a237e !important;
-    font-weight: bold !important;
-    text-shadow: none !important;
+/* Form blocks: white background */
+.matte-form,
+.matte-card,
+.tools-panel-container,
+.requirement-panel {
+    background: #fff !important;
+    border: 1px solid #dbeafe !important;
 }
 
-/* Form labels: blue, readable */
+/* Form headings and labels: blue, readable */
+#specialCaseForm h3,
+#deathClaimForm h3,
 #specialCaseForm label,
 #deathClaimForm label {
     color: #1a237e !important;
-    font-weight: 500 !important;
+    font-weight: 600 !important;
 }
 
 /* Form inputs: blue text, white background */
