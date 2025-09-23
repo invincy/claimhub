@@ -1,3 +1,12 @@
+// --- IndexedDB constants ---
+const DB_NAME = 'ClaimHubDB';
+const DB_VERSION = 1;
+const STORE = {
+    plans: 'plans',
+    claims: 'claims',
+    specialCases: 'specialCases',
+    todos: 'todos'
+};
 document.addEventListener('DOMContentLoaded', function() {
     var particlesContainer = document.getElementById('particles');
         
@@ -1265,51 +1274,65 @@ const PLAN_179 = {
 
         // --- Bootstrap plans into IndexedDB if not present ---
         (async function bootstrapPlans() {
-            const existing111 = await PlanDB.getPlan('111');
-            const existing150 = await PlanDB.getPlan('150');
-            const existing179 = await PlanDB.getPlan('179');
-            if (!existing111) await PlanDB.savePlan('111', PLAN_111);
-            if (!existing150) await PlanDB.savePlan('150', PLAN_150);
-            if (!existing179) await PlanDB.savePlan('179', PLAN_179);
+            await openDB();
+            const plans = await idbGetAll(STORE.plans);
+            const planKeys = plans.map(p => p.plan);
+            if (!planKeys.includes('111')) await idbPut(STORE.plans, { plan: '111', data: PLAN_111 });
+            if (!planKeys.includes('150')) await idbPut(STORE.plans, { plan: '150', data: PLAN_150 });
+            if (!planKeys.includes('179')) await idbPut(STORE.plans, { plan: '179', data: PLAN_179 });
         })();
 
         // --- Premium Calculator Logic ---
         const MODE_MULTIPLIERS = { YLY: 1, HLY: 0.51, QLY: 0.26, MLY: 0.085 };
         async function getTabularPremium(plan, age, term) {
-            await openDB();
-            const plans = await idbGetAll(STORE.plans);
-            const planObj = plans.find(p => p.plan === plan);
-            if (!planObj) return null;
-            const planData = planObj.data;
-            if (!planData[age] || !planData[age][term]) return null;
-            let rate = planData[age][term];
-            if (typeof rate === "string") rate = parseFloat(rate);
-            if (isNaN(rate)) return null;
-            return rate;
-        }
+            // To-Do List Logic (IndexedDB-based)
+            var todoInput = document.getElementById('todoInput');
+            var addTodoBtn = document.getElementById('addTodoBtn');
+            var todoList = document.getElementById('todoList');
 
-        document.addEventListener('DOMContentLoaded', async function() {
-            // --- To-Do List (unchanged) ---
-            // ...existing code...
-
-            // --- Death Claims: Load and render on page load ---
-            await loadFromStorage();
-
-            // Attach click event to table rows for reopening cases
-            const activeDeathClaimsTable = document.getElementById('activeDeathClaimsTable');
-            if (activeDeathClaimsTable) {
-                activeDeathClaimsTable.addEventListener('click', async function(e) {
-                    const row = e.target.closest('tr');
-                    if (!row || !row.dataset.policyNo) return;
-                    // Only open if not clicking remove button
-                    if (!e.target.classList.contains('btn-remove')) {
-                        await openCase(row.dataset.policyNo);
-                    }
+            async function renderTodos() {
+                if (!todoList) return;
+                const todos = await idbGetAll(STORE.todos);
+                todoList.innerHTML = '';
+                if (todos.length === 0) {
+                    todoList.innerHTML = '<li class="text-gray-500 text-center py-4">No tasks yet.</li>';
+                    return;
+                }
+                todos.forEach((todo) => {
+                    var li = document.createElement('li');
+                    li.className = `option-card flex items-center p-3 rounded-lg ${todo.completed ? 'opacity-50' : ''}`;
+                    li.innerHTML = `
+                        <input type="checkbox" data-id="${todo.id}" class="checkbox-modern flex-shrink-0" ${todo.completed ? 'checked' : ''}>
+                        <span class="font-medium text-gray-300 flex-grow px-3 min-w-0 break-words ${todo.completed ? 'line-through' : ''}">${todo.text}</span>
+                        <button data-id="${todo.id}" class="btn-danger text-xs px-2 py-1 rounded-md flex-shrink-0">[X]</button>
+                    `;
+                    todoList.appendChild(li);
                 });
             }
 
-            // ...existing code for premium calculator and other features...
-        });
-});
+            addTodoBtn?.addEventListener('click', async function() {
+                var text = todoInput.value.trim();
+                if (text) {
+                    await idbPut(STORE.todos, { text, completed: false });
+                    todoInput.value = '';
+                    renderTodos();
+                }
+            });
 
-// (Old premium calculator logic removed. Only the new IndexedDB-based logic with static HTML fields is kept.)
+            todoList?.addEventListener('click', async function(e) {
+                var id = e.target.dataset.id;
+                if (e.target.tagName === 'BUTTON') { // Delete
+                    await idbDelete(STORE.todos, Number(id));
+                    renderTodos();
+                } else if (e.target.type === 'checkbox') { // Toggle complete
+                    const todos = await idbGetAll(STORE.todos);
+                    const todo = todos.find(t => t.id == id);
+                    if (todo) {
+                        todo.completed = e.target.checked;
+                        await idbPut(STORE.todos, todo);
+                        renderTodos();
+                    }
+                }
+            });
+
+            renderTodos();
