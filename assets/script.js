@@ -1285,54 +1285,56 @@ const PLAN_179 = {
         // --- Premium Calculator Logic ---
         const MODE_MULTIPLIERS = { YLY: 1, HLY: 0.51, QLY: 0.26, MLY: 0.085 };
         async function getTabularPremium(plan, age, term) {
-            // To-Do List Logic (IndexedDB-based)
-            var todoInput = document.getElementById('todoInput');
-            var addTodoBtn = document.getElementById('addTodoBtn');
-            var todoList = document.getElementById('todoList');
+            // ...existing premium calculation logic (if any)...
+        }
 
-            async function renderTodos() {
-                if (!todoList) return;
-                const todos = await idbGetAll(STORE.todos);
-                todoList.innerHTML = '';
-                if (todos.length === 0) {
-                    todoList.innerHTML = '<li class="text-gray-500 text-center py-4">No tasks yet.</li>';
-                    return;
-                }
-                todos.forEach((todo) => {
-                    var li = document.createElement('li');
-                    li.className = `option-card flex items-center p-3 rounded-lg ${todo.completed ? 'opacity-50' : ''}`;
-                    li.innerHTML = `
-                        <input type="checkbox" data-id="${todo.id}" class="checkbox-modern flex-shrink-0" ${todo.completed ? 'checked' : ''}>
-                        <span class="font-medium text-gray-300 flex-grow px-3 min-w-0 break-words ${todo.completed ? 'line-through' : ''}">${todo.text}</span>
-                        <button data-id="${todo.id}" class="btn-danger text-xs px-2 py-1 rounded-md flex-shrink-0">[X]</button>
-                    `;
-                    todoList.appendChild(li);
-                });
-            }
+// To-Do List Logic (IndexedDB-based)
+var todoInput = document.getElementById('todoInput');
+var addTodoBtn = document.getElementById('addTodoBtn');
+var todoList = document.getElementById('todoList');
 
-            addTodoBtn?.addEventListener('click', async function() {
-                var text = todoInput.value.trim();
-                if (text) {
-                    await idbPut(STORE.todos, { text, completed: false });
-                    todoInput.value = '';
-                    renderTodos();
-                }
-            });
+async function renderTodos() {
+    if (!todoList) return;
+    const todos = await idbGetAll(STORE.todos);
+    todoList.innerHTML = '';
+    if (todos.length === 0) {
+        todoList.innerHTML = '<li class="text-gray-500 text-center py-4">No tasks yet.</li>';
+        return;
+    }
+    todos.forEach((todo) => {
+        var li = document.createElement('li');
+        li.className = `option-card flex items-center p-3 rounded-lg ${todo.completed ? 'opacity-50' : ''}`;
+        li.innerHTML = `
+            <input type="checkbox" data-id="${todo.id}" class="checkbox-modern flex-shrink-0" ${todo.completed ? 'checked' : ''}>
+            <span class="font-medium text-gray-300 flex-grow px-3 min-w-0 break-words ${todo.completed ? 'line-through' : ''}">${todo.text}</span>
+            <button data-id="${todo.id}" class="btn-danger text-xs px-2 py-1 rounded-md flex-shrink-0">[X]</button>
+        `;
+        todoList.appendChild(li);
+    });
+}
 
-            todoList?.addEventListener('click', async function(e) {
-                var id = e.target.dataset.id;
-                if (e.target.tagName === 'BUTTON') { // Delete
-                    await idbDelete(STORE.todos, Number(id));
-                    renderTodos();
-                } else if (e.target.type === 'checkbox') { // Toggle complete
-                    const todos = await idbGetAll(STORE.todos);
-                    const todo = todos.find(t => t.id == id);
-                    if (todo) {
-                        todo.completed = e.target.checked;
-                        await idbPut(STORE.todos, todo);
-                        renderTodos();
-                    }
-                }
-            });
+addTodoBtn?.addEventListener('click', async function() {
+    var text = todoInput.value.trim();
+    if (text) {
+        await idbPut(STORE.todos, { text, completed: false });
+        todoInput.value = '';
+        renderTodos();
+    }
+});
 
+todoList?.addEventListener('click', async function(e) {
+    var id = e.target.dataset.id;
+    if (e.target.tagName === 'BUTTON') { // Delete
+        await idbDelete(STORE.todos, Number(id));
+        renderTodos();
+    } else if (e.target.type === 'checkbox') { // Toggle complete
+        const todos = await idbGetAll(STORE.todos);
+        const todo = todos.find(t => t.id == id);
+        if (todo) {
+            todo.completed = e.target.checked;
+            await idbPut(STORE.todos, todo);
             renderTodos();
+        }
+    }
+});
+
