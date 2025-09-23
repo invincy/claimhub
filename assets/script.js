@@ -160,28 +160,36 @@ document.addEventListener('DOMContentLoaded', function() {
 
         renderTodos();
 
-        // Premium Calculator Logic
+        // Premium Calculator Logic (NEW, IndexedDB-based)
         var calculateBtn = document.getElementById('calculatePremiumBtn');
-        calculateBtn?.addEventListener('click', function() {
-            var plan = document.querySelector('input[name="plan"]:checked').value;
-            var mode = document.querySelector('input[name="mode"]:checked').value;
-            var sa = parseFloat(document.getElementById('saInput').value) * 1000;
-            var tabularPremium = parseFloat(document.getElementById('tabularPremiumInput').value);
-            var term = parseInt(document.getElementById('termInput').value);
-
-            if (isNaN(sa) || isNaN(tabularPremium) || isNaN(term) || sa <= 0 || tabularPremium <= 0 || term <= 0) {
+        calculateBtn?.addEventListener('click', async function() {
+            var plan = document.querySelector('input[name="plan"]:checked')?.value;
+            var mode = document.querySelector('input[name="mode"]:checked')?.value;
+            var sa = parseFloat(document.getElementById('saInput')?.value);
+            var age = document.getElementById('ageInput')?.value;
+            var premiumPaidTerm = document.getElementById('premiumPaidTermInput')?.value;
+            var policyTerm = document.getElementById('policyTermInput')?.value;
+            if (!plan || !mode || !sa || !age || !premiumPaidTerm || !policyTerm) {
                 showToast('Please fill all calculator fields with valid numbers.');
                 return;
             }
-
-            let breakdown = [];
-            let rate = tabularPremium;
-
-            // Mode Rebate, S.A. Rebate, Base Premium, Modal Premium, Total Premium calculations...
-            // (This logic remains the same as in your original file)
-
-            // Display results
-            // (This logic also remains the same)
+            // Fetch tabular premium from IndexedDB
+            var tabularPremium = await getTabularPremium(plan, age, premiumPaidTerm);
+            if (!tabularPremium) {
+                showToast('No tabular premium found for this age/term/plan.');
+                return;
+            }
+            var multiplier = { YLY: 1, HLY: 0.51, QLY: 0.26, MLY: 0.085 }[mode];
+            var modalPremium = tabularPremium * sa * multiplier;
+            var totalPremium = modalPremium * policyTerm;
+            // Show results
+            document.getElementById('premiumResult').classList.remove('hidden');
+            document.getElementById('modalPremiumResult').textContent = `₹${modalPremium.toFixed(2)}`;
+            document.getElementById('totalPremiumResult').textContent = `₹${totalPremium.toFixed(2)}`;
+            document.getElementById('calculationBreakdown').innerHTML = `
+                Tabular Premium: ₹${tabularPremium} × S.A.: ${sa} × Mode Multiplier: ${multiplier} = <b>₹${modalPremium.toFixed(2)}</b><br>
+                ROP: ₹${modalPremium.toFixed(2)} × Term: ${policyTerm} = <b>₹${totalPremium.toFixed(2)}</b>
+            `;
         });
 
         // Custom radio button styling logic
