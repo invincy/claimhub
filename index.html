@@ -4,21 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LIC Claims Hub</title>
-    <!-- All styles are now combined into style.css for full offline use. -->
     <link rel="stylesheet" href="assets/style.css">
     <link id="themeStylesheet" rel="stylesheet" href="assets/neon.css">
-    <style>
-        /* Custom styles removed to revert to a more minimal, default theme. */
-    </style>
 </head>
 <body class="dark-bg min-h-screen theme-neon">
     <!-- Time and Date Display -->
     <div id="clock" class="text-right text-3xl font-bold text-white"></div>
     <div id="date" class="text-right text-sm text-gray-300"></div>
 
-    </div>
     <div class="relative z-10">
-
         <!-- Header -->
         <div class="text-center mb-8">
             <div class="glass-header py-8 flex items-center justify-between">
@@ -34,13 +28,13 @@
                 <!-- Action Buttons -->
                 <div class="glass-header rounded-2xl p-6">
                     <div class="flex gap-4">
-                <button id="deathClaimBtn" class="btn-danger w-full px-8 py-4 rounded-xl font-semibold text-sm flex items-center justify-center gap-2">
-                    📄 New Death Claim
-                </button>
-                <button id="specialCaseBtn" class="btn-primary w-full px-8 py-4 rounded-xl font-semibold text-sm flex items-center justify-center gap-2">
-                    ⭐ New Special Case
-                </button>
-            </div>
+                        <button id="deathClaimBtn" class="btn-danger w-full px-8 py-4 rounded-xl font-semibold text-sm flex items-center justify-center gap-2">
+                            📄 New Death Claim
+                        </button>
+                        <button id="specialCaseBtn" class="btn-primary w-full px-8 py-4 rounded-xl font-semibold text-sm flex items-center justify-center gap-2">
+                            ⭐ New Special Case
+                        </button>
+                    </div>
                 </div>
         
         <!-- Special Case Form (Hidden by default) -->
@@ -655,41 +649,37 @@
 
     <!-- IMPORTANT: You may need to remove the old particle animation logic from assets/script.js to prevent conflicts. -->
     <script src="assets/script.js" defer></script>
-<script>
-(function() {
-    const html = document.documentElement;
-    const toggleBtn = document.getElementById('themeToggle');
-    const THEME_KEY = 'themeChoice';
-    const NEON = 'theme-neon';
-    const EFEAP = 'theme-efeap';
-
-    // On load, set theme from localStorage
-    const saved = localStorage.getItem(THEME_KEY);
-    if (saved === EFEAP) {
-        html.classList.remove(NEON);
-        html.classList.add(EFEAP);
-        document.getElementById('themeStylesheet').href = 'assets/efeap.css';
-    } else {
-        html.classList.remove(EFEAP);
-        html.classList.add(NEON);
-        document.getElementById('themeStylesheet').href = 'assets/neon.css';
-    }
-
-    // Toggle theme on button click
-    toggleBtn.addEventListener('click', function() {
-        if (html.classList.contains(NEON)) {
+    <script>
+    (function() {
+        const html = document.documentElement;
+        const toggleBtn = document.getElementById('themeToggle');
+        const THEME_KEY = 'themeChoice';
+        const NEON = 'theme-neon';
+        const EFEAP = 'theme-efeap';
+        const saved = localStorage.getItem(THEME_KEY);
+        if (saved === EFEAP) {
             html.classList.remove(NEON);
             html.classList.add(EFEAP);
             document.getElementById('themeStylesheet').href = 'assets/efeap.css';
-            localStorage.setItem(THEME_KEY, EFEAP);
         } else {
             html.classList.remove(EFEAP);
             html.classList.add(NEON);
             document.getElementById('themeStylesheet').href = 'assets/neon.css';
-            localStorage.setItem(THEME_KEY, NEON);
         }
-    });
-})();
-</script>
+        toggleBtn.addEventListener('click', function() {
+            if (html.classList.contains(NEON)) {
+                html.classList.remove(NEON);
+                html.classList.add(EFEAP);
+                document.getElementById('themeStylesheet').href = 'assets/efeap.css';
+                localStorage.setItem(THEME_KEY, EFEAP);
+            } else {
+                html.classList.remove(EFEAP);
+                html.classList.add(NEON);
+                document.getElementById('themeStylesheet').href = 'assets/neon.css';
+                localStorage.setItem(THEME_KEY, NEON);
+            }
+        });
+    })();
+    </script>
 </body>
 </html>

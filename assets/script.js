@@ -1135,8 +1135,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         // --- IndexedDB Plan Storage Bootstrap ---
-
-        // 1. IndexedDB helper for plans
         const PlanDB = (() => {
             const DB_NAME = 'ClaimHubDB';
             const STORE_NAME = 'plans';
@@ -1184,7 +1182,7 @@ document.addEventListener('DOMContentLoaded', function() {
             return { savePlan, getPlan };
         })();
 
-        // 2. Plan data (from your JSON files, inlined here)
+        // --- Plan Data (from JSONs, inlined) ---
         const PLAN_111 = {
           "18": {"15":19.55,"16":17.45,"17":15.75,"18":14.4,"19":13.35,"20":12.45,"21":11.7,"22":11.1,"23":10.55,"24":10.1,"25":9.75,"26":"9.4","27":"9.1","28":"8.9","29":"8.65","30":"8.5"},
           "19": {"15":19.6,"16":17.45,"17":15.8,"18":14.45,"19":13.4,"20":12.5,"21":11.75,"22":11.15,"23":10.65,"24":10.2,"25":9.8,"26":"9.5","27":"9.2","28":"9","29":"8.8","30":"8.6"},
@@ -1268,9 +1266,8 @@ document.addEventListener('DOMContentLoaded', function() {
           "57": {"12":129.95,"16":NaN,"20":NaN}
         };
 
-        // 3. On first load, store plans in IndexedDB if not already present
+        // --- Bootstrap plans into IndexedDB if not present ---
         (async function bootstrapPlans() {
-            // Only store if not already present
             const existing111 = await PlanDB.getPlan('111');
             const existing150 = await PlanDB.getPlan('150');
             const existing179 = await PlanDB.getPlan('179');
@@ -1279,11 +1276,66 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!existing179) await PlanDB.savePlan('179', PLAN_179);
         })();
 
-        // Initial Load
-        loadFromStorage();
-        updateCounters();
-        setupTableEventListeners();
-        document.getElementById('globalSearchInput')?.addEventListener('input', handleGlobalSearch);
+        // --- Premium Calculator Logic ---
+        const MODE_MULTIPLIERS = { YLY: 1, HLY: 0.51, QLY: 0.26, MLY: 0.085 };
+
+        async function getTabularPremium(plan, age, term) {
+            const planData = await PlanDB.getPlan(plan);
+            if (!planData) return null;
+            if (!planData[age] || !planData[age][term]) return null;
+            let rate = planData[age][term];
+            if (typeof rate === "string") rate = parseFloat(rate);
+            if (isNaN(rate)) return null;
+            return rate;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const saInput = document.getElementById('saInput');
+            const ageInput = document.getElementById('ageInput');
+            const policyTermInput = document.getElementById('policyTermInput');
+            const premiumPaidTermInput = document.getElementById('premiumPaidTermInput');
+            const calcBtn = document.getElementById('calculatePremiumBtn');
+            const premiumResult = document.getElementById('premiumResult');
+            const modalPremiumResult = document.getElementById('modalPremiumResult');
+            const totalPremiumResult = document.getElementById('totalPremiumResult');
+            const calculationBreakdown = document.getElementById('calculationBreakdown');
+
+            if (calcBtn) {
+                calcBtn.onclick = async function () {
+                    const plan = document.querySelector('input[name="plan"]:checked')?.value;
+                    const mode = document.querySelector('input[name="mode"]:checked')?.value;
+                    const sa = parseFloat(saInput?.value);
+                    const age = ageInput?.value;
+                    const premiumPaidTerm = premiumPaidTermInput?.value;
+                    const policyTerm = policyTermInput?.value;
+
+                    if (!plan || !mode || !sa || !age || !premiumPaidTerm || !policyTerm) {
+                        alert("Please fill all fields.");
+                        return;
+                    }
+
+                    const tabularPremium = await getTabularPremium(plan, age, premiumPaidTerm);
+                    if (!tabularPremium) {
+                        alert("No tabular premium found for this age/term/plan.");
+                        return;
+                    }
+
+                    const multiplier = MODE_MULTIPLIERS[mode];
+                    const modalPremium = tabularPremium * sa * multiplier;
+                    const totalPremium = modalPremium * policyTerm;
+
+                    premiumResult.classList.remove('hidden');
+                    modalPremiumResult.textContent = `₹${modalPremium.toFixed(2)}`;
+                    totalPremiumResult.textContent = `₹${totalPremium.toFixed(2)}`;
+                    calculationBreakdown.innerHTML = `
+                        Tabular Premium: ₹${tabularPremium} × S.A.: ${sa} × Mode Multiplier: ${multiplier} = <b>₹${modalPremium.toFixed(2)}</b><br>
+                        ROP: ₹${modalPremium.toFixed(2)} × Term: ${policyTerm} = <b>₹${totalPremium.toFixed(2)}</b>
+                    `;
+                };
+            }
+        });
+
+        // ...rest of your script.js code (forms, workflow, to-do, etc.)...
     });
 
 // Helper: Mode multipliers
