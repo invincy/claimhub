@@ -1285,3 +1285,93 @@ document.addEventListener('DOMContentLoaded', function() {
         setupTableEventListeners();
         document.getElementById('globalSearchInput')?.addEventListener('input', handleGlobalSearch);
     });
+
+// Helper: Mode multipliers
+const MODE_MULTIPLIERS = {
+    YLY: 1,
+    HLY: 0.51,
+    QLY: 0.26,
+    MLY: 0.085
+};
+
+// Fetch tabular premium from IndexedDB
+async function getTabularPremium(plan, age, term) {
+    const planData = await PlanDB.getPlan(plan);
+    if (!planData) return null;
+    if (!planData[age] || !planData[age][term]) return null;
+    let rate = planData[age][term];
+    if (typeof rate === "string") rate = parseFloat(rate);
+    if (isNaN(rate)) return null;
+    return rate;
+}
+
+// Update calculator UI and logic
+document.addEventListener('DOMContentLoaded', () => {
+    // UI elements
+    const saInput = document.getElementById('saInput');
+    const ageInput = document.createElement('input');
+    ageInput.type = 'number';
+    ageInput.id = 'ageInput';
+    ageInput.className = 'dark-input w-full px-3 py-2 rounded-lg font-medium';
+    ageInput.placeholder = "e.g., 25";
+    ageInput.setAttribute('min', '0');
+    ageInput.setAttribute('max', '100');
+    // Insert Age field before Term
+    const termDiv = document.getElementById('termInput').parentElement;
+    const ageDiv = document.createElement('div');
+    ageDiv.innerHTML = `<label class="block text-xs font-bold text-gray-400 mb-2">Age (Yrs)</label>`;
+    ageDiv.appendChild(ageInput);
+    termDiv.parentElement.insertBefore(ageDiv, termDiv);
+
+    // Rename "Term (Yrs)" to "Premium Paid Term (Yrs)"
+    const termLabel = termDiv.querySelector('label');
+    if (termLabel) termLabel.textContent = "Premium Paid Term (Yrs)";
+
+    // Remove Tabular Premium input (auto-fetched)
+    const tabularPremiumDiv = document.getElementById('tabularPremiumInput').parentElement;
+    tabularPremiumDiv.style.display = 'none';
+
+    // Add new Term input (policy term)
+    const newTermDiv = document.createElement('div');
+    newTermDiv.innerHTML = `
+        <label class="block text-xs font-bold text-gray-400 mb-2">Term (Yrs)</label>
+        <input type="number" id="policyTermInput" class="dark-input w-full px-3 py-2 rounded-lg font-medium" placeholder="e.g., 20">
+    `;
+    termDiv.parentElement.appendChild(newTermDiv);
+
+    // Calculate button logic
+    document.getElementById('calculatePremiumBtn').onclick = async function () {
+        const plan = document.querySelector('input[name="plan"]:checked').value;
+        const mode = document.querySelector('input[name="mode"]:checked').value;
+        const sa = parseFloat(saInput.value);
+        const age = ageInput.value;
+        const premiumPaidTerm = document.getElementById('termInput').value;
+        const policyTerm = document.getElementById('policyTermInput').value;
+
+        if (!plan || !mode || !sa || !age || !premiumPaidTerm || !policyTerm) {
+            alert("Please fill all fields.");
+            return;
+        }
+
+        // Fetch tabular premium rate
+        const tabularPremium = await getTabularPremium(plan, age, premiumPaidTerm);
+        if (!tabularPremium) {
+            alert("No tabular premium found for this age/term/plan.");
+            return;
+        }
+
+        // Calculate modal premium
+        const multiplier = MODE_MULTIPLIERS[mode];
+        const modalPremium = tabularPremium * sa * multiplier;
+        const totalPremium = modalPremium * policyTerm;
+
+        // Show results
+        document.getElementById('premiumResult').classList.remove('hidden');
+        document.getElementById('modalPremiumResult').textContent = `₹${modalPremium.toFixed(2)}`;
+        document.getElementById('totalPremiumResult').textContent = `₹${totalPremium.toFixed(2)}`;
+        document.getElementById('calculationBreakdown').innerHTML = `
+            Tabular Premium: ₹${tabularPremium} × S.A.: ${sa} × Mode Multiplier: ${multiplier} = <b>₹${modalPremium.toFixed(2)}</b><br>
+            ROP: ₹${modalPremium.toFixed(2)} × Term: ${policyTerm} = <b>₹${totalPremium.toFixed(2)}</b>
+        `;
+    };
+});
