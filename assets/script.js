@@ -115,55 +115,53 @@ document.addEventListener('DOMContentLoaded', function() {
         var timeBarWarning = document.getElementById('timeBarWarning');
         var manualSelection = document.getElementById('manualSelection');
 
-        // To-Do List Logic
+        // To-Do List Logic (IndexedDB-based)
         var todoInput = document.getElementById('todoInput');
         var addTodoBtn = document.getElementById('addTodoBtn');
         var todoList = document.getElementById('todoList');
-        var todos = JSON.parse(localStorage.getItem('lic_todos')) || [];
 
-        var saveTodos = function() {
-            localStorage.setItem('lic_todos', JSON.stringify(todos));
-        };
-
-        var renderTodos = function() {
+        async function renderTodos() {
             if (!todoList) return;
+            const todos = await idbGetAll(STORE.todos);
             todoList.innerHTML = '';
             if (todos.length === 0) {
                 todoList.innerHTML = '<li class="text-gray-500 text-center py-4">No tasks yet.</li>';
                 return;
             }
-            todos.forEach((todo, index) => {
+            todos.forEach((todo) => {
                 var li = document.createElement('li');
                 li.className = `option-card flex items-center p-3 rounded-lg ${todo.completed ? 'opacity-50' : ''}`;
                 li.innerHTML = `
-                    <input type="checkbox" data-index="${index}" class="checkbox-modern flex-shrink-0" ${todo.completed ? 'checked' : ''}>
+                    <input type="checkbox" data-id="${todo.id}" class="checkbox-modern flex-shrink-0" ${todo.completed ? 'checked' : ''}>
                     <span class="font-medium text-gray-300 flex-grow px-3 min-w-0 break-words ${todo.completed ? 'line-through' : ''}">${todo.text}</span>
-                    <button data-index="${index}" class="btn-danger text-xs px-2 py-1 rounded-md flex-shrink-0">[X]</button>
+                    <button data-id="${todo.id}" class="btn-danger text-xs px-2 py-1 rounded-md flex-shrink-0">[X]</button>
                 `;
                 todoList.appendChild(li);
             });
-        };
+        }
 
-        addTodoBtn?.addEventListener('click', function() {
+        addTodoBtn?.addEventListener('click', async function() {
             var text = todoInput.value.trim();
             if (text) {
-                todos.push({ text, completed: false });
+                await idbPut(STORE.todos, { text, completed: false });
                 todoInput.value = '';
-                saveTodos();
                 renderTodos();
             }
         });
 
-        todoList?.addEventListener('click', function(e) {
-            var index = e.target.dataset.index;
+        todoList?.addEventListener('click', async function(e) {
+            var id = e.target.dataset.id;
             if (e.target.tagName === 'BUTTON') { // Delete
-                todos.splice(index, 1);
-                saveTodos();
+                await idbDelete(STORE.todos, Number(id));
                 renderTodos();
             } else if (e.target.type === 'checkbox') { // Toggle complete
-                todos[index].completed = e.target.checked;
-                saveTodos();
-                renderTodos();
+                const todos = await idbGetAll(STORE.todos);
+                const todo = todos.find(t => t.id == id);
+                if (todo) {
+                    todo.completed = e.target.checked;
+                    await idbPut(STORE.todos, todo);
+                    renderTodos();
+                }
             }
         });
 
