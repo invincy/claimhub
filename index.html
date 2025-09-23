@@ -590,18 +590,22 @@
                                     </div>
                                 </div>
                                 <!-- Inputs -->
-                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                                     <div>
                                         <label class="block text-xs font-bold text-gray-400 mb-2">S.A. (in '000)</label>
                                         <input type="number" id="saInput" class="dark-input w-full px-3 py-2 rounded-lg font-medium" placeholder="e.g., 100">
                                     </div>
                                     <div>
-                                        <label class="block text-xs font-bold text-gray-400 mb-2">Tabular Premium</label>
-                                        <input type="number" id="tabularPremiumInput" class="dark-input w-full px-3 py-2 rounded-lg font-medium" placeholder="Rate per '000">
+                                        <label class="block text-xs font-bold text-gray-400 mb-2">Age (Yrs)</label>
+                                        <input type="number" id="ageInput" class="dark-input w-full px-3 py-2 rounded-lg font-medium" placeholder="e.g., 25" min="0" max="100">
                                     </div>
                                     <div>
                                         <label class="block text-xs font-bold text-gray-400 mb-2">Term (Yrs)</label>
-                                        <input type="number" id="termInput" class="dark-input w-full px-3 py-2 rounded-lg font-medium" placeholder="e.g., 20">
+                                        <input type="number" id="policyTermInput" class="dark-input w-full px-3 py-2 rounded-lg font-medium" placeholder="e.g., 20">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-bold text-gray-400 mb-2">Premium Paid Term (Yrs)</label>
+                                        <input type="number" id="premiumPaidTermInput" class="dark-input w-full px-3 py-2 rounded-lg font-medium" placeholder="e.g., 15">
                                     </div>
                                 </div>
                                 <!-- Calculate Button -->
