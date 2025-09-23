@@ -165,11 +165,19 @@ document.addEventListener('DOMContentLoaded', function() {
         calculateBtn?.addEventListener('click', async function() {
             var plan = document.querySelector('input[name="plan"]:checked')?.value;
             var mode = document.querySelector('input[name="mode"]:checked')?.value;
-            var sa = parseFloat(document.getElementById('saInput')?.value);
-            var age = document.getElementById('ageInput')?.value;
-            var premiumPaidTerm = document.getElementById('premiumPaidTermInput')?.value;
-            var policyTerm = document.getElementById('policyTermInput')?.value;
-            if (!plan || !mode || !sa || !age || !premiumPaidTerm || !policyTerm) {
+            var saInput = document.getElementById('saInput');
+            var ageInput = document.getElementById('ageInput');
+            var premiumPaidTermInput = document.getElementById('premiumPaidTermInput');
+            var policyTermInput = document.getElementById('policyTermInput');
+            if (!plan || !mode || !saInput || !ageInput || !premiumPaidTermInput || !policyTermInput) {
+                showToast('Calculator fields are missing in the page.');
+                return;
+            }
+            var sa = parseFloat(saInput.value);
+            var age = ageInput.value;
+            var premiumPaidTerm = premiumPaidTermInput.value;
+            var policyTerm = policyTermInput.value;
+            if (!plan || !mode || isNaN(sa) || !age || !premiumPaidTerm || !policyTerm) {
                 showToast('Please fill all calculator fields with valid numbers.');
                 return;
             }
