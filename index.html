@@ -691,7 +691,8 @@
          For the base (mobile-first) layout keep single column; override below if needed. */
     grid-template-columns: 1fr; 
   gap: 24px;
-  align-items: start;
+    /* Stretch both columns so the right panel can match the left column's height */
+    align-items: stretch;
 }
 
 @media (max-width: 1024px) {
@@ -719,9 +720,19 @@
 .dash-left { z-index: 20; }  /* clickable above tools */
 .dash-right { z-index: 10; }
 
+/* Let the sticky behavior live on the wrapper; make the tools card fill the column height */
 .tools-panel-container {
-  position: sticky;
-  top: 16px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Ensure the sticky wrapper is sticky and spans the full cell height */
+.dash-right-sticky-container {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 16px;
+    height: 100%;
 }
 
 /* Make section headers and tables reliably clickable */
