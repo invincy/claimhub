@@ -1151,7 +1151,7 @@ function openDB() {
         if (db) return resolve(db);
         const req = indexedDB.open(DB_NAME, DB_VERSION);
         req.onupgradeneeded = e => {
-            db = e.target.result;
+            const db = e.target.result;
             if (!db.objectStoreNames.contains(STORE.plans)) db.createObjectStore(STORE.plans, { keyPath: 'plan' });
             if (!db.objectStoreNames.contains(STORE.claims)) db.createObjectStore(STORE.claims, { keyPath: 'id', autoIncrement: true });
             if (!db.objectStoreNames.contains(STORE.specialCases)) db.createObjectStore(STORE.specialCases, { keyPath: 'id', autoIncrement: true });
