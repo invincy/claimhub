@@ -783,59 +783,49 @@ function updateSpecialCaseRow(row, policyNo, name, type, issue) {
 
 function openCase(policyNo) {
     const caseData = savedCases[policyNo];
-    if (!caseData) return;
-    
-     // Show the form
+
+    // Always show the form
     document.getElementById('deathClaimForm')?.classList.remove('hidden');
-    
-    // Populate basic fields
-    document.getElementById('policyNumber').value = policyNo;
-    document.getElementById('claimantName').value = caseData.name;
-    
-    // Restore all saved data if exists
-    if (savedCases[policyNo]) {
-        var savedData = savedCases[policyNo];
-        
-        // Restore basic form data
-        if (savedData.commencementDate) document.getElementById('commencementDate').value = savedData.commencementDate;
-        if (savedData.deathDate) document.getElementById('deathDate').value = savedData.deathDate;
-        if (savedData.query) document.getElementById('queryText').value = savedData.query;
-        
-        // Trigger duration calculation if dates exist
-        if (savedData.commencementDate && savedData.deathDate) {
-            calculateDuration();
+
+    // Populate basics from saved data when available; otherwise, fall back to row values
+    const policyEl = document.getElementById('policyNumber');
+    const nameEl = document.getElementById('claimantName');
+    if (policyEl) policyEl.value = policyNo;
+    if (nameEl) nameEl.value = caseData?.name || (document.querySelector(`#activeDeathClaimsTable tr[data-policy-no="${policyNo}"] td:nth-child(2)`)?.textContent ?? '');
+
+    // Restore saved fields if present
+    if (caseData) {
+        if (caseData.commencementDate) document.getElementById('commencementDate').value = caseData.commencementDate;
+        if (caseData.deathDate) document.getElementById('deathDate').value = caseData.deathDate;
+        if (caseData.query) document.getElementById('queryText').value = caseData.query;
+        if (caseData.commencementDate && caseData.deathDate) calculateDuration();
+    }
+
+    // Select claim type from saved data or infer from the row's third column
+    const claimType = caseData?.claimType || document.querySelector(`#activeDeathClaimsTable tr[data-policy-no="${policyNo}"] td:nth-child(3)`)?.textContent;
+    if (claimType) {
+        const claimTypeRadio = document.querySelector(`input[name="claimType"][value="${claimType}"]`);
+        if (claimTypeRadio) {
+            claimTypeRadio.checked = true;
+            claimTypeRadio.dispatchEvent(new Event('change'));
         }
     }
-    
-    // Select the claim type
-    var claimTypeRadio = document.querySelector(`input[name="claimType"][value="${caseData.claimType}"]`);
-    if (claimTypeRadio) {
-        claimTypeRadio.checked = true;
-        claimTypeRadio.dispatchEvent(new Event('change'));
-    }
-    
-    // Show workflow sections
-    document.getElementById('workflowSections').classList.remove('hidden');
-    
-    // Restore workflow state if exists
-    if (savedWorkflowStates[policyNo]) {
-        var workflowState = savedWorkflowStates[policyNo];
 
-        // Restore all form inputs
+    // Show workflow sections
+    document.getElementById('workflowSections')?.classList.remove('hidden');
+
+    // Restore workflow state if exists
+    const workflowState = savedWorkflowStates[policyNo];
+    if (workflowState) {
         Object.keys(workflowState).forEach(function(inputId) {
             var input = document.getElementById(inputId);
-            if (input) {
-                if (input.type === 'checkbox' || input.type === 'radio') {
-                    input.checked = workflowState[inputId];
-                    if (input.checked) {
-                        input.dispatchEvent(new Event('change'));
-                    }
-                } else {
-                    input.value = workflowState[inputId];
-                    if (input.type === 'date' && input.value) {
-                        input.dispatchEvent(new Event('change'));
-                    }
-                }
+            if (!input) return;
+            if (input.type === 'checkbox' || input.type === 'radio') {
+                input.checked = workflowState[inputId];
+                if (input.checked) input.dispatchEvent(new Event('change'));
+            } else {
+                input.value = workflowState[inputId];
+                if (input.type === 'date' && input.value) input.dispatchEvent(new Event('change'));
             }
         });
     }
