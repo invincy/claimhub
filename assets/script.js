@@ -776,7 +776,7 @@ function openCase(policyNo) {
     if (!caseData) return;
     
      // Show the form
-    deathClaimForm.classList.remove('hidden');
+    document.getElementById('deathClaimForm')?.classList.remove('hidden');
     
     // Populate basic fields
     document.getElementById('policyNumber').value = policyNo;
@@ -870,6 +870,85 @@ function resetSpecialForm() {
     document.getElementById('specialType').value = '';
     document.getElementById('specialIssue').value = '';
     document.getElementById('specialResolved').checked = false;
+}
+
+// Reset the Death Claim form and related UI state
+function resetForm() {
+    // Clear basic inputs
+    ['policyNumber', 'claimantName', 'commencementDate', 'deathDate', 'queryText'].forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.tagName === 'SELECT') {
+            if (el.type === 'checkbox' || el.type === 'radio') {
+                el.checked = false;
+            } else {
+                el.value = '';
+            }
+        } else {
+            // Fallback
+            el.value = '';
+        }
+    });
+
+    // Clear claim type selection
+    document.querySelectorAll('input[name="claimType"]').forEach(r => (r.checked = false));
+    window.selectedClaimType = undefined;
+
+    // Hide and reset duration/suggestion/time-bar UI
+    const durationDisplay = document.getElementById('durationDisplay');
+    if (durationDisplay) durationDisplay.classList.add('hidden');
+    const durationText = document.getElementById('durationText');
+    if (durationText) durationText.textContent = '';
+    const suggestionBox = document.getElementById('suggestionBox');
+    if (suggestionBox) {
+        suggestionBox.classList.add('hidden');
+        // keep base classes if any, avoid removing styling classes set elsewhere
+    }
+    const suggestionText = document.getElementById('suggestionText');
+    if (suggestionText) suggestionText.textContent = '';
+    const timeBarWarning = document.getElementById('timeBarWarning');
+    if (timeBarWarning) {
+        timeBarWarning.textContent = '';
+        timeBarWarning.classList.add('hidden');
+    }
+    const manualSelection = document.getElementById('manualSelection');
+    if (manualSelection) manualSelection.classList.add('hidden');
+
+    // Reset workflow sections state and inputs
+    const workflow = document.getElementById('workflowSections');
+    if (workflow) workflow.classList.add('hidden');
+    // Clear all inputs inside workflow
+    document.querySelectorAll('#workflowSections input, #workflowSections select, #workflowSections textarea').forEach(input => {
+        if (input.type === 'checkbox' || input.type === 'radio') {
+            input.checked = false;
+        } else {
+            input.value = '';
+        }
+    });
+    // Hide dynamic subsections and counters
+    document.getElementById('investigationDetails')?.classList.add('hidden');
+    document.getElementById('daysSinceAllotted')?.classList.add('hidden');
+    const daysCount = document.getElementById('daysCount');
+    if (daysCount) daysCount.textContent = '';
+    document.getElementById('daysSinceSent')?.classList.add('hidden');
+    const doSentDaysCount = document.getElementById('doSentDaysCount');
+    if (doSentDaysCount) doSentDaysCount.textContent = '';
+
+    // Reset LET forms section and nominee toggles
+    document.getElementById('letFormsSection')?.classList.add('hidden');
+    const nomineeAvailable = document.getElementById('nomineeAvailable');
+    const nomineeNotAvailable = document.getElementById('nomineeNotAvailable');
+    if (nomineeAvailable) nomineeAvailable.checked = false;
+    if (nomineeNotAvailable) nomineeNotAvailable.checked = false;
+    const deathClaimFormDocs = document.getElementById('deathClaimFormDocs');
+    if (deathClaimFormDocs) deathClaimFormDocs.checked = false;
+    const letForms = document.getElementById('letForms');
+    if (letForms) letForms.checked = false;
+
+    // Disable all workflow sections and reset headers/arrows
+    if (typeof resetWorkflowSections === 'function') {
+        resetWorkflowSections();
+    }
 }
 
 // Workflow logic
@@ -1179,7 +1258,7 @@ paymentDone?.addEventListener('change', function () {
 
              saveToStorage();
             showToast('Claim completed and moved to completed claims!');
-            deathClaimForm.classList.add('hidden');
+            document.getElementById('deathClaimForm')?.classList.add('hidden');
             resetForm();
 
         }
@@ -1242,7 +1321,7 @@ document.getElementById('saveProgress')?.addEventListener('click', async functio
         tableBody.appendChild(newRow);
     }
     showToast('Progress saved successfully!');
-    deathClaimForm.classList.add('hidden');
+    document.getElementById('deathClaimForm')?.classList.add('hidden');
     resetForm();
 });
 
@@ -1283,7 +1362,7 @@ async function openCase(policyNo) {
     const caseData = allClaims.find(c => c.policyNo === policyNo);
     if (!caseData) return;
     // Show the form
-    deathClaimForm.classList.remove('hidden');
+    document.getElementById('deathClaimForm')?.classList.remove('hidden');
     // Populate basic fields
     document.getElementById('policyNumber').value = policyNo;
     document.getElementById('claimantName').value = caseData.name;
