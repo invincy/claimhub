@@ -1151,11 +1151,11 @@ function openDB() {
         if (db) return resolve(db);
         const req = indexedDB.open(DB_NAME, DB_VERSION);
         req.onupgradeneeded = e => {
-            const db = e.target.result;
-            if (!db.objectStoreNames.contains(STORE.plans)) db.createObjectStore(STORE.plans, { keyPath: 'plan' });
-            if (!db.objectStoreNames.contains(STORE.claims)) db.createObjectStore(STORE.claims, { keyPath: 'id', autoIncrement: true });
-            if (!db.objectStoreNames.contains(STORE.specialCases)) db.createObjectStore(STORE.specialCases, { keyPath: 'id', autoIncrement: true });
-            if (!db.objectStoreNames.contains(STORE.todos)) db.createObjectStore(STORE.todos, { keyPath: 'id', autoIncrement: true });
+            const upgradeDb = e.target.result; // Use a different name to avoid conflict
+            if (!upgradeDb.objectStoreNames.contains(STORE.plans)) upgradeDb.createObjectStore(STORE.plans, { keyPath: 'plan' });
+            if (!upgradeDb.objectStoreNames.contains(STORE.claims)) upgradeDb.createObjectStore(STORE.claims, { keyPath: 'id', autoIncrement: true });
+            if (!upgradeDb.objectStoreNames.contains(STORE.specialCases)) upgradeDb.createObjectStore(STORE.specialCases, { keyPath: 'id', autoIncrement: true });
+            if (!upgradeDb.objectStoreNames.contains(STORE.todos)) upgradeDb.createObjectStore(STORE.todos, { keyPath: 'id', autoIncrement: true });
         };
         req.onsuccess = e => { db = e.target.result; resolve(db); };
         req.onerror = e => reject(e);
