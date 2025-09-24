@@ -147,6 +147,29 @@ document.addEventListener('DOMContentLoaded', function() {
 
         renderTodos();
 
+        async function renderTodos() {
+            const todos = await idbGetAll(STORE.todos);
+            todoList.innerHTML = '';
+            if (todos.length === 0) {
+                todoList.innerHTML = '<li class="text-gray-500 text-center p-4">No to-do items yet.</li>';
+                return;
+            }
+            todos.forEach(todo => {
+                const li = document.createElement('li');
+                li.className = `flex items-center justify-between p-3 rounded-lg ${todo.completed ? 'bg-gray-700' : 'bg-gray-800'}`;
+                li.innerHTML = `
+                    <div class="flex items-center">
+                        <input type="checkbox" data-id="${todo.id}" class="form-checkbox h-5 w-5 text-blue-500 rounded-md border-gray-600 bg-gray-900 focus:ring-blue-500" ${todo.completed ? 'checked' : ''}>
+                        <label for="todo-${todo.id}" class="ml-3 text-sm font-medium ${todo.completed ? 'text-gray-500 line-through' : 'text-gray-300'}">${todo.text}</label>
+                    </div>
+                    <button data-id="${todo.id}" class="text-gray-500 hover:text-red-500 transition-colors">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                `;
+                todoList.appendChild(li);
+            });
+        }
+
         // Premium Calculator Logic (NEW, IndexedDB-based)
         var calculateBtn = document.getElementById('calculatePremiumBtn');
         calculateBtn?.addEventListener('click', async function() {
