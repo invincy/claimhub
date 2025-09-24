@@ -583,8 +583,9 @@ function setupTableEventListeners() {
 
                 // Prefer data attribute; fall back to first cell text
                 let policyNo = row.dataset.policyNo || firstTd.textContent?.trim();
-                // Basic sanity: require numeric policy number to avoid placeholder text
-                if (!policyNo || !/^[0-9]+$/.test(policyNo)) return;
+                if (!policyNo) return;
+                const isDeathTable = tableId === 'activeDeathClaimsTable' || tableId === 'completedDeathClaimsTable';
+                if (isDeathTable && !/^[0-9]+$/.test(policyNo)) return;
                 const config = tables[tableId];
 
                 // Check if a remove button was clicked
@@ -641,6 +642,7 @@ async function loadFromStorage() {
     savedCases = {};
     completedDeathCases = [];
     savedWorkflowStates = {};
+    const CLAIM_SENTINELS = new Set(['__savedCases__', '__workflowStates__', '__completedDeathCases__']);
     allClaims.forEach(claim => {
         if (claim.id === '__savedCases__') {
             savedCases = claim.data || {};
@@ -648,6 +650,19 @@ async function loadFromStorage() {
             savedWorkflowStates = claim.data || {};
         } else if (claim.id === '__completedDeathCases__') {
             completedDeathCases = claim.data || [];
+        } else if (!CLAIM_SENTINELS.has(claim.id)) {
+            // Hydrate legacy/non-sentinel active claim if possible
+            const pno = claim.policyNo || claim.policy || claim.id;
+            if (pno && !savedCases[pno]) {
+                savedCases[pno] = {
+                    policyNo: pno,
+                    name: claim.name || '',
+                    claimType: claim.claimType || 'Non-Early',
+                    commencementDate: claim.commencementDate || '',
+                    deathDate: claim.deathDate || '',
+                    query: claim.query || ''
+                };
+            }
         }
     });
 
@@ -675,11 +690,23 @@ async function loadFromStorage() {
     const allSpecial = await idbGetAll(STORE.specialCases);
     savedSpecialCases = {};
     completedSpecialCases = [];
+    const SC_SENTINELS = new Set(['__savedSpecialCases__', '__completedSpecialCases__']);
     allSpecial.forEach(entry => {
         if (entry.id === '__savedSpecialCases__') {
             savedSpecialCases = entry.data || {};
         } else if (entry.id === '__completedSpecialCases__') {
             completedSpecialCases = entry.data || [];
+        } else if (!SC_SENTINELS.has(entry.id)) {
+            // Hydrate legacy/non-sentinel special case if possible
+            const pno = entry.policyNo || entry.policy || entry.id;
+            if (pno && !savedSpecialCases[pno]) {
+                savedSpecialCases[pno] = {
+                    name: entry.name || '',
+                    type: entry.type || '',
+                    issue: entry.issue || '',
+                    resolved: !!entry.resolved
+                };
+            }
         }
     });
 
