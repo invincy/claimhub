@@ -333,42 +333,92 @@ async function renderTodos() {
 // Premium Calculator Logic (NEW, IndexedDB-based)
 var calculateBtn = document.getElementById('calculatePremiumBtn');
 calculateBtn?.addEventListener('click', async function() {
-    var plan = document.querySelector('input[name="plan"]:checked')?.value;
-    var mode = document.querySelector('input[name="mode"]:checked')?.value;
-    var saInput = document.getElementById('saInput');
-    var ageInput = document.getElementById('ageInput');
-    var premiumPaidTermInput = document.getElementById('premiumPaidTermInput');
-    var policyTermInput = document.getElementById('policyTermInput');
+    const plan = document.querySelector('input[name="plan"]:checked')?.value;
+    const mode = document.querySelector('input[name="mode"]:checked')?.value;
+    const saInput = document.getElementById('saInput'); // in thousands
+    const ageInput = document.getElementById('ageInput');
+    const premiumPaidTermInput = document.getElementById('premiumPaidTermInput');
+    const policyTermInput = document.getElementById('policyTermInput');
     if (!plan || !mode || !saInput || !ageInput || !premiumPaidTermInput || !policyTermInput) {
         showToast('Calculator fields are missing in the page.');
         return;
     }
-    var sa = parseFloat(saInput.value);
-    var age = ageInput.value;
-    var premiumPaidTerm = premiumPaidTermInput.value;
-    var policyTerm = policyTermInput.value;
-    if (!plan || !mode || isNaN(sa) || !age || !premiumPaidTerm || !policyTerm) {
+    const saThousands = parseFloat(saInput.value);
+    const age = ageInput.value;
+    const premiumPaidTerm = premiumPaidTermInput.value;
+    const policyTerm = parseInt(policyTermInput.value, 10);
+    if (!plan || !mode || !Number.isFinite(saThousands) || !age || !premiumPaidTerm || !Number.isFinite(policyTerm)) {
         showToast('Please fill all calculator fields with valid numbers.');
         return;
     }
-    // Fetch tabular premium from IndexedDB
-    var tabularPremium = await getTabularPremium(plan, age, premiumPaidTerm);
+    // Fetch tabular premium per 1000 SA (annual)
+    const tabularPremium = await getTabularPremium(plan, age, premiumPaidTerm);
     if (!tabularPremium) {
         showToast('No tabular premium found for this age/term/plan.');
         return;
     }
-    var multiplier = { YLY: 1, HLY: 0.51, QLY: 0.26, MLY: 0.085 }[mode];
-    var modalPremium = tabularPremium * sa * multiplier;
-    var totalPremium = modalPremium * policyTerm;
-    // Show results
+
+    // 1) Apply mode rebate/extra first (percentage off the tabular per 1000)
+    const modeRebatePct = getModeRebatePercent(plan, mode); // e.g., 0.03 or 0.02, etc.
+    const per1000AfterMode = round2(tabularPremium * (1 - modeRebatePct));
+
+    // 2) Apply Sum Assured rebate (absolute units per 1000) for specific plans only
+    const saRupees = saThousands * 1000;
+    const saRebateUnits = getSARebateUnits(plan, saRupees);
+    const per1000AfterSA = Math.max(0, round2(per1000AfterMode - saRebateUnits));
+
+    // 3) Convert to modal premium using the existing mode multipliers
+    const multiplier = { YLY: 1, HLY: 0.51, QLY: 0.26, MLY: 0.085 }[mode];
+    const modalPremium = round2(per1000AfterSA * saThousands * multiplier);
+    const totalPremium = round2(modalPremium * policyTerm);
+
+    // Show results with a clear breakdown
     document.getElementById('premiumResult').classList.remove('hidden');
     document.getElementById('modalPremiumResult').textContent = `₹${modalPremium.toFixed(2)}`;
     document.getElementById('totalPremiumResult').textContent = `₹${totalPremium.toFixed(2)}`;
-    document.getElementById('calculationBreakdown').innerHTML = `
-        Tabular Premium: ₹${tabularPremium} × S.A.: ${sa} × Mode Multiplier: ${multiplier} = <b>₹${modalPremium.toFixed(2)}</b><br>
-        ROP: ₹${modalPremium.toFixed(2)} × Term: ${policyTerm} = <b>₹${totalPremium.toFixed(2)}</b>
-    `;
+    const modePctText = `${(modeRebatePct * 100).toFixed(1)}%`;
+    const breakdown = [
+        `Tabular per 1000: ₹${tabularPremium.toFixed(2)}`,
+        `Mode ${mode} rebate: -${modePctText} ⇒ ₹${per1000AfterMode.toFixed(2)} per 1000`,
+        `S.A. rebate (${saRebateUnits.toFixed(2)} units): ₹${per1000AfterMode.toFixed(2)} − ${saRebateUnits.toFixed(2)} = ₹${per1000AfterSA.toFixed(2)} per 1000`,
+        `Modal conversion: ₹${per1000AfterSA.toFixed(2)} × S.A.: ${saThousands} × Mode Multiplier: ${multiplier} = <b>₹${modalPremium.toFixed(2)}</b>`,
+        `Total over term: ₹${modalPremium.toFixed(2)} × Term: ${policyTerm} = <b>₹${totalPremium.toFixed(2)}</b>`
+    ];
+    document.getElementById('calculationBreakdown').innerHTML = breakdown.join('<br>');
 });
+
+function getModeRebatePercent(plan, mode) {
+    // Percentages provided by user
+    // YLY: 3% for 111/150, 2% for 174/179
+    // HLY: 1.5% for 111/150, 1% for 174/179
+    // QLY/MLY: assume 0% unless specified
+    const p = String(plan);
+    if (mode === 'YLY') {
+        return (p === '111' || p === '150') ? 0.03 : 0.02;
+    }
+    if (mode === 'HLY') {
+        return (p === '111' || p === '150') ? 0.015 : 0.01;
+    }
+    return 0;
+}
+
+function getSARebateUnits(plan, saRupees) {
+    // Units per 1000 SA (absolute amount to subtract), per plan and SA slab
+    const p = String(plan);
+    if (p === '179') {
+        if (saRupees <= 100000) return 0;
+        if (saRupees <= 200000) return 5;
+        return 7.5;
+    }
+    if (p === '174') {
+        if (saRupees <= 50000) return 0;
+        if (saRupees <= 100000) return 2.5;
+        return 5;
+    }
+    return 0;
+}
+
+function round2(n) { return Math.round((n + Number.EPSILON) * 100) / 100; }
 
 // Custom radio button styling logic
 document.querySelectorAll('.option-card input[type="radio"]').forEach(radio => {
