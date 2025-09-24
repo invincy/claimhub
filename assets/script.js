@@ -584,8 +584,8 @@ function setupTableEventListeners() {
                 // Prefer data attribute; fall back to first cell text
                 let policyNo = row.dataset.policyNo || firstTd.textContent?.trim();
                 if (!policyNo) return;
-                const isDeathTable = tableId === 'activeDeathClaimsTable' || tableId === 'completedDeathClaimsTable';
-                if (isDeathTable && !/^[0-9]+$/.test(policyNo)) return;
+                // For death claim tables, we no longer enforce numeric-only policy numbers here
+                // to ensure rows open even if formatting includes spaces or dashes.
                 const config = tables[tableId];
 
                 // Check if a remove button was clicked
