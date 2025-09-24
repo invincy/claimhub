@@ -1296,8 +1296,7 @@ document.getElementById('saveProgress')?.addEventListener('click', async functio
         }
     });
     savedWorkflowStates[policyNo] = workflowState;
-    // Save to IndexedDB
-    await idbPut(STORE.claims, { ...formData, workflowState });
+    // Persist only via sentinel records for consistency
     await saveToStorage();
     // Update or add to active claims table
     const tableBody = document.getElementById('activeDeathClaimsTable');
@@ -1356,57 +1355,7 @@ function getClaimStage() {
     return 'Initial Review';
 }
 
-async function openCase(policyNo) {
-    // Load from IndexedDB
-    const allClaims = await idbGetAll(STORE.claims);
-    const caseData = allClaims.find(c => c.policyNo === policyNo);
-    if (!caseData) return;
-    // Show the form
-    document.getElementById('deathClaimForm')?.classList.remove('hidden');
-    // Populate basic fields
-    document.getElementById('policyNumber').value = policyNo;
-    document.getElementById('claimantName').value = caseData.name;
-    // Restore all saved data if exists
-    if (caseData) {
-        // Restore basic form data
-        if (caseData.commencementDate) document.getElementById('commencementDate').value = caseData.commencementDate;
-        if (caseData.deathDate) document.getElementById('deathDate').value = caseData.deathDate;
-        if (caseData.query) document.getElementById('queryText').value = caseData.query;
-        // Trigger duration calculation if dates exist
-        if (caseData.commencementDate && caseData.deathDate) {
-            calculateDuration();
-        }
-    }
-    // Select the claim type
-    var claimTypeRadio = document.querySelector(`input[name="claimType"][value="${caseData.claimType}"]`);
-    if (claimTypeRadio) {
-        claimTypeRadio.checked = true;
-        claimTypeRadio.dispatchEvent(new Event('change'));
-    }
-    // Show workflow sections
-    document.getElementById('workflowSections').classList.remove('hidden');
-    // Restore workflow state if exists
-    if (caseData.workflowState) {
-        var workflowState = caseData.workflowState;
-        // Restore all form inputs
-        Object.keys(workflowState).forEach(function(inputId) {
-            var input = document.getElementById(inputId);
-            if (input) {
-                if (input.type === 'checkbox' || input.type === 'radio') {
-                    input.checked = workflowState[inputId];
-                    if (input.checked) {
-                        input.dispatchEvent(new Event('change'));
-                    }
-                } else {
-                    input.value = workflowState[inputId];
-                    if (input.type === 'date' && input.value) {
-                        input.dispatchEvent(new Event('change'));
-                    }
-                }
-            }
-        });
-    }
-}
+// Note: Removed duplicate async openCase() that loaded ad-hoc per-claim records.
 
 // --- Plan Data (inline from your JSONs) ---
 const PLAN_111 = {
