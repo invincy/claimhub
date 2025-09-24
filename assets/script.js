@@ -503,6 +503,45 @@ async function saveToStorage() {
     updateCounters();
 }
 
+// Attempt one-time migration from legacy localStorage data to IndexedDB
+async function migrateFromLocalStorageIfNeeded() {
+    try {
+        // Use a simple localStorage flag to avoid repeated migrations across sessions
+        const MIGRATION_FLAG = '__migrationToIndexedDB__';
+        if (localStorage.getItem(MIGRATION_FLAG) === 'done') return;
+
+        // Only migrate if there is no IndexedDB savedCases yet but legacy keys exist
+        const allClaims = await idbGetAll(STORE.claims);
+        const hasSentinel = allClaims.some(c => c.id === '__savedCases__');
+        const legacySavedCases = localStorage.getItem('savedCases');
+        const legacyWorkflow = localStorage.getItem('savedWorkflowStates');
+        const legacyCompleted = localStorage.getItem('completedDeathCases');
+        const legacySpecialSaved = localStorage.getItem('savedSpecialCases');
+        const legacySpecialCompleted = localStorage.getItem('completedSpecialCases');
+
+        if (!hasSentinel && (legacySavedCases || legacyWorkflow || legacyCompleted || legacySpecialSaved || legacySpecialCompleted)) {
+            // Parse and assign safely
+            try { savedCases = legacySavedCases ? JSON.parse(legacySavedCases) : {}; } catch { savedCases = {}; }
+            try { savedWorkflowStates = legacyWorkflow ? JSON.parse(legacyWorkflow) : {}; } catch { savedWorkflowStates = {}; }
+            try { completedDeathCases = legacyCompleted ? JSON.parse(legacyCompleted) : []; } catch { completedDeathCases = []; }
+            try { savedSpecialCases = legacySpecialSaved ? JSON.parse(legacySpecialSaved) : {}; } catch { savedSpecialCases = {}; }
+            try { completedSpecialCases = legacySpecialCompleted ? JSON.parse(legacySpecialCompleted) : []; } catch { completedSpecialCases = []; }
+
+            await saveToStorage();
+            localStorage.setItem(MIGRATION_FLAG, 'done');
+            // Optionally clean up legacy keys to avoid confusion
+            // localStorage.removeItem('savedCases');
+            // localStorage.removeItem('savedWorkflowStates');
+            // localStorage.removeItem('completedDeathCases');
+            // localStorage.removeItem('savedSpecialCases');
+            // localStorage.removeItem('completedSpecialCases');
+            console.log('Migrated legacy localStorage data to IndexedDB.');
+        }
+    } catch (e) {
+        console.warn('Migration from localStorage skipped due to error:', e);
+    }
+}
+
 // Update counters for all sections
 function updateCounters() {
     // Count active death claims
@@ -587,6 +626,8 @@ function createCompletedSpecialCaseRow(caseData) {
 
 // Load data from IndexedDB
 async function loadFromStorage() {
+    // Migrate any old localStorage data if IndexedDB has no sentinel yet
+    await migrateFromLocalStorageIfNeeded();
     // Load all claims from IndexedDB
     const allClaims = await idbGetAll(STORE.claims);
     savedCases = {};
@@ -652,6 +693,8 @@ async function loadFromStorage() {
 
     // Populate Completed Special Cases Table
     populateCompletedCases('completedSpecialCasesTable', completedSpecialCases, createCompletedSpecialCaseRow);
+    // Update counters after rebuilding tables
+    updateCounters();
 }
 
 // Special Case Save functionality
