@@ -120,25 +120,7 @@ document.addEventListener('DOMContentLoaded', function() {
         var addTodoBtn = document.getElementById('addTodoBtn');
         var todoList = document.getElementById('todoList');
 
-        async function renderTodos() {
-            if (!todoList) return;
-            const todos = await idbGetAll(STORE.todos);
-            todoList.innerHTML = '';
-            if (todos.length === 0) {
-                todoList.innerHTML = '<li class="text-gray-500 text-center py-4">No tasks yet.</li>';
-                return;
-            }
-            todos.forEach((todo) => {
-                var li = document.createElement('li');
-                li.className = `option-card flex items-center p-3 rounded-lg ${todo.completed ? 'opacity-50' : ''}`;
-                li.innerHTML = `
-                    <input type="checkbox" data-id="${todo.id}" class="checkbox-modern flex-shrink-0" ${todo.completed ? 'checked' : ''}>
-                    <span class="font-medium text-gray-300 flex-grow px-3 min-w-0 break-words ${todo.completed ? 'line-through' : ''}">${todo.text}</span>
-                    <button data-id="${todo.id}" class="btn-danger text-xs px-2 py-1 rounded-md flex-shrink-0">[X]</button>
-                `;
-                todoList.appendChild(li);
-            });
-        }
+        // ...existing code...
 
         addTodoBtn?.addEventListener('click', async function() {
             var text = todoInput.value.trim();
@@ -1291,25 +1273,7 @@ var todoInput = document.getElementById('todoInput');
 var addTodoBtn = document.getElementById('addTodoBtn');
 var todoList = document.getElementById('todoList');
 
-async function renderTodos() {
-    if (!todoList) return;
-    const todos = await idbGetAll(STORE.todos);
-    todoList.innerHTML = '';
-    if (todos.length === 0) {
-        todoList.innerHTML = '<li class="text-gray-500 text-center py-4">No tasks yet.</li>';
-        return;
-    }
-    todos.forEach((todo) => {
-        var li = document.createElement('li');
-        li.className = `option-card flex items-center p-3 rounded-lg ${todo.completed ? 'opacity-50' : ''}`;
-        li.innerHTML = `
-            <input type="checkbox" data-id="${todo.id}" class="checkbox-modern flex-shrink-0" ${todo.completed ? 'checked' : ''}>
-            <span class="font-medium text-gray-300 flex-grow px-3 min-w-0 break-words ${todo.completed ? 'line-through' : ''}">${todo.text}</span>
-            <button data-id="${todo.id}" class="btn-danger text-xs px-2 py-1 rounded-md flex-shrink-0">[X]</button>
-        `;
-        todoList.appendChild(li);
-    });
-}
+// ...existing code...
 
 addTodoBtn?.addEventListener('click', async function() {
     var text = todoInput.value.trim();
