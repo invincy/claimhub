@@ -11,6 +11,18 @@ const STORE = {
 // --- IndexedDB Initialization and Helpers ---
 let db;
 
+
+// Optional: quick helper to clear all active death claims (for debugging/cleanup)
+window.debugClearActiveDeathClaims = async function() {
+    try {
+        savedCases = {};
+        await saveToStorage();
+        await loadFromStorage();
+        showToast('Cleared all active death claims.');
+    } catch (e) {
+        console.warn('Failed to clear active death claims', e);
+    }
+}
 async function initDB() {
     return new Promise((resolve, reject) => {
         const req = indexedDB.open(DB_NAME, DB_VERSION);
@@ -505,11 +517,11 @@ async function saveToStorage() {
 
 // Update counters for all sections
 function updateCounters() {
-    // Count only real data rows (those we create with data-policy-no)
-    const activeDeathCount = document.querySelectorAll('#activeDeathClaimsTable tr[data-policy-no]').length;
+    // Authoritative counts from in-memory state
+    const activeDeathCount = Object.keys(savedCases || {}).length;
     document.getElementById('activeDeathClaimsCounter').textContent = activeDeathCount;
 
-    const activeSpecialCount = document.querySelectorAll('#activeSpecialCasesTable tr[data-policy-no]').length;
+    const activeSpecialCount = Object.keys(savedSpecialCases || {}).length;
     document.getElementById('activeSpecialCasesCounter').textContent = activeSpecialCount;
 
 
