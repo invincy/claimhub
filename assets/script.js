@@ -120,8 +120,6 @@ document.addEventListener('DOMContentLoaded', function() {
         var addTodoBtn = document.getElementById('addTodoBtn');
         var todoList = document.getElementById('todoList');
 
-        // ...existing code...
-
         addTodoBtn?.addEventListener('click', async function() {
             var text = todoInput.value.trim();
             if (text) {
@@ -1273,8 +1271,6 @@ var todoInput = document.getElementById('todoInput');
 var addTodoBtn = document.getElementById('addTodoBtn');
 var todoList = document.getElementById('todoList');
 
-// ...existing code...
-
 addTodoBtn?.addEventListener('click', async function() {
     var text = todoInput.value.trim();
     if (text) {
@@ -1298,6 +1294,8 @@ todoList?.addEventListener('click', async function(e) {
             renderTodos();
         }
     }
+});
+
 });
 
 
