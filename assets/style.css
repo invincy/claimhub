@@ -340,6 +340,12 @@ img, video { max-width: 100%; height: auto; }
     box-shadow: 0 0 15px rgba(0, 255, 255, 0.2);
 }
 
+/* Make clickable rows indicate interactivity */
+.dark-table-row,
+.lic-table-row {
+    cursor: pointer;
+}
+
 .workflow-section {
     background: rgba(30, 30, 30, 0.9);
     border: 1px solid rgba(75, 85, 99, 0.2);

@@ -541,9 +541,11 @@ function setupTableEventListeners() {
         if (tableElement) {
             tableElement.addEventListener('click', function(e) {
                 const row = e.target.closest('tr');
-                if (!row || !row.dataset.policyNo) return;
+                if (!row) return;
 
-                var policyNo = row.dataset.policyNo;
+                // Prefer data attribute; fall back to first cell text
+                let policyNo = row.dataset.policyNo || row.querySelector('td')?.textContent?.trim();
+                if (!policyNo) return;
                 const config = tables[tableId];
 
                 // Check if a remove button was clicked
