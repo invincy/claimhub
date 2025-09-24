@@ -417,7 +417,11 @@ img, video { max-width: 100%; height: auto; }
 }
 
 .radio-modern {
+    /* Ensure custom styling applies consistently across browsers */
     appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    display: inline-block;
     width: 20px;
     height: 20px;
     border: 2px solid rgba(75, 85, 99, 0.5);
@@ -426,9 +430,11 @@ img, video { max-width: 100%; height: auto; }
     cursor: pointer;
     transition: all 0.3s ease;
     position: relative;
+    vertical-align: middle;
 }
 .radio-modern:checked {
-    border-color: #6366f1;
+    border-color: #60a5fa; /* brighter border when selected */
+    background: rgba(17, 24, 39, 0.9);
 }
 .radio-modern:checked::after {
     content: '';
@@ -436,10 +442,18 @@ img, video { max-width: 100%; height: auto; }
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 8px;
-    height: 8px;
-    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    width: 10px; /* slightly larger for visibility */
+    height: 10px;
+    background: radial-gradient(circle, #60a5fa 0%, #3b82f6 60%, #2563eb 100%);
     border-radius: 50%;
+    box-shadow: 0 0 6px rgba(96, 165, 250, 0.8); /* glow for dark backgrounds */
+    z-index: 1;
+}
+
+/* Keyboard focus visibility */
+.radio-modern:focus-visible {
+    outline: 2px solid #60a5fa;
+    outline-offset: 2px;
 }
 
 .option-card {
