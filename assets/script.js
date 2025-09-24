@@ -631,7 +631,7 @@ function createCompletedSpecialCaseRow(caseData) {
     const row = document.createElement('tr');
     row.className = 'lic-table-row border-t transition-all duration-300';
     row.dataset.policyNo = caseData.policyNo;
-    row.innerHTML = `<td class="px-6 py-4 font-semibold text-gray-300">${caseData.policyNo}</td><td class="px-6 py-4 font-semibold text-gray-300">${caseData.name}</td><td class="px-6 py-4 font-semibold text-gray-300">${caseData.type}</td><td class="px-6 py-4 font-semibold text-gray-300">${new Date().toLocaleDateString()}</td><td class="px-6 py-4"><button class="btn-danger btn-remove px-4 py-2 rounded-lg text-sm font-bold">Remove</button></td>`;
+    row.innerHTML = `<td class="px-6 py-4 font-semibold text-gray-300">${caseData.policyNo}</td><td class="px-6 py-4 font-semibold text-gray-300">${caseData.name}</td><td class="px-6 py-4 font-semibold text-gray-300">${caseData.type}</td><td class="px-6 py-4 font-semibold text-gray-300">${caseData.completionDate || new Date().toLocaleDateString()}</td><td class="px-6 py-4"><button class="btn-danger btn-remove px-4 py-2 rounded-lg text-sm font-bold">Remove</button></td>`;
     return row;
 }
 
@@ -754,8 +754,8 @@ document.getElementById('saveSpecialCase')?.addEventListener('click', function()
             completedTableBody.innerHTML = '';
         }
 
-        // Save the completed case data
-        const completed = { policyNo, name, type, issue };
+    // Save the completed case data
+    const completed = { policyNo, name, type, issue, completionDate: new Date().toLocaleDateString() };
         completedSpecialCases.push(completed);
         // Append to completed special cases table immediately
         const completedRow = createCompletedSpecialCaseRow(completed);

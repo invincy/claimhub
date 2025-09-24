@@ -549,8 +549,8 @@ img, video { max-width: 100%; height: auto; }
 
 @media (min-width: 1024px) {
     .dash-grid {
-        /* 3fr 2fr is a 60/40 split */
-        grid-template-columns: 3fr 2fr;
+        /* 1fr 1fr is a 50/50 split */
+        grid-template-columns: 1fr 1fr;
     }
 
     .dash-right-sticky-container {
