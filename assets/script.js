@@ -505,15 +505,11 @@ async function saveToStorage() {
 
 // Update counters for all sections
 function updateCounters() {
-    // Count active death claims
-    var activeDeathRows = document.querySelectorAll('#activeDeathClaimsTable tr:not([colspan])');
-    var activeDeathCount = activeDeathRows.length > 0 && !activeDeathRows[0].querySelector('td[colspan]') ? activeDeathRows.length : 0;
+    // Count only real data rows (those we create with data-policy-no)
+    const activeDeathCount = document.querySelectorAll('#activeDeathClaimsTable tr[data-policy-no]').length;
     document.getElementById('activeDeathClaimsCounter').textContent = activeDeathCount;
 
-    // Count active special cases
-
-    var activeSpecialRows = document.querySelectorAll('#activeSpecialCasesTable tr:not([colspan])');
-    var activeSpecialCount = activeSpecialRows.length > 0 && !activeSpecialRows[0].querySelector('td[colspan]') ? activeSpecialRows.length : 0;
+    const activeSpecialCount = document.querySelectorAll('#activeSpecialCasesTable tr[data-policy-no]').length;
     document.getElementById('activeSpecialCasesCounter').textContent = activeSpecialCount;
 
 
