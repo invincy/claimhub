@@ -532,8 +532,8 @@ function setupTableEventListeners() {
     const tables = {
         'activeDeathClaimsTable': { openFn: openCase, removeFn: removeRow },
         'activeSpecialCasesTable': { openFn: openSpecialCase, removeFn: removeSpecialRow },
-        'completedDeathClaimsTable': { removeFn: removeCompletedRow },
-        'completedSpecialCasesTable': { removeFn: removeCompletedSpecialRow }
+        'completedDeathClaimsTable': { openFn: openCaseFromCompleted, removeFn: removeCompletedRow },
+        'completedSpecialCasesTable': { openFn: openCompletedSpecialCase, removeFn: removeCompletedSpecialRow }
     };
 
     for (const tableId in tables) {
@@ -756,7 +756,7 @@ document.getElementById('saveSpecialCase')?.addEventListener('click', function()
         showToast('Special case saved successfully!');
     }
 
-    specialCaseForm.classList.add('hidden');
+    document.getElementById('specialCaseForm')?.classList.add('hidden');
     resetSpecialForm();
 });
 
@@ -863,7 +863,7 @@ function openSpecialCase(policyNo) {
     if (!caseData) return;
 
     // Show the form
-    specialCaseForm.classList.remove('hidden');
+    document.getElementById('specialCaseForm')?.classList.remove('hidden');
     
     // Populate fields
     document.getElementById('specialPolicyNumber').value = policyNo;
@@ -872,6 +872,43 @@ function openSpecialCase(policyNo) {
     document.getElementById('specialIssue').value = caseData.issue;
     // Restore the 'resolved' checkbox state from saved data
     document.getElementById('specialResolved').checked = caseData.resolved || false;
+}
+
+// Open a death claim from the Completed table
+function openCaseFromCompleted(policyNo) {
+    const caseData = completedDeathCases.find(c => c.policyNo === policyNo);
+    if (!caseData) return;
+    // Show form
+    document.getElementById('deathClaimForm')?.classList.remove('hidden');
+    // Populate basics
+    const policyEl = document.getElementById('policyNumber');
+    const nameEl = document.getElementById('claimantName');
+    if (policyEl) policyEl.value = caseData.policyNo;
+    if (nameEl) nameEl.value = caseData.name;
+    const claimTypeRadio = document.querySelector(`input[name="claimType"][value="${caseData.claimType}"]`);
+    if (claimTypeRadio) {
+        claimTypeRadio.checked = true;
+        claimTypeRadio.dispatchEvent(new Event('change'));
+    }
+    document.getElementById('workflowSections')?.classList.remove('hidden');
+}
+
+// Open a special case from the Completed table
+function openCompletedSpecialCase(policyNo) {
+    const caseData = completedSpecialCases.find(c => c.policyNo === policyNo);
+    if (!caseData) return;
+    const form = document.getElementById('specialCaseForm');
+    form?.classList.remove('hidden');
+    const p = document.getElementById('specialPolicyNumber');
+    const n = document.getElementById('specialName');
+    const t = document.getElementById('specialType');
+    const i = document.getElementById('specialIssue');
+    if (p) p.value = caseData.policyNo;
+    if (n) n.value = caseData.name;
+    if (t) t.value = caseData.type;
+    if (i) i.value = caseData.issue || '';
+    const resolved = document.getElementById('specialResolved');
+    if (resolved) resolved.checked = true;
 }
 
 function resetSpecialForm() {
