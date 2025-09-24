@@ -649,7 +649,7 @@
 
     <!-- IMPORTANT: You may need to remove the old particle animation logic from assets/script.js to prevent conflicts. -->
     <!-- Cache-busting query to ensure latest script is fetched by the browser/CDN -->
-    <script src="assets/script.js?v=20250925" defer></script>
+    <script src="assets/script.js?v=20250925.1" defer></script>
     <script>
     (function() {
         const html = document.documentElement;
@@ -682,5 +682,52 @@
         });
     })();
     </script>
+
+    <style>
+/* Ensure left/right columns don’t overlap and left stays on top */
+.dash-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 360px; /* content + tools width */
+  gap: 24px;
+  align-items: start;
+}
+
+@media (max-width: 1024px) {
+  .dash-grid {
+    grid-template-columns: 1fr;
+  }
+  .dash-right {
+    position: static !important;
+    z-index: auto !important;
+  }
+}
+
+.dash-left,
+.dash-right {
+  position: relative;
+}
+
+.dash-left { z-index: 20; }  /* clickable above tools */
+.dash-right { z-index: 10; }
+
+.tools-panel-container {
+  position: sticky;
+  top: 16px;
+}
+
+/* Make section headers and tables reliably clickable */
+.collapsible-header {
+  position: relative;
+  z-index: 30;
+  cursor: pointer;
+}
+
+.matte-card,
+.dark-table,
+.glass-header {
+  position: relative;
+  z-index: 1;
+}
+    </style>
 </body>
 </html>
