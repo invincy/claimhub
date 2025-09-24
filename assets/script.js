@@ -36,32 +36,6 @@ document.addEventListener('DOMContentLoaded', function() {
             // 1. Tab Switching Logic
             tabs.forEach(tab => {
                 tab.addEventListener('click', () => {
-                    // Deactivate all tabs
-                    tabs.forEach(t => t.classList.remove('active-tab'));
-                    // Hide all panels
-                    Object.values(panels).forEach(panel => panel && panel.classList.add('hidden'));
-
-                    // Activate clicked tab
-                    tab.classList.add('active-tab');
-                    // Show corresponding panel
-                    var tabName = tab.dataset.tab;
-                    if (panels[tabName]) {
-                        panels[tabName].classList.remove('hidden');
-                    }
-                });
-            });
-
-            // 2. To-Do List Logic is handled further down with the rest of the app logic
-
-            // 3. Requirements Dropdown Logic
-            if (requirementsTypeSelect && letRequirementsTable) {
-                requirementsTypeSelect.addEventListener('change', function(e) {
-                    letRequirementsTable.style.display = e.target.value === 'LET' ? 'block' : 'none';
-                });
-            }
-
-            // 4. Premium Calculator Logic is handled further down
-        }
 
         // Workflow collapsible functionality with disabled state check
         document.querySelectorAll('.workflow-header').forEach(header => {
