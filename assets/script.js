@@ -23,6 +23,40 @@ window.debugClearActiveDeathClaims = async function() {
         console.warn('Failed to clear active death claims', e);
     }
 }
+
+// Optional: seed some sample data to test UI quickly
+window.debugSeedSampleClaims = async function() {
+    try {
+        // Seed one active death claim
+        const policyNo = '123456789';
+        savedCases[policyNo] = {
+            policyNo,
+            name: 'John Doe',
+            commencementDate: '01/01/2020',
+            deathDate: '15/03/2023',
+            query: 'Initial notes',
+            claimType: 'Early'
+        };
+        savedWorkflowStates[policyNo] = {
+            nomineeAvailable: true,
+            deathClaimFormDocs: true
+        };
+
+        // Seed one active special case
+        savedSpecialCases['S-10001'] = {
+            name: 'Jane Smith',
+            type: 'D/C',
+            issue: 'Document verification pending',
+            resolved: false
+        };
+
+        await saveToStorage();
+        await loadFromStorage();
+        showToast('Seeded sample active death claim and special case.');
+    } catch (e) {
+        console.warn('Failed to seed sample data', e);
+    }
+}
 async function initDB() {
     return new Promise((resolve, reject) => {
         const req = indexedDB.open(DB_NAME, DB_VERSION);
@@ -543,9 +577,14 @@ function setupTableEventListeners() {
                 const row = e.target.closest('tr');
                 if (!row) return;
 
+                // Ignore placeholder rows (those with a single TD that has colspan)
+                const firstTd = row.querySelector('td');
+                if (!firstTd || firstTd.hasAttribute('colspan')) return;
+
                 // Prefer data attribute; fall back to first cell text
-                let policyNo = row.dataset.policyNo || row.querySelector('td')?.textContent?.trim();
-                if (!policyNo) return;
+                let policyNo = row.dataset.policyNo || firstTd.textContent?.trim();
+                // Basic sanity: require numeric policy number to avoid placeholder text
+                if (!policyNo || !/^[0-9]+$/.test(policyNo)) return;
                 const config = tables[tableId];
 
                 // Check if a remove button was clicked
