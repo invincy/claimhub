@@ -1,6 +1,6 @@
 // --- IndexedDB constants ---
 const DB_NAME = 'ClaimHubDB';
-const DB_VERSION = 1;
+const DB_VERSION = 2; // Bump version to ensure missing object stores are created on upgrade
 const STORE = {
     plans: 'plans',
     claims: 'claims',
@@ -200,6 +200,17 @@ document.addEventListener('DOMContentLoaded', function() {
         var timeBarWarning = document.getElementById('timeBarWarning');
         var manualSelection = document.getElementById('manualSelection');
 
+        // Attach date input listeners now that DOM is ready
+        commencementDate?.addEventListener('input', function() {
+            formatDateInput(this);
+            calculateDuration();
+        });
+
+        deathDate?.addEventListener('input', function() {
+            formatDateInput(this);
+            calculateDuration();
+        });
+
         // To-Do List Logic (now safe to run)
         var todoInput = document.getElementById('todoInput');
         var addTodoBtn = document.getElementById('addTodoBtn');
@@ -261,6 +272,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
 async function renderTodos() {
     const todos = await idbGetAll(STORE.todos);
+    const todoList = document.getElementById('todoList');
+    if (!todoList) return;
     todoList.innerHTML = '';
     if (todos.length === 0) {
         todoList.innerHTML = '<li class="text-gray-500 text-center p-4">No to-do items yet.</li>';
@@ -358,12 +371,12 @@ function formatDateInput(input) {
 }
 
 
-commencementDate?.addEventListener('input', function() {
+document.getElementById('commencementDate')?.addEventListener('input', function() {
     formatDateInput(this);
     calculateDuration();
 });
 
-deathDate?.addEventListener('input', function() {
+document.getElementById('deathDate')?.addEventListener('input', function() {
     formatDateInput(this);
     calculateDuration();
 });
@@ -373,6 +386,19 @@ deathDate?.addEventListener('input', function() {
 
 
 function calculateDuration() {
+    const commencementDate = document.getElementById('commencementDate');
+    const deathDate = document.getElementById('deathDate');
+    const durationDisplay = document.getElementById('durationDisplay');
+    const durationText = document.getElementById('durationText');
+    const suggestionBox = document.getElementById('suggestionBox');
+    const suggestionText = document.getElementById('suggestionText');
+    const timeBarWarning = document.getElementById('timeBarWarning');
+    const manualSelection = document.getElementById('manualSelection');
+
+    if (!commencementDate || !deathDate || !durationDisplay || !durationText || !suggestionBox || !suggestionText || !timeBarWarning || !manualSelection) {
+        return;
+    }
+
     var commDate = commencementDate.value.replace(/\//g, '');
     var deathDateVal = deathDate.value.replace(/\//g, '');
 
@@ -444,10 +470,14 @@ function calculateDuration() {
 function removeRow(button) {
     var row = button.closest('tr');
     var tableBody = row.parentNode;
+    const policyNo = row.dataset.policyNo;
     row.remove();
     
     if (tableBody.children.length === 0) {
         tableBody.innerHTML = '<tr><td colspan="5" class="px-4 py-8 text-center text-gray-500">No active death claims</td></tr>';
+    }
+    if (policyNo && savedCases[policyNo]) {
+        delete savedCases[policyNo];
     }
     saveToStorage();
 }
@@ -456,17 +486,20 @@ function removeRow(button) {
 let savedCases = {};
 let savedWorkflowStates = {};
 let completedDeathCases = [];
+let savedSpecialCases = {};
+let completedSpecialCases = [];
 
 // Save data to IndexedDB
 async function saveToStorage() {
-    // Save all active death claims
-    for (const policyNo in savedCases) {
-        await idbPut(STORE.claims, { ...savedCases[policyNo], policyNo });
-    }
+    // Save all active death claims as a single record
+    await idbPut(STORE.claims, { id: '__savedCases__', data: savedCases });
     // Save workflow states (store as a single object)
     await idbPut(STORE.claims, { id: '__workflowStates__', data: savedWorkflowStates });
     // Save completed death cases
     await idbPut(STORE.claims, { id: '__completedDeathCases__', data: completedDeathCases });
+    // Save special cases
+    await idbPut(STORE.specialCases, { id: '__savedSpecialCases__', data: savedSpecialCases });
+    await idbPut(STORE.specialCases, { id: '__completedSpecialCases__', data: completedSpecialCases });
     updateCounters();
 }
 
@@ -539,7 +572,16 @@ function populateCompletedCases(tableId, casesArray, createRowFunction) {
 function createCompletedDeathCaseRow(caseData) {
     const row = document.createElement('tr');
     row.className = 'lic-table-row border-t transition-all duration-300';
-    row.innerHTML = `<td class="px-6 py-4 font-semibold text-gray-300">${caseData.policyNo}</td><td class="px-6 py-4 font-semibold text-gray-300">${caseData.name}</td><td class="px-6 py-4 font-semibold text-gray-300">${caseData.claimType}</td><td class="px-6 py-4 font-semibold text-gray-300">${caseData.completionDate}</td><td class="px-6 py-4"><button class="btn-danger btn-remove px-4 py-2 rounded-lg text-sm font-bold" onclick="removeCompletedRow(this)">Remove</button></td>`;
+    row.dataset.policyNo = caseData.policyNo;
+    row.innerHTML = `<td class="px-6 py-4 font-semibold text-gray-300">${caseData.policyNo}</td><td class="px-6 py-4 font-semibold text-gray-300">${caseData.name}</td><td class="px-6 py-4 font-semibold text-gray-300">${caseData.claimType}</td><td class="px-6 py-4 font-semibold text-gray-300">${caseData.completionDate}</td><td class="px-6 py-4"><button class="btn-danger btn-remove px-4 py-2 rounded-lg text-sm font-bold">Remove</button></td>`;
+    return row;
+}
+
+function createCompletedSpecialCaseRow(caseData) {
+    const row = document.createElement('tr');
+    row.className = 'lic-table-row border-t transition-all duration-300';
+    row.dataset.policyNo = caseData.policyNo;
+    row.innerHTML = `<td class="px-6 py-4 font-semibold text-gray-300">${caseData.policyNo}</td><td class="px-6 py-4 font-semibold text-gray-300">${caseData.name}</td><td class="px-6 py-4 font-semibold text-gray-300">${caseData.type}</td><td class="px-6 py-4 font-semibold text-gray-300">${new Date().toLocaleDateString()}</td><td class="px-6 py-4"><button class="btn-danger btn-remove px-4 py-2 rounded-lg text-sm font-bold">Remove</button></td>`;
     return row;
 }
 
@@ -551,12 +593,12 @@ async function loadFromStorage() {
     completedDeathCases = [];
     savedWorkflowStates = {};
     allClaims.forEach(claim => {
-        if (claim.id === '__workflowStates__') {
+        if (claim.id === '__savedCases__') {
+            savedCases = claim.data || {};
+        } else if (claim.id === '__workflowStates__') {
             savedWorkflowStates = claim.data || {};
         } else if (claim.id === '__completedDeathCases__') {
             completedDeathCases = claim.data || [];
-        } else if (claim.policyNo) {
-            savedCases[claim.policyNo] = claim;
         }
     });
 
@@ -579,6 +621,37 @@ async function loadFromStorage() {
 
     // Populate Completed Death Cases Table
     populateCompletedCases('completedDeathClaimsTable', completedDeathCases, createCompletedDeathCaseRow);
+
+    // Load all special cases from IndexedDB
+    const allSpecial = await idbGetAll(STORE.specialCases);
+    savedSpecialCases = {};
+    completedSpecialCases = [];
+    allSpecial.forEach(entry => {
+        if (entry.id === '__savedSpecialCases__') {
+            savedSpecialCases = entry.data || {};
+        } else if (entry.id === '__completedSpecialCases__') {
+            completedSpecialCases = entry.data || [];
+        }
+    });
+
+    // Rebuild Active Special Cases table
+    const activeSpecialCasesTable = document.getElementById('activeSpecialCasesTable');
+    if (activeSpecialCasesTable) {
+        activeSpecialCasesTable.innerHTML = '';
+        const scases = Object.keys(savedSpecialCases);
+        if (scases.length > 0) {
+            scases.forEach(policyNo => {
+                const caseData = savedSpecialCases[policyNo];
+                const newRow = createSpecialCaseRow(policyNo, caseData.name, caseData.type, caseData.issue);
+                activeSpecialCasesTable.appendChild(newRow);
+            });
+        } else {
+            activeSpecialCasesTable.innerHTML = '<tr><td colspan="5" class="px-4 py-8 text-center text-gray-500">No active special cases</td></tr>';
+        }
+    }
+
+    // Populate Completed Special Cases Table
+    populateCompletedCases('completedSpecialCasesTable', completedSpecialCases, createCompletedSpecialCaseRow);
 }
 
 // Special Case Save functionality
@@ -604,12 +677,11 @@ document.getElementById('saveSpecialCase')?.addEventListener('click', function()
         }
 
         // Save the completed case data
-        completedSpecialCases.push({
-            policyNo: policyNo,
-            name: name,
-            type: type,
-            issue: issue
-        });
+        const completed = { policyNo, name, type, issue };
+        completedSpecialCases.push(completed);
+        // Append to completed special cases table immediately
+        const completedRow = createCompletedSpecialCaseRow(completed);
+        completedTableBody.appendChild(completedRow);
 
         // Remove from active cases
         var activeTableBody = document.getElementById('activeSpecialCasesTable');
@@ -1067,6 +1139,7 @@ paymentDone?.addEventListener('change', function () {
     
             const completedRow = document.createElement('tr');
             completedRow.className = 'lic-table-row border-t transition-all duration-300';
+            completedRow.dataset.policyNo = policyNo;
             completedRow.innerHTML = `
                 <td class="px-6 py-4 font-semibold text-gray-300">${policyNo}</td>
                 <td class="px-6 py-4 font-semibold text-gray-300">${name}</td>
@@ -1340,20 +1413,52 @@ const PLAN_179 = {
   "57": {"12":129.95,"16":null,"20":null}
 };
 
-        // --- Bootstrap plans into IndexedDB if not present ---
-        (async function bootstrapPlans() {
-            await openDB();
-            const plans = await idbGetAll(STORE.plans);
-            const planKeys = plans.map(p => p.plan);
-            if (!planKeys.includes('111')) await idbPut(STORE.plans, { plan: '111', data: PLAN_111 });
-            if (!planKeys.includes('150')) await idbPut(STORE.plans, { plan: '150', data: PLAN_150 });
-            if (!planKeys.includes('179')) await idbPut(STORE.plans, { plan: '179', data: PLAN_179 });
-        })();
-
         // --- Premium Calculator Logic ---
         const MODE_MULTIPLIERS = { YLY: 1, HLY: 0.51, QLY: 0.26, MLY: 0.085 };
         async function getTabularPremium(plan, age, term) {
-            // ...existing premium calculation logic (if any)...
+            try {
+                const plans = await idbGetAll(STORE.plans);
+                const rec = plans.find(p => p.plan === String(plan));
+                const table = rec?.data;
+                if (!table) return null;
+                const raw = table[String(age)]?.[String(term)];
+                const val = typeof raw === 'string' ? parseFloat(raw) : raw;
+                return Number.isFinite(val) ? val : null;
+            } catch (e) {
+                console.error('getTabularPremium error', e);
+                return null;
+            }
+        }
+
+        // Handlers to remove completed rows (delegated in setupTableEventListeners)
+        function removeCompletedRow(el) {
+            const row = el.closest('tr');
+            const policyNo = row?.dataset?.policyNo || row?.querySelector('td')?.textContent;
+            if (!row || !policyNo) return;
+            row.remove();
+            const idx = completedDeathCases.findIndex(c => c.policyNo === policyNo);
+            if (idx !== -1) completedDeathCases.splice(idx, 1);
+            saveToStorage();
+            updateCounters();
+            const body = document.getElementById('completedDeathClaimsTable');
+            if (body && body.children.length === 0) {
+                body.innerHTML = '<tr><td colspan="5" class="px-4 py-8 text-center text-gray-500">No completed cases</td></tr>';
+            }
+        }
+
+        function removeCompletedSpecialRow(el) {
+            const row = el.closest('tr');
+            const policyNo = row?.dataset?.policyNo || row?.querySelector('td')?.textContent;
+            if (!row || !policyNo) return;
+            row.remove();
+            const idx = completedSpecialCases.findIndex(c => c.policyNo === policyNo);
+            if (idx !== -1) completedSpecialCases.splice(idx, 1);
+            saveToStorage();
+            updateCounters();
+            const body = document.getElementById('completedSpecialCasesTable');
+            if (body && body.children.length === 0) {
+                body.innerHTML = '<tr><td colspan="5" class="px-4 py-8 text-center text-gray-500">No completed cases</td></tr>';
+            }
         }
 
 
