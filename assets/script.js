@@ -298,18 +298,6 @@ document.addEventListener('DOMContentLoaded', function() {
         // Optionally, show an error message to the user on the UI
     });
 
-    // Code that does NOT depend on the database can stay here
-    // For example, the collapsible functionality
-    document.querySelectorAll('.collapsible-header').forEach(header => {
-        header.addEventListener('click', function () {
-            const target = document.getElementById(this.dataset.target);
-            var arrow = this.querySelector('span:last-child');
-            
-            target.classList.toggle('active');
-            arrow.style.transform = target.classList.contains('active') ? 'rotate(180deg)' : 'rotate(0deg)';
-        });
-    });
-
     // ... (any other non-DB dependent setup)
 
 });
@@ -417,15 +405,7 @@ function formatDateInput(input) {
 }
 
 
-document.getElementById('commencementDate')?.addEventListener('input', function() {
-    formatDateInput(this);
-    calculateDuration();
-});
-
-document.getElementById('deathDate')?.addEventListener('input', function() {
-    formatDateInput(this);
-    calculateDuration();
-});
+// Date input listeners are already attached after DB init; avoid duplicate bindings here.
 
 
 
