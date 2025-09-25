@@ -1690,6 +1690,8 @@ const PLAN_174 = {
 // ===================== Claims Follow-up =====================
 let followUps = {}; // keyed by policyNo
 let followUpColumns = []; // dynamic column keys in display order (from pasted data)
+// Persisted UI preference to show/hide editable detail columns (Agent, phones, remarks)
+let followUpShowDetails = (localStorage.getItem('followUpShowDetails') ?? '1') !== '0';
 
 function setupFollowUpsUI() {
     const updateBtn = document.getElementById('followUpUpdateBtn');
@@ -1701,6 +1703,8 @@ function setupFollowUpsUI() {
     const openFullscreen = document.getElementById('followUpOpenFullscreen');
     const modal = document.getElementById('followUpModal');
     const modalClose = document.getElementById('followUpModalClose');
+    const toggleDetailsBtn = document.getElementById('followUpToggleDetails');
+    const modalToggleDetailsBtn = document.getElementById('followUpModalToggleDetails');
 
     // Load persisted follow-ups on init
     loadFollowUps();
@@ -1760,6 +1764,23 @@ function setupFollowUpsUI() {
     });
     modal?.addEventListener('click', (e) => {
         if (e.target === modal) modal.classList.add('hidden');
+    });
+
+    // Toggle Details (panel)
+    toggleDetailsBtn?.addEventListener('click', () => {
+        followUpShowDetails = !followUpShowDetails;
+        localStorage.setItem('followUpShowDetails', followUpShowDetails ? '1' : '0');
+        // Re-render both views
+        renderFollowUps();
+        if (!modal?.classList.contains('hidden')) renderFollowUps(true);
+    });
+    // Toggle Details (modal)
+    modalToggleDetailsBtn?.addEventListener('click', () => {
+        followUpShowDetails = !followUpShowDetails;
+        localStorage.setItem('followUpShowDetails', followUpShowDetails ? '1' : '0');
+        renderFollowUps(true);
+        // Also update panel if visible
+        renderFollowUps();
     });
 }
 
@@ -1925,8 +1946,10 @@ function renderFollowUps(toModal = false) {
     // Build dynamic headers (Status first, then dynamic parsed headers, then local fields)
     const staticLeft = '<th class="px-4 py-3 text-left font-bold text-gray-200">Status</th>';
     const dyn = (followUpColumns || []).filter(k => k !== 'policyNo').map(k => `<th class="px-6 py-3 text-left font-bold text-gray-200">${humanizeKey(k)}</th>`).join('');
-    const staticRight = ['Agent','Agent Mob','Customer No','Customer OP','Remarks']
-        .map(h => `<th class="px-6 py-3 text-left font-bold text-gray-200">${h}</th>`).join('');
+    const staticRight = followUpShowDetails
+        ? ['Agent','Agent Mob','Customer No','Customer OP','Remarks']
+            .map(h => `<th class="px-6 py-3 text-left font-bold text-gray-200">${h}</th>`).join('')
+        : '';
     head.innerHTML = staticLeft + `<th class="px-6 py-3 text-left font-bold text-gray-200">Policy No</th>` + dyn + staticRight;
 
     const rows = Object.values(followUps);
@@ -1972,22 +1995,27 @@ function createFollowUpRow(item, toModal = false) {
         tds.push(td);
     });
 
-    // Local editable fields
-    const mkInput = (val='') => `<input type="text" class="dark-input px-3 py-2 rounded-lg w-full" value="${escapeAttr(val)}">`;
-    const agent = htmlTd(mkInput(item.agent||''));
-    const agentMobile = htmlTd(mkInput(item.agentMobile||''));
-    const customerNo = htmlTd(mkInput(item.customerNo||''));
-    const customerOP = htmlTd(mkInput(item.customerOP||''));
-    const remarks = htmlTd(mkInput(item.remarks||''));
+    // Local editable fields (conditionally rendered)
+    let agent, agentMobile, customerNo, customerOP, remarks;
+    if (followUpShowDetails) {
+        const mkInput = (val='') => `<input type="text" class="dark-input px-3 py-2 rounded-lg w-full" value="${escapeAttr(val)}">`;
+        agent = htmlTd(mkInput(item.agent||''));
+        agentMobile = htmlTd(mkInput(item.agentMobile||''));
+        customerNo = htmlTd(mkInput(item.customerNo||''));
+        customerOP = htmlTd(mkInput(item.customerOP||''));
+        remarks = htmlTd(mkInput(item.remarks||''));
+    }
 
     // Compose row
     tr.appendChild(statusCell);
     tds.forEach(td => tr.appendChild(td));
-    tr.appendChild(agent);
-    tr.appendChild(agentMobile);
-    tr.appendChild(customerNo);
-    tr.appendChild(customerOP);
-    tr.appendChild(remarks);
+    if (followUpShowDetails) {
+        tr.appendChild(agent);
+        tr.appendChild(agentMobile);
+        tr.appendChild(customerNo);
+        tr.appendChild(customerOP);
+        tr.appendChild(remarks);
+    }
 
     // Bind change listeners
     const radios = statusCell.querySelectorAll('input[type="radio"]');
@@ -2004,14 +2032,16 @@ function createFollowUpRow(item, toModal = false) {
 
     tr.addEventListener('input', () => {
         const rec = followUps[item.policyNo] ||= { policyNo: item.policyNo };
+        // Only update when details are shown (inputs exist)
+        if (!followUpShowDetails) return;
         const allTds = tr.querySelectorAll('td');
         const start = 1 + (followUpColumns?.length || 1); // after status + policy + dynamic cols
         const [agentTD, agentMobTD, custNoTD, custOPTD, remarksTD] = Array.from(allTds).slice(start, start + 5);
-        rec.agent = agentTD?.querySelector('input')?.value || '';
-        rec.agentMobile = agentMobTD?.querySelector('input')?.value || '';
-        rec.customerNo = custNoTD?.querySelector('input')?.value || '';
-        rec.customerOP = custOPTD?.querySelector('input')?.value || '';
-        rec.remarks = remarksTD?.querySelector('input')?.value || '';
+        if (agentTD) rec.agent = agentTD.querySelector('input')?.value || '';
+        if (agentMobTD) rec.agentMobile = agentMobTD.querySelector('input')?.value || '';
+        if (custNoTD) rec.customerNo = custNoTD.querySelector('input')?.value || '';
+        if (custOPTD) rec.customerOP = custOPTD.querySelector('input')?.value || '';
+        if (remarksTD) rec.remarks = remarksTD.querySelector('input')?.value || '';
     });
 
     return tr;

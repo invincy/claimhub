@@ -653,6 +653,7 @@
                                 </div>
                                 <button id="followUpUpdateBtn" class="btn-primary px-4 py-2 rounded-xl font-semibold text-sm">Update List</button>
                                 <button id="followUpSaveAllBtn" class="btn-primary px-4 py-2 rounded-xl font-semibold text-sm">Save All</button>
+                                <button id="followUpToggleDetails" class="btn-ghost px-4 py-2 rounded-xl font-semibold text-sm">Toggle Details</button>
                                 <button id="followUpOpenFullscreen" class="btn-ghost px-4 py-2 rounded-xl font-semibold text-sm">Open Fullscreen</button>
                             </div>
                             <div id="followUpPasteBox" class="hidden mb-4">
@@ -701,7 +702,7 @@
 
     <!-- IMPORTANT: You may need to remove the old particle animation logic from assets/script.js to prevent conflicts. -->
     <!-- Cache-busting query to ensure latest script is fetched by the browser/CDN -->
-    <script src="assets/script.js?v=20250925.8" defer></script>
+    <script src="assets/script.js?v=20250925.9" defer></script>
     <script>
     (function() {
         const html = document.documentElement;
@@ -815,6 +816,7 @@
                         <span class="counter-badge px-3 py-1 rounded-full" data-status="blue">0 Blue</span>
                         <span class="counter-badge px-3 py-1 rounded-full" data-status="green">0 Green</span>
                     </div>
+                    <button id="followUpModalToggleDetails" class="btn-ghost px-3 py-1 rounded-lg">Toggle Details</button>
                     <button id="followUpModalClose" class="btn-ghost px-3 py-1 rounded-lg">Close</button>
                 </div>
             </div>
