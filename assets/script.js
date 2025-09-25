@@ -1689,6 +1689,7 @@ const PLAN_174 = {
 
 // ===================== Claims Follow-up =====================
 let followUps = {}; // keyed by policyNo
+let followUpColumns = []; // dynamic column keys in display order (from pasted data)
 
 function setupFollowUpsUI() {
     const updateBtn = document.getElementById('followUpUpdateBtn');
@@ -1697,6 +1698,9 @@ function setupFollowUpsUI() {
     const saveAllBtn = document.getElementById('followUpSaveAllBtn');
     const pasteBox = document.getElementById('followUpPasteBox');
     const pasteInput = document.getElementById('followUpPasteInput');
+    const openFullscreen = document.getElementById('followUpOpenFullscreen');
+    const modal = document.getElementById('followUpModal');
+    const modalClose = document.getElementById('followUpModalClose');
 
     // Load persisted follow-ups on init
     loadFollowUps();
@@ -1711,8 +1715,9 @@ function setupFollowUpsUI() {
     parseBtn?.addEventListener('click', async () => {
         const raw = pasteInput.value.trim();
         if (!raw) { showToast('Nothing to parse'); return; }
-        const parsed = parseOutstanding(raw);
+        const { rows: parsed, columns } = parseOutstanding(raw);
         if (parsed.length === 0) { showToast('No rows detected'); return; }
+        followUpColumns = columns; // remember column layout
         // Merge by policyNo, preserve existing fields (remarks, agent details, status)
         const incomingKeys = new Set();
         parsed.forEach(row => {
@@ -1721,10 +1726,10 @@ function setupFollowUpsUI() {
             const existing = followUps[row.policyNo] || {};
             followUps[row.policyNo] = {
                 policyNo: row.policyNo,
-                sr: row.sr || existing.sr || '',
-                name: row.name || existing.name || '',
+                // bring across all parsed columns into the record for display
+                ...Object.fromEntries(columns.map(k => [k, row[k] ?? existing[k] ?? ''])),
                 // preserved fields
-                status: existing.status || 'yellow',
+                status: existing.status || 'grey',
                 agent: existing.agent || '',
                 agentMobile: existing.agentMobile || '',
                 customerNo: existing.customerNo || '',
@@ -1744,34 +1749,121 @@ function setupFollowUpsUI() {
         await saveFollowUps();
         showToast('Follow-up entries saved.');
     });
+
+    openFullscreen?.addEventListener('click', () => {
+        if (!modal) return;
+        modal.classList.remove('hidden');
+        renderFollowUps(true); // render into modal
+    });
+    modalClose?.addEventListener('click', () => {
+        modal?.classList.add('hidden');
+    });
+    modal?.addEventListener('click', (e) => {
+        if (e.target === modal) modal.classList.add('hidden');
+    });
 }
 
 function parseOutstanding(raw) {
-    // Accept either pasted HTML table or TSV/CSV-like text
+    // Accept HTML table or CSV/TSV text; return { rows, columns }
     if (/</.test(raw)) {
         // Attempt HTML parsing
         const div = document.createElement('div');
         div.innerHTML = raw;
-        const rows = Array.from(div.querySelectorAll('tr'));
-        return rows.map(tr => Array.from(tr.querySelectorAll('td,th')).map(td => td.textContent.trim()))
-            .filter(cols => cols.length >= 2)
-            .map(cols => mapColsToFollowUp(cols));
+        const trs = Array.from(div.querySelectorAll('tr'));
+        const matrix = trs.map(tr => Array.from(tr.querySelectorAll('td,th')).map(td => td.textContent.trim()));
+        return matrixToFollowUps(matrix);
     }
-    // Fallback: split lines, then split by tab or comma
-    return raw.split(/\r?\n/)
-        .map(line => line.split(/\t|,\s*/).map(s => s.trim()).filter(Boolean))
-        .filter(cols => cols.length >= 2)
-        .map(cols => mapColsToFollowUp(cols));
+    // Text: split lines, then split by comma (CSV) or tab
+    const lines = raw.split(/\r?\n/).filter(l => l.trim().length);
+    const matrix = lines.map(line => {
+        // Choose delimiter: comma if appears with quoted fields, else tab or comma
+        if (line.includes(',') ) {
+            return splitCsvLine(line);
+        }
+        return line.split(/\t/).map(s => s.trim());
+    });
+    return matrixToFollowUps(matrix);
 }
 
-function mapColsToFollowUp(cols) {
-    // Assume first two columns: Sr, Policy No, third optional Name
-    const sr = cols[0] || '';
-    // Extract numeric chunk for policy number if mixed text
-    const policyNoRaw = cols[1] || '';
-    const policyNo = (policyNoRaw.match(/[A-Za-z0-9-]+/) || [policyNoRaw])[0];
-    const name = cols[2] || '';
-    return { sr, policyNo, name };
+function matrixToFollowUps(matrix) {
+    // First row may be headers if any cell contains letters or spaces.
+    let header = matrix[0] || [];
+    const headerLooksLikeHeader = header.some(c => /[A-Za-z]/.test(c));
+    let rows = matrix;
+    if (headerLooksLikeHeader) {
+        rows = matrix.slice(1);
+    } else {
+        // synthesize headers for first few columns
+        header = ['Sr', 'Policy Number', 'Name'];
+    }
+    // Normalize header names to camelCase keys
+    const keys = header.map(h => normalizeHeader(h));
+    // Ensure essential keys exist
+    if (!keys.includes('policyNo') && keys.includes('policyNumber')) {
+        // ok
+    }
+    const columns = [];
+    const pushCol = k => { if (!columns.includes(k)) columns.push(k); };
+    // Build rows
+    const out = [];
+    rows.forEach(cols => {
+        const rec = {};
+        for (let i=0;i<cols.length;i++) {
+            const kRaw = keys[i] || `col${i+1}`;
+            const k = kRaw;
+            const val = cols[i]?.trim?.() ?? '';
+            rec[k] = val;
+            pushCol(k);
+        }
+        // Extract policy number from known fields
+        const pRaw = rec.policyNo || rec.policyNumber || rec.policy || rec['policy no'] || rec['policynumber'] || '';
+        const policyNo = (String(pRaw).match(/[A-Za-z0-9-]+/) || [String(pRaw)])[0];
+        if (!policyNo) return; // skip
+        rec.policyNo = policyNo;
+        pushCol('policyNo');
+        out.push(rec);
+    });
+    // Prefer a nice default ordering: policyNo first then common columns
+    const preferred = ['policyNo', 'plan', 'termYears', 'term', 'dueDate', 'address', 'claimAmount', 'outstandingStatus', 'name'];
+    const ordered = ['policyNo'];
+    preferred.forEach(k => { if (columns.includes(k) && !ordered.includes(k)) ordered.push(k); });
+    columns.forEach(k => { if (!ordered.includes(k)) ordered.push(k); });
+    return { rows: out, columns: ordered };
+}
+
+function splitCsvLine(line) {
+    // basic CSV splitter with quotes
+    const result = [];
+    let cur = '';
+    let inQuotes = false;
+    for (let i=0;i<line.length;i++) {
+        const ch = line[i];
+        if (ch === '"') {
+            if (inQuotes && line[i+1] === '"') { cur += '"'; i++; }
+            else inQuotes = !inQuotes;
+        } else if (ch === ',' && !inQuotes) {
+            result.push(cur.trim()); cur='';
+        } else {
+            cur += ch;
+        }
+    }
+    result.push(cur.trim());
+    return result;
+}
+
+function normalizeHeader(h) {
+    const s = String(h || '').toLowerCase().trim();
+    if (!s) return '';
+    // map common names
+    if (s.startsWith('policy')) return 'policyNo';
+    if (s === 'plan') return 'plan';
+    if (s.includes('term')) return 'termYears';
+    if (s.includes('due')) return 'dueDate';
+    if (s.includes('address')) return 'address';
+    if (s.includes('amount')) return 'claimAmount';
+    if (s.includes('status')) return 'outstandingStatus';
+    if (s.includes('name')) return 'name';
+    return s.replace(/[^a-z0-9]+([a-z0-9])/g, (_, c) => c.toUpperCase());
 }
 
 async function loadFollowUps() {
@@ -1797,64 +1889,135 @@ async function saveFollowUps() {
     });
 }
 
-function renderFollowUps() {
-    const body = document.getElementById('followUpTableBody');
-    if (!body) return;
+function renderFollowUps(toModal = false) {
+    const body = document.getElementById(toModal ? 'followUpModalBody' : 'followUpTableBody');
+    const head = document.getElementById(toModal ? 'followUpModalHead' : 'followUpTableHead');
+    const countersWrap = document.getElementById(toModal ? 'followUpCountersModal' : 'followUpCounters');
+    if (!body || !head) return;
     body.innerHTML = '';
+    // Build dynamic headers (Status first, then dynamic parsed headers, then local fields)
+    const staticLeft = '<th class="px-4 py-3 text-left font-bold text-gray-200">Status</th>';
+    const dyn = (followUpColumns || []).filter(k => k !== 'policyNo').map(k => `<th class="px-6 py-3 text-left font-bold text-gray-200">${humanizeKey(k)}</th>`).join('');
+    const staticRight = ['Agent','Agent Mob','Customer No','Customer OP','Remarks']
+        .map(h => `<th class="px-6 py-3 text-left font-bold text-gray-200">${h}</th>`).join('');
+    head.innerHTML = staticLeft + `<th class="px-6 py-3 text-left font-bold text-gray-200">Policy No</th>` + dyn + staticRight;
+
     const rows = Object.values(followUps);
     if (rows.length === 0) {
-        body.innerHTML = '<tr><td colspan="9" class="px-6 py-12 text-center text-gray-400 font-medium text-lg">— No follow-up items</td></tr>';
+        body.innerHTML = '<tr><td class="px-6 py-12 text-center text-gray-400 font-medium text-lg">— No follow-up items</td></tr>';
+        updateFollowUpCounters(countersWrap, []);
         return;
     }
-    rows.sort((a,b) => (a.sr||'').toString().localeCompare((b.sr||'').toString(), undefined, { numeric: true }));
-    rows.forEach((r, idx) => body.appendChild(createFollowUpRow(r, idx+1)));
+    // Sort by policyNo for consistency
+    rows.sort((a,b) => String(a.policyNo).localeCompare(String(b.policyNo), undefined, { numeric: true }));
+    rows.forEach(rec => body.appendChild(createFollowUpRow(rec, toModal)));
+    updateFollowUpCounters(countersWrap, rows);
 }
 
-function createFollowUpRow(item, fallbackSr) {
+function createFollowUpRow(item, toModal = false) {
     const tr = document.createElement('tr');
     tr.className = 'border-t transition-all duration-300';
     tr.dataset.policyNo = item.policyNo;
-    const status = item.status || 'yellow';
-    tr.innerHTML = `
-        <td class="px-6 py-3 text-gray-300">${item.sr || fallbackSr}</td>
-        <td class="px-6 py-3 text-gray-300 font-semibold">${item.policyNo}</td>
-        <td class="px-6 py-3 text-gray-300">${item.name || ''}</td>
-        <td class="px-6 py-3">
-            <div class="flex items-center gap-3">
-                <label class="flex items-center text-gray-300"><input type="radio" name="status-${item.policyNo}" value="red" class="radio-modern mr-2" ${status==='red'?'checked':''}><span>🔴</span></label>
-                <label class="flex items-center text-gray-300"><input type="radio" name="status-${item.policyNo}" value="yellow" class="radio-modern mr-2" ${status==='yellow'?'checked':''}><span>🟡</span></label>
-                <label class="flex items-center text-gray-300"><input type="radio" name="status-${item.policyNo}" value="blue" class="radio-modern mr-2" ${status==='blue'?'checked':''}><span>🔵</span></label>
-                <label class="flex items-center text-gray-300"><input type="radio" name="status-${item.policyNo}" value="green" class="radio-modern mr-2" ${status==='green'?'checked':''}><span>🟢</span></label>
-            </div>
-        </td>
-        <td class="px-6 py-3"><input type="text" class="dark-input px-3 py-2 rounded-lg w-full" value="${escapeAttr(item.agent||'')}"></td>
-        <td class="px-6 py-3"><input type="text" class="dark-input px-3 py-2 rounded-lg w-full" value="${escapeAttr(item.agentMobile||'')}"></td>
-        <td class="px-6 py-3"><input type="text" class="dark-input px-3 py-2 rounded-lg w-full" value="${escapeAttr(item.customerNo||'')}"></td>
-        <td class="px-6 py-3"><input type="text" class="dark-input px-3 py-2 rounded-lg w-full" value="${escapeAttr(item.customerOP||'')}"></td>
-        <td class="px-6 py-3"><input type="text" class="dark-input px-3 py-2 rounded-lg w-full" value="${escapeAttr(item.remarks||'')}"></td>
-    `;
-    // Bind change events to update in-memory model
-    const inputs = tr.querySelectorAll('input');
-    inputs.forEach(inp => {
-        if (inp.type === 'radio') {
-            inp.addEventListener('change', () => {
-                if (inp.checked) (followUps[item.policyNo] ||= {}).status = inp.value;
-            });
-        } else {
-            inp.addEventListener('input', () => {
-                const cells = tr.querySelectorAll('td');
-                const [ , , , , agent, agentMobile, customerNo, customerOP, remarks] = cells;
-                const getVal = td => td.querySelector('input')?.value || '';
-                const rec = followUps[item.policyNo] ||= { policyNo: item.policyNo };
-                rec.agent = getVal(agent);
-                rec.agentMobile = getVal(agentMobile);
-                rec.customerNo = getVal(customerNo);
-                rec.customerOP = getVal(customerOP);
-                rec.remarks = getVal(remarks);
-            });
-        }
+    applyRowStatusColor(tr, item.status);
+
+    const statusCell = document.createElement('td');
+    statusCell.className = 'px-4 py-3';
+    statusCell.innerHTML = `
+        <div class="flex flex-col gap-1">
+            <label class="flex items-center text-gray-300"><input type="radio" name="status-${item.policyNo}" value="red" class="radio-modern mr-2" ${item.status==='red'?'checked':''}><span>🔴</span></label>
+            <label class="flex items-center text-gray-300"><input type="radio" name="status-${item.policyNo}" value="yellow" class="radio-modern mr-2" ${item.status==='yellow'?'checked':''}><span>🟡</span></label>
+            <label class="flex items-center text-gray-300"><input type="radio" name="status-${item.policyNo}" value="blue" class="radio-modern mr-2" ${item.status==='blue'?'checked':''}><span>🔵</span></label>
+            <label class="flex items-center text-gray-300"><input type="radio" name="status-${item.policyNo}" value="green" class="radio-modern mr-2" ${item.status==='green'?'checked':''}><span>🟢</span></label>
+        </div>`;
+
+    const tds = [];
+    const policyCell = document.createElement('td');
+    policyCell.className = 'px-6 py-3 text-gray-300 font-semibold';
+    policyCell.textContent = item.policyNo;
+    tds.push(policyCell);
+
+    // Dynamic columns
+    (followUpColumns || []).filter(k => k !== 'policyNo').forEach(k => {
+        const td = document.createElement('td');
+        // Address may be long; allow wrapping and multi-line
+        td.className = 'px-6 py-3 text-gray-300 align-top';
+        td.textContent = item[k] ?? '';
+        tds.push(td);
     });
+
+    // Local editable fields
+    const mkInput = (val='') => `<input type="text" class="dark-input px-3 py-2 rounded-lg w-full" value="${escapeAttr(val)}">`;
+    const agent = htmlTd(mkInput(item.agent||''));
+    const agentMobile = htmlTd(mkInput(item.agentMobile||''));
+    const customerNo = htmlTd(mkInput(item.customerNo||''));
+    const customerOP = htmlTd(mkInput(item.customerOP||''));
+    const remarks = htmlTd(mkInput(item.remarks||''));
+
+    // Compose row
+    tr.appendChild(statusCell);
+    tds.forEach(td => tr.appendChild(td));
+    tr.appendChild(agent);
+    tr.appendChild(agentMobile);
+    tr.appendChild(customerNo);
+    tr.appendChild(customerOP);
+    tr.appendChild(remarks);
+
+    // Bind change listeners
+    const radios = statusCell.querySelectorAll('input[type="radio"]');
+    radios.forEach(r => r.addEventListener('change', () => {
+        if (r.checked) {
+            (followUps[item.policyNo] ||= {}).status = r.value;
+            applyRowStatusColor(tr, r.value);
+            // update counters in both views if present
+            renderFollowUps();
+            const modal = document.getElementById('followUpModal');
+            if (!modal?.classList.contains('hidden')) renderFollowUps(true);
+        }
+    }));
+
+    const inputs = tr.querySelectorAll('input[type="text"]');
+    inputs.forEach(() => {
+        tr.addEventListener('input', () => {
+            const rec = followUps[item.policyNo] ||= { policyNo: item.policyNo };
+            const allTds = tr.querySelectorAll('td');
+            const offset = 1 /*status*/ + 1 /*policy*/ + (followUpColumns?.length||1) - 1; // policyNo removed
+            const [agentTD, agentMobTD, custNoTD, custOPTD, remarksTD] = Array.from(allTds).slice(1 + (followUpColumns?.length||1), 1 + (followUpColumns?.length||1) + 5);
+            rec.agent = agentTD.querySelector('input')?.value || '';
+            rec.agentMobile = agentMobTD.querySelector('input')?.value || '';
+            rec.customerNo = custNoTD.querySelector('input')?.value || '';
+            rec.customerOP = custOPTD.querySelector('input')?.value || '';
+            rec.remarks = remarksTD.querySelector('input')?.value || '';
+        }, { once: true });
+    });
+
     return tr;
+}
+
+function htmlTd(inner) { const td = document.createElement('td'); td.className = 'px-6 py-3'; td.innerHTML = inner; return td; }
+
+function applyRowStatusColor(tr, status) {
+    tr.style.backgroundColor = '';
+    tr.style.filter = '';
+    const color = ({red:'#3b0000', yellow:'#3b2f00', blue:'#001a3b', green:'#003b16', grey:'#1f2937'})[status||'grey'];
+    tr.style.backgroundColor = color;
+    tr.style.filter = 'brightness(1.05)';
+}
+
+function updateFollowUpCounters(container, rows) {
+    if (!container) return;
+    const counts = { grey:0, red:0, yellow:0, blue:0, green:0 };
+    rows.forEach(r => counts[(r.status||'grey')]++);
+    Array.from(container.querySelectorAll('[data-status]')).forEach(span => {
+        const s = span.getAttribute('data-status');
+        const label = s.charAt(0).toUpperCase() + s.slice(1);
+        span.textContent = `${counts[s]} ${label}`;
+    });
+}
+
+function humanizeKey(k) {
+    if (!k) return '';
+    if (k === 'policyNo') return 'Policy No';
+    return String(k).replace(/([A-Z])/g, ' $1').replace(/^./, c => c.toUpperCase());
 }
 
 function escapeAttr(s) { return String(s).replace(/"/g, '&quot;'); }
