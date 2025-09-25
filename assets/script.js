@@ -1973,12 +1973,13 @@ function createFollowUpRow(item, toModal = false) {
     const statusCell = document.createElement('td');
     statusCell.className = 'px-4 py-3';
     statusCell.innerHTML = `
-        <div class="flex flex-col gap-1">
-            <label class="flex items-center text-gray-300"><input type="radio" name="status-${item.policyNo}" value="red" class="radio-modern mr-2" ${item.status==='red'?'checked':''}><span>🔴</span></label>
-            <label class="flex items-center text-gray-300"><input type="radio" name="status-${item.policyNo}" value="yellow" class="radio-modern mr-2" ${item.status==='yellow'?'checked':''}><span>🟡</span></label>
-            <label class="flex items-center text-gray-300"><input type="radio" name="status-${item.policyNo}" value="blue" class="radio-modern mr-2" ${item.status==='blue'?'checked':''}><span>🔵</span></label>
-            <label class="flex items-center text-gray-300"><input type="radio" name="status-${item.policyNo}" value="green" class="radio-modern mr-2" ${item.status==='green'?'checked':''}><span>🟢</span></label>
-        </div>`;
+        <select class="dark-input px-2 py-2 rounded-lg">
+            <option value="grey" ${!item.status || item.status==='grey' ? 'selected' : ''}>Grey (Unattended)</option>
+            <option value="red" ${item.status==='red' ? 'selected' : ''}>Red</option>
+            <option value="yellow" ${item.status==='yellow' ? 'selected' : ''}>Yellow</option>
+            <option value="blue" ${item.status==='blue' ? 'selected' : ''}>Blue</option>
+            <option value="green" ${item.status==='green' ? 'selected' : ''}>Green</option>
+        </select>`;
 
     const tds = [];
     const policyCell = document.createElement('td');
@@ -2017,18 +2018,21 @@ function createFollowUpRow(item, toModal = false) {
         tr.appendChild(remarks);
     }
 
-    // Bind change listeners
-    const radios = statusCell.querySelectorAll('input[type="radio"]');
-    radios.forEach(r => r.addEventListener('change', () => {
-        if (r.checked) {
-            (followUps[item.policyNo] ||= {}).status = r.value;
-            applyRowStatusColor(tr, r.value);
-            // update counters in both views if present
-            renderFollowUps();
-            const modal = document.getElementById('followUpModal');
-            if (!modal?.classList.contains('hidden')) renderFollowUps(true);
+    // Bind change listener on dropdown
+    const statusSelect = statusCell.querySelector('select');
+    statusSelect.addEventListener('change', (e) => {
+        const value = e.target.value;
+        (followUps[item.policyNo] ||= {}).status = value;
+        applyRowStatusColor(tr, value);
+        // Update counters without rebuilding the whole table
+        const panelCounters = document.getElementById('followUpCounters');
+        if (panelCounters) updateFollowUpCounters(panelCounters, Object.values(followUps));
+        const modalEl = document.getElementById('followUpModal');
+        if (modalEl && !modalEl.classList.contains('hidden')) {
+            const modalCounters = document.getElementById('followUpCountersModal');
+            if (modalCounters) updateFollowUpCounters(modalCounters, Object.values(followUps));
         }
-    }));
+    });
 
     tr.addEventListener('input', () => {
         const rec = followUps[item.policyNo] ||= { policyNo: item.policyNo };
