@@ -2057,17 +2057,16 @@ function applyRowStatusColor(tr, status) {
     // Reset styles first
     tr.style.backgroundColor = '';
     tr.style.filter = '';
-    // Use subtle tints for better readability; leave default for grey/unset
-    const map = {
-        red:   'rgba(255, 0, 0, 0.08)',
-        yellow:'rgba(255, 200, 0, 0.10)',
-        blue:  'rgba(0, 128, 255, 0.08)',
-        green: 'rgba(0, 200, 120, 0.08)'
+    tr.style.color = '';
+    // Prefer text color to indicate status; keep background default
+    const colors = {
+        red:   '#ff6b6b',
+        yellow:'#ffd166',
+        blue:  '#60a5fa',
+        green: '#34d399'
     };
-    const c = map[status];
-    if (c) {
-        tr.style.backgroundColor = c;
-    }
+    const c = colors[status];
+    tr.style.color = c || '';
 }
 
 function updateFollowUpCounters(container, rows) {
