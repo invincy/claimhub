@@ -671,7 +671,7 @@
                                     <h4 class="font-bold text-white text-lg flex items-center gap-2">Follow-up Items</h4>
                                 </div>
                                 <div class="overflow-x-auto">
-                                    <table class="w-full text-sm">
+                                    <table class="followup-table text-sm">
                                         <thead class="dark-table-header">
                                             <tr id="followUpTableHead">
                                                 <th class="px-4 py-3 text-left font-bold text-gray-200">Status</th>
@@ -801,6 +801,10 @@
   position: relative;
   z-index: 1;
 }
+/* Follow-up: horizontal scrolling support by forcing table min width */
+.followup-table {
+    min-width: 1200px;
+}
     </style>
 
     <!-- Fullscreen Follow-up Modal -->
@@ -822,7 +826,7 @@
             </div>
             <div class="dark-table rounded-2xl border border-gray-600/30 shadow-2xl overflow-hidden flex-1 flex flex-col">
                 <div class="overflow-x-auto">
-                    <table class="w-full text-sm">
+                    <table class="followup-table text-sm">
                         <thead class="dark-table-header">
                             <tr id="followUpModalHead">
                                 <th class="px-4 py-3 text-left font-bold text-gray-200">Status</th>
@@ -837,7 +841,7 @@
                     </table>
                 </div>
                 <div class="overflow-auto flex-1">
-                    <table class="w-full text-sm">
+                    <table class="followup-table text-sm">
                         <tbody id="followUpModalBody">
                             <tr>
                                 <td class="px-6 py-12 text-center text-gray-400 font-medium text-lg">— No follow-up items</td>

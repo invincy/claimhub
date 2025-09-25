@@ -2054,11 +2054,20 @@ function createFollowUpRow(item, toModal = false) {
 function htmlTd(inner) { const td = document.createElement('td'); td.className = 'px-6 py-3'; td.innerHTML = inner; return td; }
 
 function applyRowStatusColor(tr, status) {
+    // Reset styles first
     tr.style.backgroundColor = '';
     tr.style.filter = '';
-    const color = ({red:'#3b0000', yellow:'#3b2f00', blue:'#001a3b', green:'#003b16', grey:'#1f2937'})[status||'grey'];
-    tr.style.backgroundColor = color;
-    tr.style.filter = 'brightness(1.05)';
+    // Use subtle tints for better readability; leave default for grey/unset
+    const map = {
+        red:   'rgba(255, 0, 0, 0.08)',
+        yellow:'rgba(255, 200, 0, 0.10)',
+        blue:  'rgba(0, 128, 255, 0.08)',
+        green: 'rgba(0, 200, 120, 0.08)'
+    };
+    const c = map[status];
+    if (c) {
+        tr.style.backgroundColor = c;
+    }
 }
 
 function updateFollowUpCounters(container, rows) {
