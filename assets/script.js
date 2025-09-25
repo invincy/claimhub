@@ -1773,28 +1773,36 @@ function parseOutstanding(raw) {
         const matrix = trs.map(tr => Array.from(tr.querySelectorAll('td,th')).map(td => td.textContent.trim()));
         return matrixToFollowUps(matrix);
     }
-    // Text: split lines, then split by comma (CSV) or tab
-    const lines = raw.split(/\r?\n/).filter(l => l.trim().length);
+    // Text: split lines, prefer tab-delimited if present; else CSV
+    const lines = raw.split(/\r?\n/).filter(l => l.replace(/\s+/g,'').length);
+    // Determine delimiter globally for better consistency
+    const containsTab = lines.some(l => l.includes('\t'));
+    const useTab = containsTab;
     const matrix = lines.map(line => {
-        // Choose delimiter: comma if appears with quoted fields, else tab or comma
-        if (line.includes(',') ) {
+        if (useTab) {
+            return line.split('\t').map(s => s.trim());
+        }
+        if (line.includes(',')) {
             return splitCsvLine(line);
         }
-        return line.split(/\t/).map(s => s.trim());
+        // fallback: split on multiple spaces
+        return line.split(/\s{2,}/).map(s => s.trim());
     });
     return matrixToFollowUps(matrix);
 }
 
 function matrixToFollowUps(matrix) {
-    // First row may be headers if any cell contains letters or spaces.
+    // Decide whether first row is a header by matching common header tokens
     let header = matrix[0] || [];
-    const headerLooksLikeHeader = header.some(c => /[A-Za-z]/.test(c));
+    const tokens = ['policy', 'plan', 'term', 'due', 'address', 'amount', 'status', 'name'];
+    const headerHits = header.reduce((acc, c) => acc + (tokens.some(t => String(c).toLowerCase().includes(t)) ? 1 : 0), 0);
     let rows = matrix;
-    if (headerLooksLikeHeader) {
+    if (headerHits >= 2) {
         rows = matrix.slice(1);
     } else {
-        // synthesize headers for first few columns
-        header = ['Sr', 'Policy Number', 'Name'];
+        // synthesize headers based on column count and common pattern (PolicyNo, Plan, TermYears, DueDate, Address, Amount, Status)
+        const sample = matrix[0] || [];
+        header = guessHeaders(sample.length, sample);
     }
     // Normalize header names to camelCase keys
     const keys = header.map(h => normalizeHeader(h));
@@ -1866,10 +1874,29 @@ function normalizeHeader(h) {
     return s.replace(/[^a-z0-9]+([a-z0-9])/g, (_, c) => c.toUpperCase());
 }
 
+function guessHeaders(len, sample) {
+    // If first value looks like a policy number, use common mapping
+    const first = String(sample?.[0] || '');
+    const looksLikePolicy = /[A-Za-z]{2,}\d{3,}/.test(first) || /^\d{6,}$/.test(first);
+    if (looksLikePolicy && len >= 6) {
+        const base = ['Policy Number','Plan','Term (Years)','Due Date','Address','Claim Amount','Outstanding Status'];
+        return base.slice(0, len);
+    }
+    // Default: col1..colN
+    return Array.from({ length: len }, (_, i) => `col${i+1}`);
+}
+
 async function loadFollowUps() {
     const all = await idbGetAll(STORE.followups);
     followUps = {};
     all.forEach(rec => { if (rec?.policyNo) followUps[rec.policyNo] = rec; });
+    // attempt to reconstruct columns from saved data if none are set
+    if ((!followUpColumns || followUpColumns.length === 0) && all.length) {
+        const localFields = new Set(['policyNo','status','agent','agentMobile','customerNo','customerOP','remarks']);
+        const sample = all[0];
+        const keys = Object.keys(sample).filter(k => !localFields.has(k));
+        followUpColumns = ['policyNo', ...keys];
+    }
     renderFollowUps();
 }
 
@@ -1975,19 +2002,16 @@ function createFollowUpRow(item, toModal = false) {
         }
     }));
 
-    const inputs = tr.querySelectorAll('input[type="text"]');
-    inputs.forEach(() => {
-        tr.addEventListener('input', () => {
-            const rec = followUps[item.policyNo] ||= { policyNo: item.policyNo };
-            const allTds = tr.querySelectorAll('td');
-            const offset = 1 /*status*/ + 1 /*policy*/ + (followUpColumns?.length||1) - 1; // policyNo removed
-            const [agentTD, agentMobTD, custNoTD, custOPTD, remarksTD] = Array.from(allTds).slice(1 + (followUpColumns?.length||1), 1 + (followUpColumns?.length||1) + 5);
-            rec.agent = agentTD.querySelector('input')?.value || '';
-            rec.agentMobile = agentMobTD.querySelector('input')?.value || '';
-            rec.customerNo = custNoTD.querySelector('input')?.value || '';
-            rec.customerOP = custOPTD.querySelector('input')?.value || '';
-            rec.remarks = remarksTD.querySelector('input')?.value || '';
-        }, { once: true });
+    tr.addEventListener('input', () => {
+        const rec = followUps[item.policyNo] ||= { policyNo: item.policyNo };
+        const allTds = tr.querySelectorAll('td');
+        const start = 1 + (followUpColumns?.length || 1); // after status + policy + dynamic cols
+        const [agentTD, agentMobTD, custNoTD, custOPTD, remarksTD] = Array.from(allTds).slice(start, start + 5);
+        rec.agent = agentTD?.querySelector('input')?.value || '';
+        rec.agentMobile = agentMobTD?.querySelector('input')?.value || '';
+        rec.customerNo = custNoTD?.querySelector('input')?.value || '';
+        rec.customerOP = custOPTD?.querySelector('input')?.value || '';
+        rec.remarks = remarksTD?.querySelector('input')?.value || '';
     });
 
     return tr;
