@@ -27,12 +27,12 @@ sup { top: -0.5em; }
 table { text-indent: 0; border-color: inherit; border-collapse: collapse; }
 button, input, optgroup, select, textarea { font-family: inherit; font-size: 100%; font-weight: inherit; line-height: inherit; color: inherit; margin: 0; padding: 0; }
 button, select { text-transform: none; }
-button, [type='button'], [type='reset'], [type='submit'] { -webkit-appearance: button; background-color: transparent; background-image: none; }
+button, [type='button'], [type='reset'], [type='submit'] { appearance: button; -webkit-appearance: button; background-color: transparent; background-image: none; }
 :-moz-focusring { outline: auto; }
 :-moz-ui-invalid { box-shadow: none; }
 progress { vertical-align: baseline; }
 ::-webkit-inner-spin-button, ::-webkit-outer-spin-button { height: auto; }
-[type='search'] { -webkit-appearance: textfield; outline-offset: -2px; }
+[type='search'] { appearance: textfield; -webkit-appearance: textfield; outline-offset: -2px; }
 ::-webkit-search-decoration { -webkit-appearance: none; }
 ::-webkit-file-upload-button { -webkit-appearance: button; font: inherit; }
 summary { display: list-item; }
@@ -44,7 +44,7 @@ textarea { resize: vertical; }
 input::placeholder, textarea::placeholder { opacity: 1; color: #9ca3af; }
 button, [role="button"] { cursor: pointer; }
 :disabled { cursor: default; }
-img, svg, video, canvas, audio, iframe, embed, object { display: block; vertical-align: middle; }
+img, svg, video, canvas, audio, iframe, embed, object { display: block; }
 img, video { max-width: 100%; height: auto; }
 
 /* 2. Tailwind Utility Classes */

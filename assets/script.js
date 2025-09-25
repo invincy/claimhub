@@ -1,11 +1,12 @@
 // --- IndexedDB constants ---
 const DB_NAME = 'ClaimHubDB';
-const DB_VERSION = 2; // Bump version to ensure missing object stores are created on upgrade
+const DB_VERSION = 3; // Bump version to ensure missing object stores are created on upgrade
 const STORE = {
     plans: 'plans',
     claims: 'claims',
     specialCases: 'specialCases',
-    todos: 'todos'
+    todos: 'todos',
+    followups: 'followups'
 };
 
 // --- IndexedDB Initialization and Helpers ---
@@ -74,6 +75,9 @@ async function initDB() {
             }
             if (!upgradeDb.objectStoreNames.contains(STORE.todos)) {
                 upgradeDb.createObjectStore(STORE.todos, { keyPath: 'id', autoIncrement: true });
+            }
+            if (!upgradeDb.objectStoreNames.contains(STORE.followups)) {
+                upgradeDb.createObjectStore(STORE.followups, { keyPath: 'policyNo' });
             }
         };
 
@@ -161,6 +165,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 requirements: document.getElementById('requirementsPanel'),
                 calculator: document.getElementById('calculatorPanel'),
                 links: document.getElementById('linksPanel'),
+                followups: document.getElementById('followupsPanel')
             };
             var requirementsTypeSelect = document.getElementById('requirementsType');
             var letRequirementsTable = document.getElementById('letRequirementsTable');
@@ -293,6 +298,9 @@ document.addEventListener('DOMContentLoaded', function() {
         loadFromStorage();
         updateCounters();
         setupTableEventListeners();
+
+    // Claims Follow-up: wire up buttons
+    setupFollowUpsUI();
 
     }).catch(error => {
         console.error("Failed to initialize the application:", error);
@@ -1678,5 +1686,177 @@ const PLAN_174 = {
                 body.innerHTML = '<tr><td colspan="5" class="px-4 py-8 text-center text-gray-500">No completed cases</td></tr>';
             }
         }
+
+// ===================== Claims Follow-up =====================
+let followUps = {}; // keyed by policyNo
+
+function setupFollowUpsUI() {
+    const updateBtn = document.getElementById('followUpUpdateBtn');
+    const parseBtn = document.getElementById('followUpParseBtn');
+    const cancelPaste = document.getElementById('followUpCancelPaste');
+    const saveAllBtn = document.getElementById('followUpSaveAllBtn');
+    const pasteBox = document.getElementById('followUpPasteBox');
+    const pasteInput = document.getElementById('followUpPasteInput');
+
+    // Load persisted follow-ups on init
+    loadFollowUps();
+
+    updateBtn?.addEventListener('click', () => {
+        pasteBox?.classList.remove('hidden');
+    });
+    cancelPaste?.addEventListener('click', () => {
+        pasteBox?.classList.add('hidden');
+        pasteInput.value = '';
+    });
+    parseBtn?.addEventListener('click', async () => {
+        const raw = pasteInput.value.trim();
+        if (!raw) { showToast('Nothing to parse'); return; }
+        const parsed = parseOutstanding(raw);
+        if (parsed.length === 0) { showToast('No rows detected'); return; }
+        // Merge by policyNo, preserve existing fields (remarks, agent details, status)
+        const incomingKeys = new Set();
+        parsed.forEach(row => {
+            if (!row.policyNo) return;
+            incomingKeys.add(row.policyNo);
+            const existing = followUps[row.policyNo] || {};
+            followUps[row.policyNo] = {
+                policyNo: row.policyNo,
+                sr: row.sr || existing.sr || '',
+                name: row.name || existing.name || '',
+                // preserved fields
+                status: existing.status || 'yellow',
+                agent: existing.agent || '',
+                agentMobile: existing.agentMobile || '',
+                customerNo: existing.customerNo || '',
+                customerOP: existing.customerOP || '',
+                remarks: existing.remarks || ''
+            };
+        });
+        // Remove entries not present in new list
+        Object.keys(followUps).forEach(p => { if (!incomingKeys.has(p)) delete followUps[p]; });
+        await saveFollowUps();
+        renderFollowUps();
+        pasteBox?.classList.add('hidden');
+        pasteInput.value = '';
+        showToast('Follow-up list merged.');
+    });
+    saveAllBtn?.addEventListener('click', async () => {
+        await saveFollowUps();
+        showToast('Follow-up entries saved.');
+    });
+}
+
+function parseOutstanding(raw) {
+    // Accept either pasted HTML table or TSV/CSV-like text
+    if (/</.test(raw)) {
+        // Attempt HTML parsing
+        const div = document.createElement('div');
+        div.innerHTML = raw;
+        const rows = Array.from(div.querySelectorAll('tr'));
+        return rows.map(tr => Array.from(tr.querySelectorAll('td,th')).map(td => td.textContent.trim()))
+            .filter(cols => cols.length >= 2)
+            .map(cols => mapColsToFollowUp(cols));
+    }
+    // Fallback: split lines, then split by tab or comma
+    return raw.split(/\r?\n/)
+        .map(line => line.split(/\t|,\s*/).map(s => s.trim()).filter(Boolean))
+        .filter(cols => cols.length >= 2)
+        .map(cols => mapColsToFollowUp(cols));
+}
+
+function mapColsToFollowUp(cols) {
+    // Assume first two columns: Sr, Policy No, third optional Name
+    const sr = cols[0] || '';
+    // Extract numeric chunk for policy number if mixed text
+    const policyNoRaw = cols[1] || '';
+    const policyNo = (policyNoRaw.match(/[A-Za-z0-9-]+/) || [policyNoRaw])[0];
+    const name = cols[2] || '';
+    return { sr, policyNo, name };
+}
+
+async function loadFollowUps() {
+    const all = await idbGetAll(STORE.followups);
+    followUps = {};
+    all.forEach(rec => { if (rec?.policyNo) followUps[rec.policyNo] = rec; });
+    renderFollowUps();
+}
+
+async function saveFollowUps() {
+    // Clear store then write all for simplicity
+    // More efficient merge could be done, but this is fine for moderate lists
+    const existing = await idbGetAll(STORE.followups);
+    const tx = db.transaction(STORE.followups, 'readwrite');
+    const store = tx.objectStore(STORE.followups);
+    // Delete ones not present
+    existing.forEach(r => { if (!followUps[r.policyNo]) store.delete(r.policyNo); });
+    // Put all current
+    Object.values(followUps).forEach(r => store.put(r));
+    return new Promise((resolve, reject) => {
+        tx.oncomplete = resolve;
+        tx.onerror = e => reject(e.target.error);
+    });
+}
+
+function renderFollowUps() {
+    const body = document.getElementById('followUpTableBody');
+    if (!body) return;
+    body.innerHTML = '';
+    const rows = Object.values(followUps);
+    if (rows.length === 0) {
+        body.innerHTML = '<tr><td colspan="9" class="px-6 py-12 text-center text-gray-400 font-medium text-lg">— No follow-up items</td></tr>';
+        return;
+    }
+    rows.sort((a,b) => (a.sr||'').toString().localeCompare((b.sr||'').toString(), undefined, { numeric: true }));
+    rows.forEach((r, idx) => body.appendChild(createFollowUpRow(r, idx+1)));
+}
+
+function createFollowUpRow(item, fallbackSr) {
+    const tr = document.createElement('tr');
+    tr.className = 'border-t transition-all duration-300';
+    tr.dataset.policyNo = item.policyNo;
+    const status = item.status || 'yellow';
+    tr.innerHTML = `
+        <td class="px-6 py-3 text-gray-300">${item.sr || fallbackSr}</td>
+        <td class="px-6 py-3 text-gray-300 font-semibold">${item.policyNo}</td>
+        <td class="px-6 py-3 text-gray-300">${item.name || ''}</td>
+        <td class="px-6 py-3">
+            <div class="flex items-center gap-3">
+                <label class="flex items-center text-gray-300"><input type="radio" name="status-${item.policyNo}" value="red" class="radio-modern mr-2" ${status==='red'?'checked':''}><span>🔴</span></label>
+                <label class="flex items-center text-gray-300"><input type="radio" name="status-${item.policyNo}" value="yellow" class="radio-modern mr-2" ${status==='yellow'?'checked':''}><span>🟡</span></label>
+                <label class="flex items-center text-gray-300"><input type="radio" name="status-${item.policyNo}" value="blue" class="radio-modern mr-2" ${status==='blue'?'checked':''}><span>🔵</span></label>
+                <label class="flex items-center text-gray-300"><input type="radio" name="status-${item.policyNo}" value="green" class="radio-modern mr-2" ${status==='green'?'checked':''}><span>🟢</span></label>
+            </div>
+        </td>
+        <td class="px-6 py-3"><input type="text" class="dark-input px-3 py-2 rounded-lg w-full" value="${escapeAttr(item.agent||'')}"></td>
+        <td class="px-6 py-3"><input type="text" class="dark-input px-3 py-2 rounded-lg w-full" value="${escapeAttr(item.agentMobile||'')}"></td>
+        <td class="px-6 py-3"><input type="text" class="dark-input px-3 py-2 rounded-lg w-full" value="${escapeAttr(item.customerNo||'')}"></td>
+        <td class="px-6 py-3"><input type="text" class="dark-input px-3 py-2 rounded-lg w-full" value="${escapeAttr(item.customerOP||'')}"></td>
+        <td class="px-6 py-3"><input type="text" class="dark-input px-3 py-2 rounded-lg w-full" value="${escapeAttr(item.remarks||'')}"></td>
+    `;
+    // Bind change events to update in-memory model
+    const inputs = tr.querySelectorAll('input');
+    inputs.forEach(inp => {
+        if (inp.type === 'radio') {
+            inp.addEventListener('change', () => {
+                if (inp.checked) (followUps[item.policyNo] ||= {}).status = inp.value;
+            });
+        } else {
+            inp.addEventListener('input', () => {
+                const cells = tr.querySelectorAll('td');
+                const [ , , , , agent, agentMobile, customerNo, customerOP, remarks] = cells;
+                const getVal = td => td.querySelector('input')?.value || '';
+                const rec = followUps[item.policyNo] ||= { policyNo: item.policyNo };
+                rec.agent = getVal(agent);
+                rec.agentMobile = getVal(agentMobile);
+                rec.customerNo = getVal(customerNo);
+                rec.customerOP = getVal(customerOP);
+                rec.remarks = getVal(remarks);
+            });
+        }
+    });
+    return tr;
+}
+
+function escapeAttr(s) { return String(s).replace(/"/g, '&quot;'); }
 
 
