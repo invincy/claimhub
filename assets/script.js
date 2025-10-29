@@ -1,12 +1,11 @@
 // --- IndexedDB constants ---
 const DB_NAME = 'ClaimHubDB';
-const DB_VERSION = 3; // Bump version to ensure missing object stores are created on upgrade
+const DB_VERSION = 2; // Bump version to ensure missing object stores are created on upgrade
 const STORE = {
     plans: 'plans',
     claims: 'claims',
     specialCases: 'specialCases',
-    todos: 'todos',
-    followups: 'followups'
+    todos: 'todos'
 };
 
 // --- IndexedDB Initialization and Helpers ---
@@ -22,40 +21,6 @@ window.debugClearActiveDeathClaims = async function() {
         showToast('Cleared all active death claims.');
     } catch (e) {
         console.warn('Failed to clear active death claims', e);
-    }
-}
-
-// Optional: seed some sample data to test UI quickly
-window.debugSeedSampleClaims = async function() {
-    try {
-        // Seed one active death claim
-        const policyNo = '123456789';
-        savedCases[policyNo] = {
-            policyNo,
-            name: 'John Doe',
-            commencementDate: '01/01/2020',
-            deathDate: '15/03/2023',
-            query: 'Initial notes',
-            claimType: 'Early'
-        };
-        savedWorkflowStates[policyNo] = {
-            nomineeAvailable: true,
-            deathClaimFormDocs: true
-        };
-
-        // Seed one active special case
-        savedSpecialCases['S-10001'] = {
-            name: 'Jane Smith',
-            type: 'D/C',
-            issue: 'Document verification pending',
-            resolved: false
-        };
-
-        await saveToStorage();
-        await loadFromStorage();
-        showToast('Seeded sample active death claim and special case.');
-    } catch (e) {
-        console.warn('Failed to seed sample data', e);
     }
 }
 async function initDB() {
@@ -76,9 +41,6 @@ async function initDB() {
             if (!upgradeDb.objectStoreNames.contains(STORE.todos)) {
                 upgradeDb.createObjectStore(STORE.todos, { keyPath: 'id', autoIncrement: true });
             }
-            if (!upgradeDb.objectStoreNames.contains(STORE.followups)) {
-                upgradeDb.createObjectStore(STORE.followups, { keyPath: 'policyNo' });
-            }
         };
 
         req.onsuccess = async (e) => {
@@ -92,7 +54,6 @@ async function initDB() {
                 if (!planKeys.includes('111')) await idbPut(STORE.plans, { plan: '111', data: PLAN_111 });
                 if (!planKeys.includes('150')) await idbPut(STORE.plans, { plan: '150', data: PLAN_150 });
                 if (!planKeys.includes('179')) await idbPut(STORE.plans, { plan: '179', data: PLAN_179 });
-                if (!planKeys.includes('174')) await idbPut(STORE.plans, { plan: '174', data: PLAN_174 });
                 console.log('Plan data bootstrapped.');
                 resolve(db);
             } catch (bootstrapError) {
@@ -165,7 +126,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 requirements: document.getElementById('requirementsPanel'),
                 calculator: document.getElementById('calculatorPanel'),
                 links: document.getElementById('linksPanel'),
-                followups: document.getElementById('followupsPanel')
             };
             var requirementsTypeSelect = document.getElementById('requirementsType');
             var letRequirementsTable = document.getElementById('letRequirementsTable');
@@ -299,12 +259,21 @@ document.addEventListener('DOMContentLoaded', function() {
         updateCounters();
         setupTableEventListeners();
 
-    // Claims Follow-up: wire up buttons
-    setupFollowUpsUI();
-
     }).catch(error => {
         console.error("Failed to initialize the application:", error);
         // Optionally, show an error message to the user on the UI
+    });
+
+    // Code that does NOT depend on the database can stay here
+    // For example, the collapsible functionality
+    document.querySelectorAll('.collapsible-header').forEach(header => {
+        header.addEventListener('click', function () {
+            const target = document.getElementById(this.dataset.target);
+            var arrow = this.querySelector('span:last-child');
+            
+            target.classList.toggle('active');
+            arrow.style.transform = target.classList.contains('active') ? 'rotate(180deg)' : 'rotate(0deg)';
+        });
     });
 
     // ... (any other non-DB dependent setup)
@@ -341,110 +310,42 @@ async function renderTodos() {
 // Premium Calculator Logic (NEW, IndexedDB-based)
 var calculateBtn = document.getElementById('calculatePremiumBtn');
 calculateBtn?.addEventListener('click', async function() {
-    const plan = document.querySelector('input[name="plan"]:checked')?.value;
-    const mode = document.querySelector('input[name="mode"]:checked')?.value;
-    const saInput = document.getElementById('saInput'); // in thousands
-    const ageInput = document.getElementById('ageInput');
-    const premiumPaidTermInput = document.getElementById('premiumPaidTermInput');
-    const policyTermInput = document.getElementById('policyTermInput');
+    var plan = document.querySelector('input[name="plan"]:checked')?.value;
+    var mode = document.querySelector('input[name="mode"]:checked')?.value;
+    var saInput = document.getElementById('saInput');
+    var ageInput = document.getElementById('ageInput');
+    var premiumPaidTermInput = document.getElementById('premiumPaidTermInput');
+    var policyTermInput = document.getElementById('policyTermInput');
     if (!plan || !mode || !saInput || !ageInput || !premiumPaidTermInput || !policyTermInput) {
         showToast('Calculator fields are missing in the page.');
         return;
     }
-    const saThousands = parseFloat(saInput.value);
-    const age = ageInput.value;
-    const premiumPaidTerm = premiumPaidTermInput.value;
-    const policyTerm = parseInt(policyTermInput.value, 10);
-    if (!plan || !mode || !Number.isFinite(saThousands) || !age || !premiumPaidTerm || !Number.isFinite(policyTerm)) {
+    var sa = parseFloat(saInput.value);
+    var age = ageInput.value;
+    var premiumPaidTerm = premiumPaidTermInput.value;
+    var policyTerm = policyTermInput.value;
+    if (!plan || !mode || isNaN(sa) || !age || !premiumPaidTerm || !policyTerm) {
         showToast('Please fill all calculator fields with valid numbers.');
         return;
     }
-    // Fetch tabular premium per 1000 SA (annual)
-    const tabularPremium = await getTabularPremium(plan, age, premiumPaidTerm);
+    // Fetch tabular premium from IndexedDB
+    var tabularPremium = await getTabularPremium(plan, age, premiumPaidTerm);
     if (!tabularPremium) {
         showToast('No tabular premium found for this age/term/plan.');
         return;
     }
-
-    // 1) Apply mode rebate/extra first (percentage off the tabular per 1000)
-    const modeRebatePct = getModeRebatePercent(plan, mode); // e.g., 0.03 or 0.02, etc.
-    const per1000AfterMode = round2(tabularPremium * (1 - modeRebatePct));
-
-    // 2) Apply Sum Assured rebate (absolute units per 1000) for specific plans only
-    const saRupees = saThousands * 1000;
-    const saRebateUnits = getSARebateUnits(plan, saRupees);
-    const per1000AfterSA = Math.max(0, round2(per1000AfterMode - saRebateUnits));
-
-    // 3) Convert to modal premium using the existing mode multipliers
-    const multiplier = { YLY: 1, HLY: 0.50, QLY: 0.25, MLY: 0.085 }[mode];
-    const modalPremium = round2(per1000AfterSA * saThousands * multiplier);
-    const INSTAL_PER_YEAR = {YLY: 1, HLY: 2, QLY: 4, MLY: 12};
-    const inst = INSTAL_PER_YEAR[mode] ?? 1;
-    const totalPremium = round2(modalPremium * inst * policyTerm);
-    let survival = 0;
-    if (plan === 179){
-    const isT16 = policyTerm === 16;
-    const pct = isT16 ? 0.15 : 0.10;
-    const schedule = isT16 ? [4, 8, 12] : [4, 8, 12, 16] 
-    const payouts = policyTerm === 16 ? [4, 8, 12] : [4, 8, 12, 16];
-    for (const yr of schedule) if (policyYears >= yr) survival += pct * sumRupees;}
-    if (plan === 174){
-    for (let yr = 4; yr <= policyTerm; yr += 4)
-    if (policyYears >= yr) survival += 0.10 * sumRupees;}
-    netROP = round2(totalPremium - survival);
-
-    // Show results with a clear breakdown
+    var multiplier = { YLY: 1, HLY: 0.51, QLY: 0.26, MLY: 0.085 }[mode];
+    var modalPremium = tabularPremium * sa * multiplier;
+    var totalPremium = modalPremium * policyTerm;
+    // Show results
     document.getElementById('premiumResult').classList.remove('hidden');
     document.getElementById('modalPremiumResult').textContent = `₹${modalPremium.toFixed(2)}`;
     document.getElementById('totalPremiumResult').textContent = `₹${totalPremium.toFixed(2)}`;
-    const netNode = document.getElementById('netRopResult');
-    if (netNode) netNode.textContent = netROP.toFixed(2);
-    document.getElementById('netRopResult').textContent = netROP.toFixed(2)}`;
-    const modePctText = ((modeRebatePct * 100).toFixed(1)) + `%`;
-    const breakdown = [
-        `Tabular per 1000: ₹${tabularPremium.toFixed(2)}`,
-        `Mode ${mode} rebate: -${modePctText} ⇒ ₹${per1000AfterMode.toFixed(2)} per 1000`,
-        `S.A. rebate (${saRebateUnits.toFixed(2)} units): ₹${per1000AfterMode.toFixed(2)} − ${saRebateUnits.toFixed(2)} = ₹${per1000AfterSA.toFixed(2)} per 1000`,
-        `Modal conversion: ₹${per1000AfterSA.toFixed(2)} × S.A.: ${saThousands} × Mode Multiplier: ${multiplier} = <b>₹${modalPremium.toFixed(2)}`,
-        `Total over term: ₹${modalPremium.toFixed(2)} × Inst./yr: ${inst} × Term: ${policyTerm} = <b>₹${totalPremium.toFixed(2)}`,
-        `Net ROP: ₹${netROP.toFixed(2)}
-    ];
-    document.getElementById('calculationBreakdown').innerHTML = breakdown.join('<br>');
+    document.getElementById('calculationBreakdown').innerHTML = `
+        Tabular Premium: ₹${tabularPremium} × S.A.: ${sa} × Mode Multiplier: ${multiplier} = <b>₹${modalPremium.toFixed(2)}</b><br>
+        ROP: ₹${modalPremium.toFixed(2)} × Term: ${policyTerm} = <b>₹${totalPremium.toFixed(2)}</b>
+    `;
 });
-
-function getModeRebatePercent(plan, mode) {
-    // Percentages provided by user
-    // YLY: 3% for 111/150, 2% for 174/179
-    // HLY: 1.5% for 111/150, 1% for 174/179
-    // QLY/MLY: assume 0% unless specified
-    const p = String(plan);
-    if (mode === 'YLY') {
-        return (p === '111' || p === '150') ? 0.03 : 0.02;
-    }
-    if (mode === 'HLY') {
-        return (p === '111' || p === '150') ? 0.015 : 0.01;
-    }
-    return 0;
-}
-
-function getSARebateUnits(plan, saRupees) {
-    // Units per 1000 SA (absolute amount to subtract), per plan and SA slab
-    const p = String(plan);
-    if (p === '179') {
-        if (saRupees <= 100000) return 0;
-        if (saRupees <= 200000) return 5;
-        return 5;
-    }
-    if (p === '174') {
-        if (saRupees <= 45000) return 0;
-        if (saRupees <= 95000) return 2.5;
-        if (saRupees <= 195000) return 7.5
-        return 10;
-    }
-    return 0;
-}
-
-function round2(n) { return Math.round((n + Number.EPSILON) * 100) / 100; }
 
 // Custom radio button styling logic
 document.querySelectorAll('.option-card input[type="radio"]').forEach(radio => {
@@ -482,7 +383,15 @@ function formatDateInput(input) {
 }
 
 
-// Date input listeners are already attached after DB init; avoid duplicate bindings here.
+document.getElementById('commencementDate')?.addEventListener('input', function() {
+    formatDateInput(this);
+    calculateDuration();
+});
+
+document.getElementById('deathDate')?.addEventListener('input', function() {
+    formatDateInput(this);
+    calculateDuration();
+});
 
 
 
@@ -632,17 +541,9 @@ function setupTableEventListeners() {
         if (tableElement) {
             tableElement.addEventListener('click', function(e) {
                 const row = e.target.closest('tr');
-                if (!row) return;
+                if (!row || !row.dataset.policyNo) return;
 
-                // Ignore placeholder rows (those with a single TD that has colspan)
-                const firstTd = row.querySelector('td');
-                if (!firstTd || firstTd.hasAttribute('colspan')) return;
-
-                // Prefer data attribute; fall back to first cell text
-                let policyNo = row.dataset.policyNo || firstTd.textContent?.trim();
-                if (!policyNo) return;
-                // For death claim tables, we no longer enforce numeric-only policy numbers here
-                // to ensure rows open even if formatting includes spaces or dashes.
+                var policyNo = row.dataset.policyNo;
                 const config = tables[tableId];
 
                 // Check if a remove button was clicked
@@ -688,7 +589,7 @@ function createCompletedSpecialCaseRow(caseData) {
     const row = document.createElement('tr');
     row.className = 'lic-table-row border-t transition-all duration-300';
     row.dataset.policyNo = caseData.policyNo;
-    row.innerHTML = `<td class="px-6 py-4 font-semibold text-gray-300">${caseData.policyNo}</td><td class="px-6 py-4 font-semibold text-gray-300">${caseData.name}</td><td class="px-6 py-4 font-semibold text-gray-300">${caseData.type}</td><td class="px-6 py-4 font-semibold text-gray-300">${caseData.completionDate || new Date().toLocaleDateString()}</td><td class="px-6 py-4"><button class="btn-danger btn-remove px-4 py-2 rounded-lg text-sm font-bold">Remove</button></td>`;
+    row.innerHTML = `<td class="px-6 py-4 font-semibold text-gray-300">${caseData.policyNo}</td><td class="px-6 py-4 font-semibold text-gray-300">${caseData.name}</td><td class="px-6 py-4 font-semibold text-gray-300">${caseData.type}</td><td class="px-6 py-4 font-semibold text-gray-300">${new Date().toLocaleDateString()}</td><td class="px-6 py-4"><button class="btn-danger btn-remove px-4 py-2 rounded-lg text-sm font-bold">Remove</button></td>`;
     return row;
 }
 
@@ -699,7 +600,6 @@ async function loadFromStorage() {
     savedCases = {};
     completedDeathCases = [];
     savedWorkflowStates = {};
-    const CLAIM_SENTINELS = new Set(['__savedCases__', '__workflowStates__', '__completedDeathCases__']);
     allClaims.forEach(claim => {
         if (claim.id === '__savedCases__') {
             savedCases = claim.data || {};
@@ -707,19 +607,6 @@ async function loadFromStorage() {
             savedWorkflowStates = claim.data || {};
         } else if (claim.id === '__completedDeathCases__') {
             completedDeathCases = claim.data || [];
-        } else if (!CLAIM_SENTINELS.has(claim.id)) {
-            // Hydrate legacy/non-sentinel active claim if possible
-            const pno = claim.policyNo || claim.policy || claim.id;
-            if (pno && !savedCases[pno]) {
-                savedCases[pno] = {
-                    policyNo: pno,
-                    name: claim.name || '',
-                    claimType: claim.claimType || 'Non-Early',
-                    commencementDate: claim.commencementDate || '',
-                    deathDate: claim.deathDate || '',
-                    query: claim.query || ''
-                };
-            }
         }
     });
 
@@ -747,23 +634,11 @@ async function loadFromStorage() {
     const allSpecial = await idbGetAll(STORE.specialCases);
     savedSpecialCases = {};
     completedSpecialCases = [];
-    const SC_SENTINELS = new Set(['__savedSpecialCases__', '__completedSpecialCases__']);
     allSpecial.forEach(entry => {
         if (entry.id === '__savedSpecialCases__') {
             savedSpecialCases = entry.data || {};
         } else if (entry.id === '__completedSpecialCases__') {
             completedSpecialCases = entry.data || [];
-        } else if (!SC_SENTINELS.has(entry.id)) {
-            // Hydrate legacy/non-sentinel special case if possible
-            const pno = entry.policyNo || entry.policy || entry.id;
-            if (pno && !savedSpecialCases[pno]) {
-                savedSpecialCases[pno] = {
-                    name: entry.name || '',
-                    type: entry.type || '',
-                    issue: entry.issue || '',
-                    resolved: !!entry.resolved
-                };
-            }
         }
     });
 
@@ -811,8 +686,8 @@ document.getElementById('saveSpecialCase')?.addEventListener('click', function()
             completedTableBody.innerHTML = '';
         }
 
-    // Save the completed case data
-    const completed = { policyNo, name, type, issue, completionDate: new Date().toLocaleDateString() };
+        // Save the completed case data
+        const completed = { policyNo, name, type, issue };
         completedSpecialCases.push(completed);
         // Append to completed special cases table immediately
         const completedRow = createCompletedSpecialCaseRow(completed);
@@ -1603,62 +1478,8 @@ const PLAN_179 = {
   "57": {"12":129.95,"16":null,"20":null}
 };
 
-// Plan 174 - Bima Gold (Annual premium per 1000 SA)
-const PLAN_174 = {
-    "14": {"12":65.45,"16":56.80,"20":41.65},
-    "15": {"12":65.70,"16":56.90,"20":41.75},
-    "16": {"12":65.90,"16":57.05,"20":41.85},
-    "17": {"12":66.05,"16":57.15,"20":41.95},
-    "18": {"12":66.20,"16":57.25,"20":42.05},
-    "19": {"12":66.40,"16":57.35,"20":42.15},
-    "20": {"12":66.50,"16":57.45,"20":42.25},
-    "21": {"12":66.60,"16":57.55,"20":42.35},
-    "22": {"12":66.60,"16":57.55,"20":42.45},
-    "23": {"12":66.80,"16":57.75,"20":42.60},
-    "24": {"12":66.90,"16":57.90,"20":42.70},
-    "25": {"12":67.00,"16":58.00,"20":42.85},
-    "26": {"12":67.15,"16":58.15,"20":43.00},
-    "27": {"12":67.30,"16":58.35,"20":43.20},
-    "28": {"12":67.45,"16":58.55,"20":43.45},
-    "29": {"12":67.60,"16":58.75,"20":43.70},
-    "30": {"12":68.05,"16":59.25,"20":44.00},
-    "31": {"12":68.45,"16":59.45,"20":44.35},
-    "32": {"12":68.90,"16":59.85,"20":44.80},
-    "33": {"12":69.50,"16":60.35,"20":45.30},
-    "34": {"12":70.10,"16":60.90,"20":45.85},
-    "35": {"12":70.85,"16":61.55,"20":46.45},
-    "36": {"12":71.70,"16":62.25,"20":47.10},
-    "37": {"12":72.65,"16":63.05,"20":47.85},
-    "38": {"12":73.70,"16":63.95,"20":48.65},
-    "39": {"12":74.80,"16":64.90,"20":49.50},
-    "40": {"12":76.05,"16":65.90,"20":50.40},
-    "41": {"12":77.35,"16":67.00,"20":51.35},
-    "42": {"12":78.85,"16":68.20,"20":52.45},
-    "43": {"12":80.50,"16":69.45,"20":53.55},
-    "44": {"12":82.30,"16":70.90,"20":54.80},
-    "45": {"12":84.25,"16":72.40,"20":56.15},
-    "46": {"12":86.40,"16":74.05,"20":57.60},
-    "47": {"12":88.65,"16":75.80,"20":59.15},
-    "48": {"12":91.00,"16":77.65,"20":60.75},
-    "49": {"12":93.50,"16":79.60,"20":62.45},
-    "50": {"12":96.10,"16":81.60,"20":64.25},
-    "51": {"12":98.85,"16":83.75,"20":66.10},
-    "52": {"12":101.65,"16":85.95,"20":68.10},
-    "53": {"12":104.60,"16":88.25,"20":70.10},
-    "54": {"12":107.60,"16":90.65,"20":72.25},
-    "55": {"12":110.65,"16":93.10,"20":74.45},
-    "56": {"12":113.75,"16":95.65,"20":null},
-    "57": {"12":117.05,"16":98.35,"20":null},
-    "58": {"12":120.55,"16":101.20,"20":null},
-    "59": {"12":124.40,"16":104.30,"20":null},
-    "60": {"12":128.50,"16":null,"20":null},
-    "61": {"12":132.75,"16":null,"20":null},
-    "62": {"12":137.15,"16":null,"20":null},
-    "63": {"12":141.45,"16":null,"20":null}
-};
-
         // --- Premium Calculator Logic ---
-        const MODE_MULTIPLIERS = { YLY: 1, HLY: 0.50, QLY: 0.25, MLY: 0.085 };
+        const MODE_MULTIPLIERS = { YLY: 1, HLY: 0.51, QLY: 0.26, MLY: 0.085 };
         async function getTabularPremium(plan, age, term) {
             try {
                 const plans = await idbGetAll(STORE.plans);
@@ -1704,406 +1525,5 @@ const PLAN_174 = {
                 body.innerHTML = '<tr><td colspan="5" class="px-4 py-8 text-center text-gray-500">No completed cases</td></tr>';
             }
         }
-
-// ===================== Claims Follow-up =====================
-let followUps = {}; // keyed by policyNo
-let followUpColumns = []; // dynamic column keys in display order (from pasted data)
-// Persisted UI preference to show/hide editable detail columns (Agent, phones, remarks)
-let followUpShowDetails = (localStorage.getItem('followUpShowDetails') ?? '1') !== '0';
-
-function setupFollowUpsUI() {
-    const updateBtn = document.getElementById('followUpUpdateBtn');
-    const parseBtn = document.getElementById('followUpParseBtn');
-    const cancelPaste = document.getElementById('followUpCancelPaste');
-    const saveAllBtn = document.getElementById('followUpSaveAllBtn');
-    const pasteBox = document.getElementById('followUpPasteBox');
-    const pasteInput = document.getElementById('followUpPasteInput');
-    const openFullscreen = document.getElementById('followUpOpenFullscreen');
-    const modal = document.getElementById('followUpModal');
-    const modalClose = document.getElementById('followUpModalClose');
-    const toggleDetailsBtn = document.getElementById('followUpToggleDetails');
-    const modalToggleDetailsBtn = document.getElementById('followUpModalToggleDetails');
-
-    // Load persisted follow-ups on init
-    loadFollowUps();
-
-    updateBtn?.addEventListener('click', () => {
-        pasteBox?.classList.remove('hidden');
-    });
-    cancelPaste?.addEventListener('click', () => {
-        pasteBox?.classList.add('hidden');
-        pasteInput.value = '';
-    });
-    parseBtn?.addEventListener('click', async () => {
-        const raw = pasteInput.value.trim();
-        if (!raw) { showToast('Nothing to parse'); return; }
-        const { rows: parsed, columns } = parseOutstanding(raw);
-        if (parsed.length === 0) { showToast('No rows detected'); return; }
-        followUpColumns = columns; // remember column layout
-        // Merge by policyNo, preserve existing fields (remarks, agent details, status)
-        const incomingKeys = new Set();
-        parsed.forEach(row => {
-            if (!row.policyNo) return;
-            incomingKeys.add(row.policyNo);
-            const existing = followUps[row.policyNo] || {};
-            followUps[row.policyNo] = {
-                policyNo: row.policyNo,
-                // bring across all parsed columns into the record for display
-                ...Object.fromEntries(columns.map(k => [k, row[k] ?? existing[k] ?? ''])),
-                // preserved fields
-                status: existing.status || 'grey',
-                agent: existing.agent || '',
-                agentMobile: existing.agentMobile || '',
-                customerNo: existing.customerNo || '',
-                customerOP: existing.customerOP || '',
-                remarks: existing.remarks || ''
-            };
-        });
-        // Remove entries not present in new list
-        Object.keys(followUps).forEach(p => { if (!incomingKeys.has(p)) delete followUps[p]; });
-        await saveFollowUps();
-        renderFollowUps();
-        pasteBox?.classList.add('hidden');
-        pasteInput.value = '';
-        showToast('Follow-up list merged.');
-    });
-    saveAllBtn?.addEventListener('click', async () => {
-        await saveFollowUps();
-        showToast('Follow-up entries saved.');
-    });
-
-    openFullscreen?.addEventListener('click', () => {
-        if (!modal) return;
-        modal.classList.remove('hidden');
-        renderFollowUps(true); // render into modal
-    });
-    modalClose?.addEventListener('click', () => {
-        modal?.classList.add('hidden');
-    });
-    modal?.addEventListener('click', (e) => {
-        if (e.target === modal) modal.classList.add('hidden');
-    });
-
-    // Toggle Details (panel)
-    toggleDetailsBtn?.addEventListener('click', () => {
-        followUpShowDetails = !followUpShowDetails;
-        localStorage.setItem('followUpShowDetails', followUpShowDetails ? '1' : '0');
-        // Re-render both views
-        renderFollowUps();
-        if (!modal?.classList.contains('hidden')) renderFollowUps(true);
-    });
-    // Toggle Details (modal)
-    modalToggleDetailsBtn?.addEventListener('click', () => {
-        followUpShowDetails = !followUpShowDetails;
-        localStorage.setItem('followUpShowDetails', followUpShowDetails ? '1' : '0');
-        renderFollowUps(true);
-        // Also update panel if visible
-        renderFollowUps();
-    });
-}
-
-function parseOutstanding(raw) {
-    // Accept HTML table or CSV/TSV text; return { rows, columns }
-    if (/</.test(raw)) {
-        // Attempt HTML parsing
-        const div = document.createElement('div');
-        div.innerHTML = raw;
-        const trs = Array.from(div.querySelectorAll('tr'));
-        const matrix = trs.map(tr => Array.from(tr.querySelectorAll('td,th')).map(td => td.textContent.trim()));
-        return matrixToFollowUps(matrix);
-    }
-    // Text: split lines, prefer tab-delimited if present; else CSV
-    const lines = raw.split(/\r?\n/).filter(l => l.replace(/\s+/g,'').length);
-    // Determine delimiter globally for better consistency
-    const containsTab = lines.some(l => l.includes('\t'));
-    const useTab = containsTab;
-    const matrix = lines.map(line => {
-        if (useTab) {
-            return line.split('\t').map(s => s.trim());
-        }
-        if (line.includes(',')) {
-            return splitCsvLine(line);
-        }
-        // fallback: split on multiple spaces
-        return line.split(/\s{2,}/).map(s => s.trim());
-    });
-    return matrixToFollowUps(matrix);
-}
-
-function matrixToFollowUps(matrix) {
-    // Decide whether first row is a header by matching common header tokens
-    let header = matrix[0] || [];
-    const tokens = ['policy', 'plan', 'term', 'due', 'address', 'amount', 'status', 'name'];
-    const headerHits = header.reduce((acc, c) => acc + (tokens.some(t => String(c).toLowerCase().includes(t)) ? 1 : 0), 0);
-    let rows = matrix;
-    if (headerHits >= 2) {
-        rows = matrix.slice(1);
-    } else {
-        // synthesize headers based on column count and common pattern (PolicyNo, Plan, TermYears, DueDate, Address, Amount, Status)
-        const sample = matrix[0] || [];
-        header = guessHeaders(sample.length, sample);
-    }
-    // Normalize header names to camelCase keys
-    const keys = header.map(h => normalizeHeader(h));
-    // Ensure essential keys exist
-    if (!keys.includes('policyNo') && keys.includes('policyNumber')) {
-        // ok
-    }
-    const columns = [];
-    const pushCol = k => { if (!columns.includes(k)) columns.push(k); };
-    // Build rows
-    const out = [];
-    rows.forEach(cols => {
-        const rec = {};
-        for (let i=0;i<cols.length;i++) {
-            const kRaw = keys[i] || `col${i+1}`;
-            const k = kRaw;
-            const val = cols[i]?.trim?.() ?? '';
-            rec[k] = val;
-            pushCol(k);
-        }
-        // Extract policy number from known fields
-        const pRaw = rec.policyNo || rec.policyNumber || rec.policy || rec['policy no'] || rec['policynumber'] || '';
-        const policyNo = (String(pRaw).match(/[A-Za-z0-9-]+/) || [String(pRaw)])[0];
-        if (!policyNo) return; // skip
-        rec.policyNo = policyNo;
-        pushCol('policyNo');
-        out.push(rec);
-    });
-    // Prefer a nice default ordering: policyNo first then common columns
-    const preferred = ['policyNo', 'plan', 'termYears', 'term', 'dueDate', 'address', 'claimAmount', 'outstandingStatus', 'name'];
-    const ordered = ['policyNo'];
-    preferred.forEach(k => { if (columns.includes(k) && !ordered.includes(k)) ordered.push(k); });
-    columns.forEach(k => { if (!ordered.includes(k)) ordered.push(k); });
-    return { rows: out, columns: ordered };
-}
-
-function splitCsvLine(line) {
-    // basic CSV splitter with quotes
-    const result = [];
-    let cur = '';
-    let inQuotes = false;
-    for (let i=0;i<line.length;i++) {
-        const ch = line[i];
-        if (ch === '"') {
-            if (inQuotes && line[i+1] === '"') { cur += '"'; i++; }
-            else inQuotes = !inQuotes;
-        } else if (ch === ',' && !inQuotes) {
-            result.push(cur.trim()); cur='';
-        } else {
-            cur += ch;
-        }
-    }
-    result.push(cur.trim());
-    return result;
-}
-
-function normalizeHeader(h) {
-    const s = String(h || '').toLowerCase().trim();
-    if (!s) return '';
-    // map common names
-    if (s.startsWith('policy')) return 'policyNo';
-    if (s === 'plan') return 'plan';
-    if (s.includes('term')) return 'termYears';
-    if (s.includes('due')) return 'dueDate';
-    if (s.includes('address')) return 'address';
-    if (s.includes('amount')) return 'claimAmount';
-    if (s.includes('status')) return 'outstandingStatus';
-    if (s.includes('name')) return 'name';
-    return s.replace(/[^a-z0-9]+([a-z0-9])/g, (_, c) => c.toUpperCase());
-}
-
-function guessHeaders(len, sample) {
-    // If first value looks like a policy number, use common mapping
-    const first = String(sample?.[0] || '');
-    const looksLikePolicy = /[A-Za-z]{2,}\d{3,}/.test(first) || /^\d{6,}$/.test(first);
-    if (looksLikePolicy && len >= 6) {
-        const base = ['Policy Number','Plan','Term (Years)','Due Date','Address','Claim Amount','Outstanding Status'];
-        return base.slice(0, len);
-    }
-    // Default: col1..colN
-    return Array.from({ length: len }, (_, i) => `col${i+1}`);
-}
-
-async function loadFollowUps() {
-    const all = await idbGetAll(STORE.followups);
-    followUps = {};
-    all.forEach(rec => { if (rec?.policyNo) followUps[rec.policyNo] = rec; });
-    // attempt to reconstruct columns from saved data if none are set
-    if ((!followUpColumns || followUpColumns.length === 0) && all.length) {
-        const localFields = new Set(['policyNo','status','agent','agentMobile','customerNo','customerOP','remarks']);
-        const sample = all[0];
-        const keys = Object.keys(sample).filter(k => !localFields.has(k));
-        followUpColumns = ['policyNo', ...keys];
-    }
-    renderFollowUps();
-}
-
-async function saveFollowUps() {
-    // Clear store then write all for simplicity
-    // More efficient merge could be done, but this is fine for moderate lists
-    const existing = await idbGetAll(STORE.followups);
-    const tx = db.transaction(STORE.followups, 'readwrite');
-    const store = tx.objectStore(STORE.followups);
-    // Delete ones not present
-    existing.forEach(r => { if (!followUps[r.policyNo]) store.delete(r.policyNo); });
-    // Put all current
-    Object.values(followUps).forEach(r => store.put(r));
-    return new Promise((resolve, reject) => {
-        tx.oncomplete = resolve;
-        tx.onerror = e => reject(e.target.error);
-    });
-}
-
-function renderFollowUps(toModal = false) {
-    const body = document.getElementById(toModal ? 'followUpModalBody' : 'followUpTableBody');
-    const head = document.getElementById(toModal ? 'followUpModalHead' : 'followUpTableHead');
-    const countersWrap = document.getElementById(toModal ? 'followUpCountersModal' : 'followUpCounters');
-    if (!body || !head) return;
-    body.innerHTML = '';
-    // Build dynamic headers (Status first, then dynamic parsed headers, then local fields)
-    const staticLeft = '<th class="px-4 py-3 text-left font-bold text-gray-200">Status</th>';
-    const dyn = (followUpColumns || []).filter(k => k !== 'policyNo').map(k => `<th class="px-6 py-3 text-left font-bold text-gray-200">${humanizeKey(k)}</th>`).join('');
-    const staticRight = followUpShowDetails
-        ? ['Agent','Agent Mob','Customer No','Customer OP','Remarks']
-            .map(h => `<th class="px-6 py-3 text-left font-bold text-gray-200">${h}</th>`).join('')
-        : '';
-    head.innerHTML = staticLeft + `<th class="px-6 py-3 text-left font-bold text-gray-200">Policy No</th>` + dyn + staticRight;
-
-    const rows = Object.values(followUps);
-    if (rows.length === 0) {
-        body.innerHTML = '<tr><td class="px-6 py-12 text-center text-gray-400 font-medium text-lg">— No follow-up items</td></tr>';
-        updateFollowUpCounters(countersWrap, []);
-        return;
-    }
-    // Sort by policyNo for consistency
-    rows.sort((a,b) => String(a.policyNo).localeCompare(String(b.policyNo), undefined, { numeric: true }));
-    rows.forEach(rec => body.appendChild(createFollowUpRow(rec, toModal)));
-    updateFollowUpCounters(countersWrap, rows);
-}
-
-function createFollowUpRow(item, toModal = false) {
-    const tr = document.createElement('tr');
-    tr.className = 'border-t transition-all duration-300';
-    tr.dataset.policyNo = item.policyNo;
-    applyRowStatusColor(tr, item.status);
-
-    const statusCell = document.createElement('td');
-    statusCell.className = 'px-4 py-3';
-    statusCell.innerHTML = `
-        <select class="dark-input px-2 py-2 rounded-lg">
-            <option value="grey" ${!item.status || item.status==='grey' ? 'selected' : ''}>Grey (Unattended)</option>
-            <option value="red" ${item.status==='red' ? 'selected' : ''}>Red</option>
-            <option value="yellow" ${item.status==='yellow' ? 'selected' : ''}>Yellow</option>
-            <option value="blue" ${item.status==='blue' ? 'selected' : ''}>Blue</option>
-            <option value="green" ${item.status==='green' ? 'selected' : ''}>Green</option>
-        </select>`;
-
-    const tds = [];
-    const policyCell = document.createElement('td');
-    policyCell.className = 'px-6 py-3 text-gray-300 font-semibold';
-    policyCell.textContent = item.policyNo;
-    tds.push(policyCell);
-
-    // Dynamic columns
-    (followUpColumns || []).filter(k => k !== 'policyNo').forEach(k => {
-        const td = document.createElement('td');
-        // Address may be long; allow wrapping and multi-line
-        td.className = 'px-6 py-3 text-gray-300 align-top';
-        td.textContent = item[k] ?? '';
-        tds.push(td);
-    });
-
-    // Local editable fields (conditionally rendered)
-    let agent, agentMobile, customerNo, customerOP, remarks;
-    if (followUpShowDetails) {
-        const mkInput = (val='') => `<input type="text" class="dark-input px-3 py-2 rounded-lg w-full" value="${escapeAttr(val)}">`;
-        agent = htmlTd(mkInput(item.agent||''));
-        agentMobile = htmlTd(mkInput(item.agentMobile||''));
-        customerNo = htmlTd(mkInput(item.customerNo||''));
-        customerOP = htmlTd(mkInput(item.customerOP||''));
-        remarks = htmlTd(mkInput(item.remarks||''));
-    }
-
-    // Compose row
-    tr.appendChild(statusCell);
-    tds.forEach(td => tr.appendChild(td));
-    if (followUpShowDetails) {
-        tr.appendChild(agent);
-        tr.appendChild(agentMobile);
-        tr.appendChild(customerNo);
-        tr.appendChild(customerOP);
-        tr.appendChild(remarks);
-    }
-
-    // Bind change listener on dropdown
-    const statusSelect = statusCell.querySelector('select');
-    statusSelect.addEventListener('change', (e) => {
-        const value = e.target.value;
-        (followUps[item.policyNo] ||= {}).status = value;
-        applyRowStatusColor(tr, value);
-        // Update counters without rebuilding the whole table
-        const panelCounters = document.getElementById('followUpCounters');
-        if (panelCounters) updateFollowUpCounters(panelCounters, Object.values(followUps));
-        const modalEl = document.getElementById('followUpModal');
-        if (modalEl && !modalEl.classList.contains('hidden')) {
-            const modalCounters = document.getElementById('followUpCountersModal');
-            if (modalCounters) updateFollowUpCounters(modalCounters, Object.values(followUps));
-        }
-    });
-
-    tr.addEventListener('input', () => {
-        const rec = followUps[item.policyNo] ||= { policyNo: item.policyNo };
-        // Only update when details are shown (inputs exist)
-        if (!followUpShowDetails) return;
-        const allTds = tr.querySelectorAll('td');
-        const start = 1 + (followUpColumns?.length || 1); // after status + policy + dynamic cols
-        const [agentTD, agentMobTD, custNoTD, custOPTD, remarksTD] = Array.from(allTds).slice(start, start + 5);
-        if (agentTD) rec.agent = agentTD.querySelector('input')?.value || '';
-        if (agentMobTD) rec.agentMobile = agentMobTD.querySelector('input')?.value || '';
-        if (custNoTD) rec.customerNo = custNoTD.querySelector('input')?.value || '';
-        if (custOPTD) rec.customerOP = custOPTD.querySelector('input')?.value || '';
-        if (remarksTD) rec.remarks = remarksTD.querySelector('input')?.value || '';
-    });
-
-    return tr;
-}
-
-function htmlTd(inner) { const td = document.createElement('td'); td.className = 'px-6 py-3'; td.innerHTML = inner; return td; }
-
-function applyRowStatusColor(tr, status) {
-    // Reset styles first
-    tr.style.backgroundColor = '';
-    tr.style.filter = '';
-    tr.style.color = '';
-    // Prefer text color to indicate status; keep background default
-    const colors = {
-        red:   '#ff6b6b',
-        yellow:'#ffd166',
-        blue:  '#60a5fa',
-        green: '#34d399'
-    };
-    const c = colors[status];
-    tr.style.color = c || '';
-}
-
-function updateFollowUpCounters(container, rows) {
-    if (!container) return;
-    const counts = { grey:0, red:0, yellow:0, blue:0, green:0 };
-    rows.forEach(r => counts[(r.status||'grey')]++);
-    Array.from(container.querySelectorAll('[data-status]')).forEach(span => {
-        const s = span.getAttribute('data-status');
-        const label = s.charAt(0).toUpperCase() + s.slice(1);
-        span.textContent = `${counts[s]} ${label}`;
-    });
-}
-
-function humanizeKey(k) {
-    if (!k) return '';
-    if (k === 'policyNo') return 'Policy No';
-    return String(k).replace(/([A-Z])/g, ' $1').replace(/^./, c => c.toUpperCase());
-}
-
-function escapeAttr(s) { return String(s).replace(/"/g, '&quot;'); }
 
 

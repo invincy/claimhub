@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LIC Claims Hub</title>
-    <link rel="stylesheet" href="assets/style.css?v=20250925.4">
+    <link rel="stylesheet" href="assets/style.css">
     <link id="themeStylesheet" rel="stylesheet" href="assets/neon.css">
 </head>
 <body class="dark-bg min-h-screen theme-neon">
@@ -499,7 +499,6 @@
                             <button class="tool-tab" data-tab="requirements">Requirements</button>
                             <button class="tool-tab" data-tab="calculator">Premium Calculator</button>
                             <button class="tool-tab" data-tab="links">Links</button>
-                            <button class="tool-tab" data-tab="followups">Claims Follow-up</button>
                         </div>
 
                         <!-- Tab Panels -->
@@ -571,7 +570,6 @@
                                     <div class="flex items-center space-x-6">
                                         <label class="flex items-center text-gray-300"><input type="radio" name="plan" value="111" class="radio-modern mr-2" checked><span>111</span></label>
                                         <label class="flex items-center text-gray-300"><input type="radio" name="plan" value="150" class="radio-modern mr-2"><span>150</span></label>
-                                        <label class="flex items-center text-gray-300"><input type="radio" name="plan" value="174" class="radio-modern mr-2"><span>174</span></label>
                                         <label class="flex items-center text-gray-300"><input type="radio" name="plan" value="179" class="radio-modern mr-2"><span>179</span></label>
                                     </div>
                                 </div>
@@ -641,57 +639,6 @@
                                 <div><a href="#" target="_blank" rel="noopener noreferrer" class="quick-link-item text-gray-300 font-medium hover:text-cyan-400 transition-colors duration-200"><span class="mr-3">📍</span> Claim Tracker</a></div>
                             </div>
                         </div>
-
-                        <div id="followupsPanel" class="tab-panel hidden">
-                            <div class="mb-4 flex gap-2 items-center justify-between">
-                                <div id="followUpCounters" class="flex flex-wrap gap-2 text-sm">
-                                    <span class="counter-badge px-3 py-1 rounded-full" data-status="grey">0 Grey</span>
-                                    <span class="counter-badge px-3 py-1 rounded-full" data-status="red">0 Red</span>
-                                    <span class="counter-badge px-3 py-1 rounded-full" data-status="yellow">0 Yellow</span>
-                                    <span class="counter-badge px-3 py-1 rounded-full" data-status="blue">0 Blue</span>
-                                    <span class="counter-badge px-3 py-1 rounded-full" data-status="green">0 Green</span>
-                                </div>
-                                <button id="followUpUpdateBtn" class="btn-primary px-4 py-2 rounded-xl font-semibold text-sm">Update List</button>
-                                <button id="followUpSaveAllBtn" class="btn-primary px-4 py-2 rounded-xl font-semibold text-sm">Save All</button>
-                                <button id="followUpToggleDetails" class="btn-ghost px-4 py-2 rounded-xl font-semibold text-sm">Toggle Details</button>
-                                <button id="followUpOpenFullscreen" class="btn-ghost px-4 py-2 rounded-xl font-semibold text-sm">Open Fullscreen</button>
-                            </div>
-                            <div id="followUpPasteBox" class="hidden mb-4">
-                                <label class="block text-sm font-bold text-gray-300 mb-2">Paste Outstanding List (HTML table or tab-separated)</label>
-                                <textarea id="followUpPasteInput" rows="6" class="dark-input w-full px-4 py-3 rounded-xl font-medium" placeholder="Paste table HTML or tab-separated rows here..."></textarea>
-                                <div class="mt-2 flex gap-2">
-                                    <button id="followUpParseBtn" class="btn-primary px-4 py-2 rounded-xl font-semibold text-sm">Parse & Merge</button>
-                                    <button id="followUpCancelPaste" class="btn-ghost px-4 py-2 rounded-xl font-semibold text-sm">Cancel</button>
-                                </div>
-                                <p class="text-xs text-gray-400 mt-2">We’ll use Policy No as the unique key. Existing remarks, agent details, and status are preserved for matching policies; entries not present in the new list are removed.</p>
-                            </div>
-
-                            <div class="dark-table rounded-2xl border border-gray-600/30 shadow-2xl overflow-hidden">
-                                <div class="bg-gray-900/60 px-6 py-4 border-b border-gray-600/30">
-                                    <h4 class="font-bold text-white text-lg flex items-center gap-2">Follow-up Items</h4>
-                                </div>
-                                <div class="overflow-x-auto">
-                                    <table class="followup-table text-sm">
-                                        <thead class="dark-table-header">
-                                            <tr id="followUpTableHead">
-                                                <th class="px-4 py-3 text-left font-bold text-gray-200">Status</th>
-                                                <!-- Dynamic headers will be injected here -->
-                                                <th class="px-6 py-3 text-left font-bold text-gray-200">Agent</th>
-                                                <th class="px-6 py-3 text-left font-bold text-gray-200">Agent Mob</th>
-                                                <th class="px-6 py-3 text-left font-bold text-gray-200">Customer No</th>
-                                                <th class="px-6 py-3 text-left font-bold text-gray-200">Customer OP</th>
-                                                <th class="px-6 py-3 text-left font-bold text-gray-200">Remarks</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="followUpTableBody">
-                                            <tr>
-                                                <td colspan="12" class="px-6 py-12 text-center text-gray-400 font-medium text-lg">— No follow-up items</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -702,7 +649,7 @@
 
     <!-- IMPORTANT: You may need to remove the old particle animation logic from assets/script.js to prevent conflicts. -->
     <!-- Cache-busting query to ensure latest script is fetched by the browser/CDN -->
-    <script src="assets/script.js?v=20250925.9" defer></script>
+    <script src="assets/script.js?v=20250925" defer></script>
     <script>
     (function() {
         const html = document.documentElement;
@@ -735,122 +682,5 @@
         });
     })();
     </script>
-
-    <style>
-/* Ensure left/right columns don’t overlap and left stays on top */
-.dash-grid {
-  display: grid;
-    /* 50/50 split on wider screens will be handled by external CSS media query.
-         For the base (mobile-first) layout keep single column; override below if needed. */
-    grid-template-columns: 1fr; 
-  gap: 24px;
-    /* Stretch both columns so the right panel can match the left column's height */
-    align-items: stretch;
-}
-
-@media (max-width: 1024px) {
-  .dash-grid {
-    grid-template-columns: 1fr;
-  }
-  .dash-right {
-    position: static !important;
-    z-index: auto !important;
-  }
-}
-
-/* Ensure 50/50 columns on desktop viewports */
-@media (min-width: 1024px) {
-    .dash-grid {
-        grid-template-columns: 1fr 1fr;
-    }
-}
-
-.dash-left,
-.dash-right {
-  position: relative;
-}
-
-.dash-left { z-index: 20; }  /* clickable above tools */
-.dash-right { z-index: 10; }
-
-/* Let the sticky behavior live on the wrapper; make the tools card fill the column height */
-.tools-panel-container {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-}
-
-/* Ensure the sticky wrapper is sticky and spans the full cell height */
-.dash-right-sticky-container {
-    position: -webkit-sticky;
-    position: sticky;
-    top: 16px;
-    height: 100%;
-}
-
-/* Make section headers and tables reliably clickable */
-.collapsible-header {
-  position: relative;
-  z-index: 30;
-  cursor: pointer;
-}
-
-.matte-card,
-.dark-table,
-.glass-header {
-  position: relative;
-  z-index: 1;
-}
-/* Follow-up: horizontal scrolling support by forcing table min width */
-.followup-table {
-    min-width: 1200px;
-}
-    </style>
-
-    <!-- Fullscreen Follow-up Modal -->
-    <div id="followUpModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm hidden z-50">
-        <div class="max-w-7xl mx-auto mt-8 mb-8 bg-gray-900/90 rounded-2xl border border-gray-700/40 p-4 h-[90vh] flex flex-col">
-            <div class="flex items-center justify-between mb-3">
-                <h3 class="text-xl font-bold text-white">Claims Follow-up</h3>
-                <div class="flex items-center gap-2">
-                    <div id="followUpCountersModal" class="flex flex-wrap gap-2 text-sm mr-4">
-                        <span class="counter-badge px-3 py-1 rounded-full" data-status="grey">0 Grey</span>
-                        <span class="counter-badge px-3 py-1 rounded-full" data-status="red">0 Red</span>
-                        <span class="counter-badge px-3 py-1 rounded-full" data-status="yellow">0 Yellow</span>
-                        <span class="counter-badge px-3 py-1 rounded-full" data-status="blue">0 Blue</span>
-                        <span class="counter-badge px-3 py-1 rounded-full" data-status="green">0 Green</span>
-                    </div>
-                    <button id="followUpModalToggleDetails" class="btn-ghost px-3 py-1 rounded-lg">Toggle Details</button>
-                    <button id="followUpModalClose" class="btn-ghost px-3 py-1 rounded-lg">Close</button>
-                </div>
-            </div>
-            <div class="dark-table rounded-2xl border border-gray-600/30 shadow-2xl overflow-hidden flex-1 flex flex-col">
-                <div class="overflow-x-auto">
-                    <table class="followup-table text-sm">
-                        <thead class="dark-table-header">
-                            <tr id="followUpModalHead">
-                                <th class="px-4 py-3 text-left font-bold text-gray-200">Status</th>
-                                <!-- Dynamic headers in modal -->
-                                <th class="px-6 py-3 text-left font-bold text-gray-200">Agent</th>
-                                <th class="px-6 py-3 text-left font-bold text-gray-200">Agent Mob</th>
-                                <th class="px-6 py-3 text-left font-bold text-gray-200">Customer No</th>
-                                <th class="px-6 py-3 text-left font-bold text-gray-200">Customer OP</th>
-                                <th class="px-6 py-3 text-left font-bold text-gray-200">Remarks</th>
-                            </tr>
-                        </thead>
-                    </table>
-                </div>
-                <div class="overflow-auto flex-1">
-                    <table class="followup-table text-sm">
-                        <tbody id="followUpModalBody">
-                            <tr>
-                                <td class="px-6 py-12 text-center text-gray-400 font-medium text-lg">— No follow-up items</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
 </body>
 </html>
