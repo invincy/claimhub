@@ -352,13 +352,14 @@ calculateBtn?.addEventListener('click', async function() {
         return;
     }
     const saThousands = parseFloat(saInput.value);
-    const age = ageInput.value;
-    const premiumPaidTerm = premiumPaidTermInput.value;
+    const age = parseInt(ageInput.value, 10);
+    const premiumPaidTerm = parseInt(premiumPaidTermInput.value, 10);
     const policyTerm = parseInt(policyTermInput.value, 10);
-    if (!plan || !mode || !Number.isFinite(saThousands) || !age || !premiumPaidTerm || !Number.isFinite(policyTerm)) {
+    if (!plan || !mode || Number.isNaN(saThousands) || Number.isNaN(age) || Number.isNaN(premiumPaidTerm) || Number.isNaN(policyTerm)) {
         showToast('Please fill all calculator fields with valid numbers.');
         return;
     }
+
     // Fetch tabular premium per 1000 SA (annual)
     const tabularPremium = await getTabularPremium(plan, age, premiumPaidTerm);
     if (!tabularPremium) {
@@ -376,40 +377,50 @@ calculateBtn?.addEventListener('click', async function() {
     const per1000AfterSA = Math.max(0, round2(per1000AfterMode - saRebateUnits));
 
     // 3) Convert to modal premium using the existing mode multipliers
-    const multiplier = { YLY: 1, HLY: 0.50, QLY: 0.25, MLY: 0.085 }[mode];
+    const multiplier = { YLY: 1, HLY: 0.50, QLY: 0.25, MLY: 0.085 }[mode] || 1;
     const modalPremium = round2(per1000AfterSA * saThousands * multiplier);
     const INSTAL_PER_YEAR = {YLY: 1, HLY: 2, QLY: 4, MLY: 12};
     const inst = INSTAL_PER_YEAR[mode] ?? 1;
     const totalPremium = round2(modalPremium * inst * policyTerm);
+
+    // Survival / ROP adjustments (use defined variables)
     let survival = 0;
-    if (plan === 179){
-    const isT16 = policyTerm === 16;
-    const pct = isT16 ? 0.15 : 0.10;
-    const schedule = isT16 ? [4, 8, 12] : [4, 8, 12, 16] 
-    const payouts = policyTerm === 16 ? [4, 8, 12] : [4, 8, 12, 16];
-    for (const yr of schedule) if (policyYears >= yr) survival += pct * sumRupees;}
-    if (plan === 174){
-    for (let yr = 4; yr <= policyTerm; yr += 4)
-    if (policyYears >= yr) survival += 0.10 * sumRupees;}
-    netROP = round2(totalPremium - survival);
+    if (String(plan) === '179') {
+        const isT16 = policyTerm === 16;
+        const pct = isT16 ? 0.15 : 0.10;
+        const schedule = isT16 ? [4, 8, 12] : [4, 8, 12, 16];
+        for (const yr of schedule) {
+            if (policyTerm >= yr) survival += pct * saRupees;
+        }
+    }
+    if (String(plan) === '174') {
+        for (let yr = 4; yr <= policyTerm; yr += 4) {
+            if (policyTerm >= yr) survival += 0.10 * saRupees;
+        }
+    }
+    const netROP = round2(totalPremium - survival);
 
     // Show results with a clear breakdown
-    document.getElementById('premiumResult').classList.remove('hidden');
-    document.getElementById('modalPremiumResult').textContent = `₹${modalPremium.toFixed(2)}`;
-    document.getElementById('totalPremiumResult').textContent = `₹${totalPremium.toFixed(2)}`;
+    const premiumResultEl = document.getElementById('premiumResult');
+    if (premiumResultEl) premiumResultEl.classList.remove('hidden');
+    const modalPremiumEl = document.getElementById('modalPremiumResult');
+    if (modalPremiumEl) modalPremiumEl.textContent = `₹${modalPremium.toFixed(2)}`;
+    const totalPremiumEl = document.getElementById('totalPremiumResult');
+    if (totalPremiumEl) totalPremiumEl.textContent = `₹${totalPremium.toFixed(2)}`;
     const netNode = document.getElementById('netRopResult');
-    if (netNode) netNode.textContent = netROP.toFixed(2);
-    document.getElementById('netRopResult').textContent = netROP.toFixed(2)}`;
+    if (netNode) netNode.textContent = `₹${netROP.toFixed(2)}`;
+
     const modePctText = ((modeRebatePct * 100).toFixed(1)) + `%`;
     const breakdown = [
         `Tabular per 1000: ₹${tabularPremium.toFixed(2)}`,
         `Mode ${mode} rebate: -${modePctText} ⇒ ₹${per1000AfterMode.toFixed(2)} per 1000`,
         `S.A. rebate (${saRebateUnits.toFixed(2)} units): ₹${per1000AfterMode.toFixed(2)} − ${saRebateUnits.toFixed(2)} = ₹${per1000AfterSA.toFixed(2)} per 1000`,
-        `Modal conversion: ₹${per1000AfterSA.toFixed(2)} × S.A.: ${saThousands} × Mode Multiplier: ${multiplier} = <b>₹${modalPremium.toFixed(2)}`,
-        `Total over term: ₹${modalPremium.toFixed(2)} × Inst./yr: ${inst} × Term: ${policyTerm} = <b>₹${totalPremium.toFixed(2)}`,
-        `Net ROP: ₹${netROP.toFixed(2)}
+        `Modal conversion: ₹${per1000AfterSA.toFixed(2)} × S.A.: ${saThousands} × Mode Multiplier: ${multiplier} = ₹${modalPremium.toFixed(2)}`,
+        `Total over term: ₹${modalPremium.toFixed(2)} × Inst./yr: ${inst} × Term: ${policyTerm} = ₹${totalPremium.toFixed(2)}`,
+        `Net ROP: ₹${netROP.toFixed(2)}`
     ];
-    document.getElementById('calculationBreakdown').innerHTML = breakdown.join('<br>');
+    const breakdownEl = document.getElementById('calculationBreakdown');
+    if (breakdownEl) breakdownEl.innerHTML = breakdown.join('<br>');
 });
 
 function getModeRebatePercent(plan, mode) {
