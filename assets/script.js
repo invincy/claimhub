@@ -378,24 +378,28 @@ calculateBtn?.addEventListener('click', async function() {
 
     // 3) Convert to modal premium using the existing mode multipliers
     const multiplier = { YLY: 1, HLY: 0.50, QLY: 0.25, MLY: 0.085 }[mode] || 1;
-    const modalPremium = round2(per1000AfterSA * saThousands * multiplier);
+    // Calculate annual premium first (per1000 rate × SA in thousands)
+    const annualPremium = round2(per1000AfterSA * saThousands);
+    // Now compute modal premium (rounded after multiplying by annual -> mode)
+    const modalPremium = round2(annualPremium * multiplier);
     const INSTAL_PER_YEAR = {YLY: 1, HLY: 2, QLY: 4, MLY: 12};
     const inst = INSTAL_PER_YEAR[mode] ?? 1;
     const totalPremium = round2(modalPremium * inst * policyTerm);
 
     // Survival / ROP adjustments (use defined variables)
+    // Money-back payouts occur at 4-year multiples strictly less than the policy term
     let survival = 0;
     if (String(plan) === '179') {
-        const isT16 = policyTerm === 16;
-        const pct = isT16 ? 0.15 : 0.10;
-        const schedule = isT16 ? [4, 8, 12] : [4, 8, 12, 16];
-        for (const yr of schedule) {
-            if (policyTerm >= yr) survival += pct * saRupees;
+        // For money-back plans, payouts depend on how many years premiums are paid.
+        // Use premiumPaidTerm (years premiums are paid) to determine scheduled payouts at 4-year multiples
+        const pct = premiumPaidTerm === 16 ? 0.15 : 0.10; // special higher pct for 16-yr premium-paid variant
+        for (let yr = 4; yr < premiumPaidTerm; yr += 4) {
+            survival += pct * saRupees;
         }
     }
     if (String(plan) === '174') {
-        for (let yr = 4; yr <= policyTerm; yr += 4) {
-            if (policyTerm >= yr) survival += 0.10 * saRupees;
+        for (let yr = 4; yr < premiumPaidTerm; yr += 4) {
+            survival += 0.10 * saRupees;
         }
     }
     const netROP = round2(totalPremium - survival);
