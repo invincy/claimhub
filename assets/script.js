@@ -382,7 +382,9 @@ calculateBtn?.addEventListener('click', async function() {
     const annualPremium = round2(per1000AfterSA * saThousands);
     // Compute modal premium: apply mode multiplier then ROUND to nearest rupee
     const modalPremiumRaw = annualPremium * multiplier; // may have decimals
-    const modalPremium = Math.round(modalPremiumRaw); // nearest rupee (integer)
+    // Round modal premium UP to the next rupee so modal premium (and net ROP)
+    // are slightly larger as required by business preference
+    const modalPremium = Math.ceil(modalPremiumRaw); // round up to nearest rupee (integer)
     const INSTAL_PER_YEAR = {YLY: 1, HLY: 2, QLY: 4, MLY: 12};
     const inst = INSTAL_PER_YEAR[mode] ?? 1;
     const totalPremium = modalPremium * inst * policyTerm; // integer rupees
