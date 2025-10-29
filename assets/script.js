@@ -414,6 +414,8 @@ calculateBtn?.addEventListener('click', async function() {
     // Update Modal Premium (medium size)
     const modalPremiumEl = document.getElementById('modalPremiumResult');
     if (modalPremiumEl) {
+        // remove any previous sizing classes to avoid accumulation
+        modalPremiumEl.classList.remove('result-medium', 'result-small', 'result-large');
         modalPremiumEl.textContent = `₹${modalPremium.toFixed(0)}`;
         modalPremiumEl.classList.add('result-medium');
     }
@@ -421,6 +423,7 @@ calculateBtn?.addEventListener('click', async function() {
     // Update Total Paid Over Term (smaller size)
     const totalPremiumEl = document.getElementById('totalPremiumResult');
     if (totalPremiumEl) {
+        totalPremiumEl.classList.remove('result-medium', 'result-small', 'result-large');
         totalPremiumEl.textContent = `₹${totalPremium.toFixed(0)}`;
         totalPremiumEl.classList.add('result-small');
     }
@@ -428,6 +431,7 @@ calculateBtn?.addEventListener('click', async function() {
     // Update Net ROP (prominent large display)
     const netNode = document.getElementById('netRopResult');
     if (netNode) {
+        netNode.classList.remove('result-medium', 'result-small', 'result-large');
         netNode.textContent = `₹${netROP.toFixed(0)}`;
         netNode.classList.add('result-large');
     }
