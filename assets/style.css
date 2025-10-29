@@ -679,3 +679,23 @@ img, video { max-width: 100%; height: auto; }
     width: max-content;   /* expand to content width rather than fill container */
     min-width: 1400px;    /* ensure scrollbar appears on narrower containers */
 }
+
+/* Result sizing classes for Premium Calculator */
+.result-large {
+    font-size: 2.5rem; /* large display for Net ROP */
+    line-height: 1.05;
+    font-weight: 800;
+    color: #ffffff !important;
+}
+.result-medium {
+    font-size: 1.75rem; /* medium for Modal Premium */
+    line-height: 1.1;
+    font-weight: 700;
+    color: #ffffff !important;
+}
+.result-small {
+    font-size: 1rem; /* smaller for Total Paid Over Term */
+    line-height: 1.2;
+    font-weight: 600;
+    color: #d1d5db !important; /* gray-300 */
+}

@@ -410,12 +410,27 @@ calculateBtn?.addEventListener('click', async function() {
     // Show results with a clear breakdown (modal premium rounded to nearest rupee)
     const premiumResultEl = document.getElementById('premiumResult');
     if (premiumResultEl) premiumResultEl.classList.remove('hidden');
+
+    // Update Modal Premium (medium size)
     const modalPremiumEl = document.getElementById('modalPremiumResult');
-    if (modalPremiumEl) modalPremiumEl.textContent = `₹${modalPremium.toFixed(0)}`;
+    if (modalPremiumEl) {
+        modalPremiumEl.textContent = `₹${modalPremium.toFixed(0)}`;
+        modalPremiumEl.classList.add('result-medium');
+    }
+
+    // Update Total Paid Over Term (smaller size)
     const totalPremiumEl = document.getElementById('totalPremiumResult');
-    if (totalPremiumEl) totalPremiumEl.textContent = `₹${totalPremium.toFixed(0)}`;
+    if (totalPremiumEl) {
+        totalPremiumEl.textContent = `₹${totalPremium.toFixed(0)}`;
+        totalPremiumEl.classList.add('result-small');
+    }
+
+    // Update Net ROP (prominent large display)
     const netNode = document.getElementById('netRopResult');
-    if (netNode) netNode.textContent = `₹${netROP.toFixed(0)}`;
+    if (netNode) {
+        netNode.textContent = `₹${netROP.toFixed(0)}`;
+        netNode.classList.add('result-large');
+    }
 
     const modePctText = ((modeRebatePct * 100).toFixed(1)) + `%`;
     const breakdown = [
