@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LIC Claims Hub</title>
+    <link rel="stylesheet" href="assets/style.css">
+    <link id="themeStylesheet" rel="stylesheet" href="assets/efeap.css">
+    <style>
+        /* Make tools title and tab labels more visible (dark blue) */
+        .tools-panel-container h3 { color: #0b3d91 !important; }
+        .tool-tab { color: #0b3d91; }
+        .tool-tab.active-tab { color: #042856; }
+    </style>
+</head>
+<body class="dark-bg min-h-screen theme-efeap">
+    <!-- Time and Date Display -->
+    <div id="clock" class="text-right text-3xl font-bold text-white"></div>
+    <div id="date" class="text-right text-sm text-gray-300"></div>
+
+    <div class="relative z-10">
+        <!-- Header -->
+        <div class="text-center mb-4">
+            <div class="glass-header page-header py-4 flex items-center justify-center">
+                <h1 class="text-4xl font-bold glow-text">LIC Claims Hub</h1>
+            </div>
+        </div>
+
+        <!-- Main Dashboard Grid -->
+        <div class="dash-grid p-4 md:p-6">
+            <!-- Left Column (Tools & Requirements) -->
+            <div class="dash-right">
+                <div class="dash-right-sticky-container">
+                    <div class="glass-header rounded-2xl p-6 tools-panel-container">
+                        <h3 class="text-2xl font-bold text-white mb-6 flex items-center gap-3">🧰 Tools & Requirements</h3>
+
+                        <!-- Tabs -->
+                        <div class="flex border-b border-gray-700 mb-6">
+                            <button class="tool-tab active-tab" data-tab="todo">To-Do</button>
+                            <button class="tool-tab" data-tab="requirements">Requirements</button>
+                            <button class="tool-tab" data-tab="maturity">Maturity Calculator</button>
+                            <button class="tool-tab" data-tab="calculator">Premium Calculator</button>
+                            <button class="tool-tab" data-tab="links">Links</button>
+                        </div>
+
+                        <!-- Tab Panels -->
+                        <div id="todoPanel" class="tab-panel">
+                            <div class="mb-4">
+                                <div class="flex gap-2">
+                                    <input type="text" id="todoInput" class="dark-input w-full px-4 py-3 rounded-xl font-medium" placeholder="Add a new to-do...">
+                                    <button id="addTodoBtn" class="btn-primary px-4 py-3 rounded-xl font-semibold text-sm">Add</button>
+                                </div>
+                            </div>
+                            <ul id="todoList" class="space-y-3 mt-4"> <!-- JS should create <li> with class="option-card todo-item" -->
+                                <!-- To-do items will be injected here by JS -->
+                            </ul>
+                        </div>
+
+                        <div id="requirementsPanel" class="tab-panel hidden">
+                            <div class="mb-4">
+                                <label class="block text-sm font-bold text-gray-300 mb-2">Select Type</label>
+                                <div class="flex items-center gap-3" role="tablist" aria-label="Requirements Types">
+                                    <button type="button" class="requirements-btn btn-ghost px-4 py-2 rounded-xl" data-type="LET">LET Forms</button>
+                                    <button type="button" class="requirements-btn btn-ghost px-4 py-2 rounded-xl" data-type="LOST">Lost Policy Bond</button>
+                                    <button type="button" class="requirements-btn btn-ghost px-4 py-2 rounded-xl" data-type="ACC">Accident / Suicide</button>
+                                </div>
+                            </div>
+                            <div id="letRequirementsTable">
+                                <div class="dark-table rounded-2xl border border-gray-600/30 shadow-2xl overflow-hidden">
+                                    <div class="bg-gray-900/60 px-6 py-4 border-b border-gray-600/30">
+                                        <h4 class="font-bold text-white text-lg flex items-center gap-2">LET Form Requirements based on NCAP</h4>
+                                    </div>
+                                    <div class="overflow-x-auto">
+                                        <table class="w-full text-sm">
+                                            <thead class="dark-table-header">
+                                                <tr>
+                                                    <th class="px-6 py-4 text-left font-bold text-gray-200 border-b border-gray-600/30">NCAP Slab</th>
+                                                    <th class="px-6 py-4 text-left font-bold text-gray-200 border-b border-gray-600/30">Required Forms</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="divide-y divide-gray-600/20">
+                                                <tr class="dark-table-row transition-colors">
+                                                    <td class="px-6 py-4 font-semibold text-gray-300">Up to ₹5,000</td>
+                                                    <td class="px-6 py-4 text-gray-300">Form 3806 (no stamp paper needed)</td>
+                                                </tr>
+                                                <tr class="dark-table-row transition-colors">
+                                                    <td class="px-6 py-4 font-semibold text-gray-300">₹5,001 to ₹10,000</td>
+                                                    <td class="px-6 py-4 text-gray-300">Form 3806, Form 3805-B (no notarization)</td>
+                                                </tr>
+                                                <tr class="dark-table-row transition-colors">
+                                                    <td class="px-6 py-4 font-semibold text-gray-300">₹10,001 to ₹40,000</td>
+                                                    <td class="px-6 py-4 text-gray-300">Form 3806, Form 3805-B (notarized)</td>
+                                                </tr>
+                                                <tr class="dark-table-row transition-colors">
+                                                    <td class="px-6 py-4 font-semibold text-gray-300">₹40,001 to ₹1,00,000</td>
+                                                    <td class="px-6 py-4 text-gray-300">Form 3806-A (₹300 stamp), Form 3805-B (₹300 stamp), notarized</td>
+                                                </tr>
+                                                <tr class="dark-table-row transition-colors">
+                                                    <td class="px-6 py-4 font-semibold text-gray-300">Above ₹1,00,000</td>
+                                                    <td class="px-6 py-4 text-gray-300">Form 3806-A (₹300 stamp), Form 3805 (₹300 stamp), Form 3807 (surety form), all notarized</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="lostPolicyTable" class="hidden">
+                                <div class="dark-table rounded-2xl border border-gray-600/30 shadow-2xl overflow-hidden">
+                                    <div class="bg-gray-900/60 px-6 py-4 border-b border-gray-600/30">
+                                        <h4 class="font-bold text-white text-lg flex items-center gap-2">Lost Policy Bond - Typical Requirements</h4>
+                                    </div>
+                                    <div class="p-6">
+                                        <ul class="text-gray-600">
+                                            <li>• FIR / Affidavit as applicable</li>
+                                            <li>• Original policy bond (if available)</li>
+                                            <li>• Indemnity bond / Surety as per branch guidelines</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="accidentTable" class="hidden">
+                                <div class="dark-table rounded-2xl border border-gray-600/30 shadow-2xl overflow-hidden">
+                                    <div class="bg-gray-900/60 px-6 py-4 border-b border-gray-600/30">
+                                        <h4 class="font-bold text-white text-lg flex items-center gap-2">Accident / Suicide - Typical Requirements</h4>
+                                    </div>
+                                    <div class="p-6">
+                                        <ul class="text-gray-600">
+                                            <li>• Police inquest / FIR</li>
+                                            <li>• Post-mortem report (if applicable)</li>
+                                            <li>• Medical records and doctor's certificates</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="maturityPanel" class="tab-panel hidden">
+                            <div class="space-y-6 maturity-calculator">
+                                <h4 class="text-lg font-bold text-white mb-2">Maturity Calculator</h4>
+                                <div>
+                                    <label class="block text-sm font-bold text-gray-300 mb-3">Plan</label>
+                                    <div class="flex items-center space-x-6 mb-4">
+                                        <label class="flex items-center text-gray-300"><input type="radio" name="maturityPlan" value="111" class="radio-modern mr-2" checked><span>111</span></label>
+                                        <label class="flex items-center text-gray-300"><input type="radio" name="maturityPlan" value="150" class="radio-modern mr-2"><span>150</span></label>
+                                        <label class="flex items-center text-gray-300"><input type="radio" name="maturityPlan" value="174" class="radio-modern mr-2"><span>174</span></label>
+                                        <label class="flex items-center text-gray-300"><input type="radio" name="maturityPlan" value="179" class="radio-modern mr-2"><span>179</span></label>
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <div>
+                                        <label class="block text-xs font-bold text-gray-400 mb-2">Sum Assured (in '000)</label>
+                                        <input type="number" id="maturitySaInput" class="dark-input w-full px-3 py-2 rounded-lg font-medium" placeholder="e.g., 100" min="0" step="1">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-bold text-gray-400 mb-2">Premium (per installment)</label>
+                                        <input type="number" step="0.01" id="maturityPremiumInput" class="dark-input w-full px-3 py-2 rounded-lg font-medium" placeholder="e.g., 2500">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-bold text-gray-400 mb-2">Paid Years</label>
+                                        <input type="number" step="0.25" id="maturityPaidYearsInput" class="dark-input w-full px-3 py-2 rounded-lg font-medium" placeholder="e.g., 12.75">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-bold text-gray-300 mb-3">Mode</label>
+                                    <div class="flex items-center space-x-6 mb-4">
+                                        <label class="flex items-center text-gray-300"><input type="radio" name="maturityMode" value="YLY" class="radio-modern mr-2" checked><span>YLY</span></label>
+                                        <label class="flex items-center text-gray-300"><input type="radio" name="maturityMode" value="HLY" class="radio-modern mr-2"><span>HLY</span></label>
+                                        <label class="flex items-center text-gray-300"><input type="radio" name="maturityMode" value="QLY" class="radio-modern mr-2"><span>QLY</span></label>
+                                        <label class="flex items-center text-gray-300"><input type="radio" name="maturityMode" value="MLY" class="radio-modern mr-2"><span>MLY</span></label>
+                                    </div>
+                                </div>
+                                <div>
+                                    <button id="calculateMaturityBtn" class="btn-primary w-full py-3 rounded-xl font-semibold text-sm">Calculate Maturity</button>
+                                </div>
+                                <div id="maturityResult" class="hidden space-y-4 p-4 bg-gray-900/40 rounded-xl border border-gray-700/40">
+                                    <div>
+                                        <p class="text-sm text-gray-400">Estimated Maturity (S.A.)</p>
+                                        <p id="maturityAmount" class="text-3xl font-extrabold" style="color:#1a237e"></p>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm text-gray-400">Total Paid (after dab deduction)</p>
+                                        <p id="maturityTotalPaid" class="text-2xl font-semibold" style="color:#1a237e"></p>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm text-gray-400">Money-back / Survival Paid</p>
+                                        <p id="maturitySurvival" class="text-lg font-semibold text-gray-300"></p>
+                                    </div>
+                                    <div id="maturityBreakdown" class="text-xs text-gray-500 pt-2 border-t border-gray-700"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="calculatorPanel" class="tab-panel hidden">
+                            <div class="space-y-6 premium-calculator">
+                                <div>
+                                    <label class="block text-sm font-bold text-gray-300 mb-3">Plan</label>
+                                    <div class="flex items-center space-x-6">
+                                        <label class="flex items-center text-gray-300"><input type="radio" name="plan" value="111" class="radio-modern mr-2" checked><span>111</span></label>
+                                        <label class="flex items-center text-gray-300"><input type="radio" name="plan" value="150" class="radio-modern mr-2"><span>150</span></label>
+                                        <label class="flex items-center text-gray-300"><input type="radio" name="plan" value="174" class="radio-modern mr-2"><span>174</span></label>
+                                        <label class="flex items-center text-gray-300"><input type="radio" name="plan" value="179" class="radio-modern mr-2"><span>179</span></label>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-bold text-gray-300 mb-3">Mode</label>
+                                    <div class="flex items-center space-x-6">
+                                        <label class="flex items-center text-gray-300"><input type="radio" name="mode" value="YLY" class="radio-modern mr-2" checked><span>YLY</span></label>
+                                        <label class="flex items-center text-gray-300"><input type="radio" name="mode" value="HLY" class="radio-modern mr-2"><span>HLY</span></label>
+                                        <label class="flex items-center text-gray-300"><input type="radio" name="mode" value="QLY" class="radio-modern mr-2"><span>QLY</span></label>
+                                        <label class="flex items-center text-gray-300"><input type="radio" name="mode" value="MLY" class="radio-modern mr-2"><span>MLY</span></label>
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-xs font-bold text-gray-400 mb-2">S.A. (in '000)</label>
+                                        <input type="number" id="saInput" class="dark-input w-full px-3 py-2 rounded-lg font-medium" placeholder="e.g., 100">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-bold text-gray-400 mb-2">Age (Yrs)</label>
+                                        <input type="number" id="ageInput" class="dark-input w-full px-3 py-2 rounded-lg font-medium" placeholder="e.g., 25" min="0" max="100">
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+                                    <div>
+                                        <label class="block text-xs font-bold text-gray-400 mb-2">Paid Years</label>
+                                        <input type="number" step="0.25" id="premiumPaidTermInput" class="dark-input w-full px-3 py-2 rounded-lg font-medium" placeholder="e.g., 12.75">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-bold text-gray-400 mb-2">Policy term</label>
+                                        <input type="number" step="0.25" id="policyTermInput" class="dark-input w-full px-3 py-2 rounded-lg font-medium" placeholder="e.g., 20">
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <button id="calculatePremiumBtn" class="btn-primary w-full py-3 rounded-xl font-semibold text-sm">Calculate Premium</button>
+                                </div>
+
+                                <div id="premiumResult" class="hidden space-y-4 p-4 bg-gray-900/40 rounded-xl border border-gray-700/40">
+                                    <div>
+                                        <p class="text-sm text-gray-400">Net ROP</p>
+                                        <p id="netRopResult" class="text-3xl font-extrabold text-white"></p>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm text-gray-400">Modal Premium</p>
+                                        <p id="modalPremiumResult" class="text-2xl font-bold text-white"></p>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm text-gray-400">Total Paid Over Term</p>
+                                        <p id="totalPremiumResult" class="text-lg font-semibold text-gray-300"></p>
+                                    </div>
+                                    <div id="calculationBreakdown" class="text-xs text-gray-500 pt-2 border-t border-gray-700">
+                                        <!-- Breakdown will be injected here -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="linksPanel" class="tab-panel hidden">
+                            <h4 class="text-lg font-bold text-white mb-4">Quick Links</h4>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div><a href="#" target="_blank" rel="noopener noreferrer" class="quick-link-item text-gray-300 font-medium hover:text-cyan-400 transition-colors duration-200"><span class="mr-3">🔍</span> IPP Inquiry</a></div>
+                                <div><a href="#" target="_blank" rel="noopener noreferrer" class="quick-link-item text-gray-300 font-medium hover:text-cyan-400 transition-colors duration-200"><span class="mr-3">✉️</span> Webmail</a></div>
+                                <div><a href="#" target="_blank" rel="noopener noreferrer" class="quick-link-item text-gray-300 font-medium hover:text-cyan-400 transition-colors duration-200"><span class="mr-3">✍️</span> D.O. Decision</a></div>
+                                <div><a href="#" target="_blank" rel="noopener noreferrer" class="quick-link-item text-gray-300 font-medium hover:text-cyan-400 transition-colors duration-200"><span class="mr-3">📋</span> Claim D.O.</a></div>
+                                <div><a href="#" target="_blank" rel="noopener noreferrer" class="quick-link-item text-gray-300 font-medium hover:text-cyan-400 transition-colors duration-200"><span class="mr-3">📚</span> VVPedia</a></div>
+                                <div><a href="#" target="_blank" rel="noopener noreferrer" class="quick-link-item text-gray-300 font-medium hover:text-cyan-400 transition-colors duration-200"><span class="mr-3">💻</span> JS</a></div>
+                                <div><a href="#" target="_blank" rel="noopener noreferrer" class="quick-link-item text-gray-300 font-medium hover:text-cyan-400 transition-colors duration-200"><span class="mr-3">🤖</span> LISA</a></div>
+                                <div><a href="#" target="_blank" rel="noopener noreferrer" class="quick-link-item text-gray-300 font-medium hover:text-cyan-400 transition-colors duration-200"><span class="mr-3">📜</span> Premium History</a></div>
+                                <div><a href="#" target="_blank" rel="noopener noreferrer" class="quick-link-item text-gray-300 font-medium hover:text-cyan-400 transition-colors duration-200"><span class="mr-3">💼</span> C.O.CRM</a></div>
+                                <div><a href="#" target="_blank" rel="noopener noreferrer" class="quick-link-item text-gray-300 font-medium hover:text-cyan-400 transition-colors duration-200"><span class="mr-3">📝</span> SDC Feedback</a></div>
+                                <div><a href="#" target="_blank" rel="noopener noreferrer" class="quick-link-item text-gray-300 font-medium hover:text-cyan-400 transition-colors duration-200"><span class="mr-3">📍</span> Claim Tracker</a></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Right Column (Death Claims & Special Cases) -->
+            <div class="dash-left">
+                <!-- Action Buttons -->
+                <div class="glass-header rounded-2xl p-6">
+                    <div class="flex gap-4">
+                        <button id="deathClaimBtn" class="btn-danger w-full px-8 py-4 rounded-xl font-semibold text-sm flex items-center justify-center gap-2">
+                            📄 New Death Claim
+                        </button>
+                        <button id="specialCaseBtn" class="btn-primary w-full px-8 py-4 rounded-xl font-semibold text-sm flex items-center justify-center gap-2">
+                            ⭐ New Special Case
+                        </button>
+                    </div>
+                </div>
+        
+        <!-- Special Case Form (Hidden by default) -->
+        <div id="specialCaseForm" class="hidden matte-form rounded-3xl p-8">
+
+            <h3 class="text-3xl font-bold text-white mb-8 flex items-center gap-3">⭐ Add Special Case</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div>
+                    <label class="block text-sm font-bold text-gray-300 mb-3">Policy Number</label>
+                    <input type="text" id="specialPolicyNumber" class="dark-input w-full px-4 py-3 rounded-xl font-medium">
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-gray-300 mb-3">Name</label>
+                    <input type="text" id="specialName" class="dark-input w-full px-4 py-3 rounded-xl font-medium">
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-gray-300 mb-3">Type</label>
+                    <select id="specialType" class="dark-input w-full px-4 py-3 rounded-xl font-medium">
+                        <option value="">Select Type</option>
+                        <option value="M/C">M/C</option>
+                        <option value="D/C">D/C</option>
+                        <option value="S.B.">S.B.</option>
+                        <option value="IPP">IPP</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="mb-6">
+                <label class="block text-sm font-bold text-gray-300 mb-3">Issue</label>
+                <textarea id="specialIssue" rows="4" class="dark-input w-full px-4 py-3 rounded-xl font-medium" placeholder="Describe the issue..."></textarea>
+            </div>
+
+            <div class="mb-8">
+                <label class="option-card flex items-center p-4 rounded-xl">
+                    <input type="checkbox" id="specialResolved" class="checkbox-modern mr-3">
+                    <span class="font-medium text-gray-300">✓ Mark as resolved</span>
+                </label>
+            </div>
+
+            <div class="flex gap-4">
+
+                <button id="saveSpecialCase" class="btn-primary px-6 py-3 rounded-xl font-semibold text-sm">
+
+                    Save Case
+                </button>
+                <button id="cancelSpecialForm" class="btn-ghost px-6 py-3 rounded-xl font-semibold text-sm">
+                    Cancel
+                </button>
+            </div>
+        </div>
+
+        <!-- Death Claim Form (Hidden by default) -->
+        <div id="deathClaimForm" class="hidden matte-form rounded-3xl p-8">
+
+            <h3 class="text-3xl font-bold text-white mb-8 flex items-center gap-3">📄 Death Claim Form</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div>
+                    <label class="block text-sm font-bold text-gray-300 mb-3">Policy Number</label>
+                    <input type="text" id="policyNumber" class="dark-input w-full px-4 py-3 rounded-xl font-medium">
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-gray-300 mb-3">Name</label>
+                    <input type="text" id="claimantName" class="dark-input w-full px-4 py-3 rounded-xl font-medium">
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-gray-300 mb-3">Date of Commencement/ Revival (dd/mm/yyyy)</label>
+                    <input type="text" id="commencementDate" placeholder="01/01/2020" maxlength="10" class="dark-input w-full px-4 py-3 rounded-xl font-medium">
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-gray-300 mb-3">Date of Death (dd/mm/yyyy)</label>
+                    <input type="text" id="deathDate" placeholder="15/03/2023" maxlength="10" class="dark-input w-full px-4 py-3 rounded-xl font-medium">
+                </div>
+            </div>
+
+            <!-- Duration Display -->
+
+            <div id="durationDisplay" class="hidden mb-6 p-6 bg-gray-900/40 rounded-2xl border border-gray-700/40 backdrop-blur-sm">
+                <span class="font-bold text-gray-300">Duration: </span>
+                <span id="durationText" class="font-bold text-gray-300 text-xl"></span>
+            </div>
+
+            <!-- Suggestion -->
+            <div id="suggestionBox" class="hidden mb-6 p-6 rounded-2xl backdrop-blur-sm">
+                <span id="suggestionText" class="font-bold text-xl"></span>
+                <div id="timeBarWarning" class="hidden mt-2 text-gray-300 font-semibold"></div>
+            </div>
+
+
+            <!-- Manual Selection -->
+            <div id="manualSelection" class="hidden mb-6">
+                <label class="block text-lg font-bold text-gray-300 mb-4">🎯 Select Claim Type:</label>
+                <div class="space-y-3">
+                    <label class="option-card flex items-center p-4 rounded-xl">
+                        <input type="radio" name="claimType" value="Early" class="radio-modern mr-4">
+                        <span class="font-semibold text-gray-300">🔴 Early</span>
+                    </label>
+                    <label class="option-card flex items-center p-4 rounded-xl">
+                        <input type="radio" name="claimType" value="Non-Early (4–5 Yrs)" class="radio-modern mr-4">
+                        <span class="font-semibold text-gray-300">🔵 Non-Early (4–5 Yrs)</span>
+                    </label>
+                    <label class="option-card flex items-center p-4 rounded-xl">
+                        <input type="radio" name="claimType" value="Non-Early" class="radio-modern mr-4">
+                        <span class="font-semibold text-gray-300">🟢 Non-Early</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Workflow Sections -->
+            <div id="workflowSections" class="hidden space-y-6 mb-8">
+                <!-- Check Nominee Section -->
+
+                <div class="workflow-section rounded-2xl">
+                    <button class="workflow-header w-full text-left p-6 font-bold text-white rounded-2xl transition-all duration-300 flex items-center justify-between section-header" data-target="checkNominee">
+                        <span class="text-xl flex items-center gap-3">Check Nominee</span>
+                          <span class="transform transition-transform text-gray-300 text-2xl">▼</span>
+
+                    </button>
+                    <div id="checkNominee" class="workflow-content">
+                        <div class="p-6 pt-0 space-y-4">
+                            <label class="option-card flex items-center p-4 rounded-xl">
+                                <input type="checkbox" id="nomineeAvailable" class="checkbox-modern mr-4">
+                                <span class="font-semibold text-gray-300">✓ Nominee Available</span>
+                            </label>
+                            <label class="option-card flex items-center p-4 rounded-xl">
+                                <input type="checkbox" id="nomineeNotAvailable" class="checkbox-modern mr-4">
+                                <span class="font-semibold text-gray-300">✗ Nominee Not Available</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Documents Required Section -->
+
+                <div class="workflow-section rounded-2xl">
+                    <button class="workflow-header w-full text-left p-6 font-bold text-white rounded-2xl transition-all duration-300 flex items-center justify-between section-header" data-target="documentsRequired">
+                        <span class="text-xl flex items-center gap-3">Documents Required</span>
+                          <span class="transform transition-transform text-gray-300 text-2xl">▼</span>
+
+                    </button>
+                    <div id="documentsRequired" class="workflow-content">
+                        <div class="p-6 pt-0 space-y-4">
+                            <label class="option-card flex items-center p-4 rounded-xl">
+                                <input type="checkbox" id="deathClaimFormDocs" class="checkbox-modern mr-4">
+                                <span class="font-semibold text-gray-300">Death Claim Form + Supporting Documents</span>
+                            </label>
+                            <div id="letFormsSection" class="hidden space-y-6">
+                                <label class="option-card flex items-center p-4 rounded-xl">
+                                    <input type="checkbox" id="letForms" class="checkbox-modern mr-4">
+                                    <span class="font-semibold text-gray-300">LET Forms (Legal Evidence of Title)</span>
+                                </label>
+                                
+                                <!-- LET Form Requirements Table -->
+
+                                  <div class="dark-table rounded-2xl border border-gray-600/30 shadow-2xl overflow-hidden">
+                                    <div class="bg-gray-900/60 px-6 py-4 border-b border-gray-600/30">
+
+                                        <h4 class="font-bold text-white text-lg flex items-center gap-2">LET Form Requirements based on NCAP</h4>
+                                    </div>
+                                    <div class="overflow-x-auto">
+                                        <table class="w-full text-sm">
+                                            <thead class="dark-table-header">
+                                                <tr>
+                                                    <th class="px-6 py-4 text-left font-bold text-gray-200 border-b border-gray-600/30">NCAP Slab</th>
+                                                    <th class="px-6 py-4 text-left font-bold text-gray-200 border-b border-gray-600/30">Required Forms</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="divide-y divide-gray-600/20">
+
+                                                <tr class="dark-table-row transition-colors">
+                                                    <td class="px-6 py-4 font-semibold text-gray-300">Up to ₹5,000</td>
+                                                    <td class="px-6 py-4 text-gray-300">Form 3806 (no stamp paper needed)</td>
+                                                </tr>
+                                                <tr class="dark-table-row transition-colors">
+                                                    <td class="px-6 py-4 font-semibold text-gray-300">₹5,001 to ₹10,000</td>
+                                                    <td class="px-6 py-4 text-gray-300">Form 3806, Form 3805-B (no notarization)</td>
+                                                </tr>
+                                                <tr class="dark-table-row transition-colors">
+                                                    <td class="px-6 py-4 font-semibold text-gray-300">₹10,001 to ₹40,000</td>
+                                                    <td class="px-6 py-4 text-gray-300">Form 3806, Form 3805-B (notarized)</td>
+                                                </tr>
+                                                <tr class="dark-table-row transition-colors">
+                                                    <td class="px-6 py-4 font-semibold text-gray-300">₹40,001 to ₹1,00,000</td>
+                                                    <td class="px-6 py-4 text-gray-300">Form 3806-A (₹300 stamp), Form 3805-B (₹300 stamp), notarized</td>
+                                                </tr>
+                                                <tr class="dark-table-row transition-colors">
+                                                    <td class="px-6 py-4 font-semibold text-gray-300">Above ₹1,00,000</td>
+                                                    <td class="px-6 py-4 text-gray-300">Form 3806-A (₹300 stamp), Form 3805 (₹300 stamp), Form 3807 (surety form), all notarized</td>
+                                                </tr>
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Investigation Section -->
+
+                <div class="workflow-section rounded-2xl">
+                    <button class="workflow-header w-full text-left p-6 font-bold text-white rounded-2xl transition-all duration-300 flex items-center justify-between section-header" data-target="investigation">
+                        <span class="text-xl flex items-center gap-3">Investigation</span>
+                          <span class="transform transition-transform text-gray-300 text-2xl">▼</span>
+
+                    </button>
+                    <div id="investigation" class="workflow-content">
+                        <div class="p-6 pt-0 space-y-4">
+                            <div class="space-y-3">
+                                <label class="option-card flex items-center p-4 rounded-xl">
+                                    <input type="radio" id="investigationABM" name="investigationType" value="ABM(s)" class="radio-modern mr-4">
+                                    <span class="font-semibold text-gray-300">ABM(s)</span>
+                                </label>
+                                <label class="option-card flex items-center p-4 rounded-xl">
+                                    <input type="radio" id="investigationSrBM" name="investigationType" value="Sr. B.M." class="radio-modern mr-4">
+                                    <span class="font-semibold text-gray-300">Sr. B.M.</span>
+                                </label>
+                                <label class="option-card flex items-center p-4 rounded-xl">
+                                    <input type="radio" id="investigationDO" name="investigationType" value="D.O." class="radio-modern mr-4">
+                                    <span class="font-semibold text-gray-300">D.O.</span>
+                                </label>
+                            </div>
+                            <div id="investigationDetails" class="hidden space-y-4">
+                                <div>
+                                    <label class="block text-sm font-bold text-gray-300 mb-3">Date Investigation Allotted</label>
+                                    <input type="date" id="investigationDate" class="dark-input w-full px-4 py-3 rounded-xl">
+                                </div>
+
+                                <div id="daysSinceAllotted" class="text-sm text-gray-300 hidden bg-gray-900/40 p-4 rounded-xl border border-gray-700/40">
+                                <span class="font-semibold">Days since allotted: </span><span id="daysCount" class="font-bold text-gray-300 text-lg"></span>
+
+                                </div>
+                                <label class="option-card flex items-center p-4 rounded-xl">
+                                    <input type="checkbox" id="investigationReceived" class="checkbox-modern mr-4">
+                                    <span class="font-semibold text-gray-300">✓ Investigation Received</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- D.O. Decision Section (Early claims only) -->
+
+                <div id="doDecisionSection" class="workflow-section rounded-2xl hidden">
+                    <button class="workflow-header w-full text-left p-6 font-bold text-white rounded-2xl transition-all duration-300 flex items-center justify-between section-header" data-target="doDecision">
+                        <span class="text-xl flex items-center gap-3">D.O. Decision</span>
+                          <span class="transform transition-transform text-gray-300 text-2xl">▼</span>
+
+                    </button>
+                    <div id="doDecision" class="workflow-content">
+                        <div class="p-6 pt-0 space-y-4">
+                            <div>
+                                <label class="block text-sm font-bold text-gray-300 mb-3">Date Sent to D.O.</label>
+                                <input type="date" id="doSentDate" class="dark-input w-full px-4 py-3 rounded-xl">
+                            </div>
+                            <div id="daysSinceSent" class="text-sm text-gray-300 hidden bg-gray-900/40 p-4 rounded-xl border border-gray-700/40">
+                                <span class="font-semibold">Days since sent: </span><span id="doSentDaysCount" class="font-bold text-gray-300 text-lg"></span>
+                            </div>
+
+                            <label class="option-card flex items-center p-4 rounded-xl">
+                                <input type="checkbox" id="doDecisionReceived" class="checkbox-modern mr-4">
+                                <span class="font-semibold text-gray-300">✓ D.O. Decision Received</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Proceed for Payment Section -->
+
+                <div class="workflow-section rounded-2xl">
+                    <button class="workflow-header w-full text-left p-6 font-bold text-white rounded-2xl transition-all duration-300 flex items-center justify-between section-header" data-target="proceedPayment">
+                        <span class="text-xl flex items-center gap-3">Proceed for Payment</span>
+                          <span class="transform transition-transform text-gray-300 text-2xl">▼</span>
+
+                    </button>
+                    <div id="proceedPayment" class="workflow-content">
+                        <div class="p-6 pt-0">
+                            <label class="option-card flex items-center p-4 rounded-xl">
+                                <input type="checkbox" id="paymentDone" class="checkbox-modern mr-4">
+                                <span class="font-semibold text-gray-300">✓ Payment Done</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Query and Save Section -->
+
+                <div class="workflow-section rounded-2xl p-6 space-y-4">
+                    <div>
+                        <label class="block text-lg font-bold text-gray-300 mb-3">Notes</label>
+                        <textarea id="queryText" rows="4" class="dark-input w-full px-4 py-3 rounded-xl" placeholder="Enter any queries or notes..."></textarea>
+                    </div>
+                    <button id="saveProgress" class="btn-primary px-6 py-3 rounded-xl font-semibold text-sm">
+                        Save Progress
+                    </button>
+                </div>
+
+            </div>
+
+            <div class="flex gap-4">
+                <button id="cancelForm" class="btn-ghost px-6 py-3 rounded-xl font-semibold text-sm">
+                    Cancel
+                </button>
+            </div>
+        </div>
+
+        <!-- Global Search Bar -->
+        <div class="mb-6 px-6">
+            <label for="globalSearchInput" class="block text-sm font-bold text-gray-300 mb-3">Search All Cases</label>
+            <input type="search" id="globalSearchInput" placeholder="🔍 Search by Policy No, Name, etc..." class="dark-input w-full px-4 py-3 rounded-xl font-medium">
+        </div>
+
+        <!-- Collapsible Sections Container -->
+        <div class="glass-header rounded-2xl p-6">
+            <div class="space-y-6">
+                <!-- Active Death Claims -->
+
+                <div class="matte-card rounded-2xl">
+                    <button class="collapsible-header w-full text-left p-6 font-medium bg-gray-900/40 text-gray-200 hover:bg-gray-900/60 rounded-2xl transition-all duration-300 flex items-center justify-between backdrop-blur-sm" data-target="activeDeathClaims">
+
+                        <span class="text-lg flex items-center gap-3">📄 Active Death Claims</span>
+                        <div class="flex items-center gap-4">
+                            <span id="activeDeathClaimsCounter" class="counter-badge px-3 py-1 rounded-full text-sm font-bold">0</span>
+                            <span class="transform transition-transform text-gray-300 text-xl">▼</span>
+                        </div>
+                    </button>
+                    <div id="activeDeathClaims" class="collapsible-content">
+                        <div class="p-6 pt-0">
+                            <div class="dark-table rounded-2xl overflow-hidden shadow-2xl">
+                                <table class="w-full">
+                                    <thead class="dark-table-header">
+                                        <tr>
+                                            <th class="px-6 py-4 text-left text-sm font-bold text-gray-200">Policy No</th>
+                                            <th class="px-6 py-4 text-left text-sm font-bold text-gray-200">Name</th>
+                                            <th class="px-6 py-4 text-left text-sm font-bold text-gray-200">Type</th>
+                                            <th class="px-6 py-4 text-left text-sm font-bold text-gray-200">Stage</th>
+                                            <th class="px-6 py-4 text-left text-sm font-bold text-gray-200">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="activeDeathClaimsTable">
+                                        <tr>
+                                            <td colspan="5" class="px-6 py-12 text-center text-gray-400 font-medium text-lg">— No active death claims</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Active Special Cases -->
+
+                <div class="matte-card rounded-2xl">
+                    <button class="collapsible-header w-full text-left p-6 font-medium bg-gray-900/40 text-gray-200 hover:bg-gray-900/60 rounded-2xl transition-all duration-300 flex items-center justify-between backdrop-blur-sm" data-target="activeSpecialCases">
+
+                        <span class="text-lg flex items-center gap-3">⭐ Active Special Cases</span>
+                        <div class="flex items-center gap-4">
+                            <span id="activeSpecialCasesCounter" class="counter-badge px-3 py-1 rounded-full text-sm font-bold">0</span>
+                            <span class="transform transition-transform text-gray-300 text-xl">▼</span>
+                        </div>
+                    </button>
+                    <div id="activeSpecialCases" class="collapsible-content">
+                        <div class="p-6 pt-0">
+                            <div class="dark-table rounded-2xl overflow-hidden shadow-2xl">
+                                <table class="w-full">
+                                    <thead class="dark-table-header">
+                                        <tr>
+                                            <th class="px-6 py-4 text-left text-sm font-bold text-gray-200">Policy No</th>
+                                            <th class="px-6 py-4 text-left text-sm font-bold text-gray-200">Name</th>
+                                            <th class="px-6 py-4 text-left text-sm font-bold text-gray-200">Type</th>
+                                            <th class="px-6 py-4 text-left text-sm font-bold text-gray-200">Issue</th>
+                                            <th class="px-6 py-4 text-left text-sm font-bold text-gray-200">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="activeSpecialCasesTable">
+                                        <tr>
+                                            <td colspan="5" class="px-6 py-12 text-center text-gray-400 font-medium text-lg">— No active special cases</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Completed Death Claims -->
+
+                <div class="matte-card rounded-2xl">
+                    <button class="collapsible-header w-full text-left p-6 font-medium bg-gray-900/40 text-gray-200 hover:bg-gray-900/60 rounded-2xl transition-all duration-300 flex items-center justify-between backdrop-blur-sm" data-target="completedDeathClaims">
+
+                        <span class="text-lg flex items-center gap-3">✅ Completed Death Claims</span>
+                        <span class="transform transition-transform text-gray-300 text-xl">▼</span>
+                    </button>
+                    <div id="completedDeathClaims" class="collapsible-content">
+                        <div class="p-6 pt-0">
+                            <div class="dark-table rounded-2xl overflow-hidden shadow-2xl">
+                                <table class="w-full">
+                                    <thead class="dark-table-header">
+                                        <tr>
+                                            <th class="px-6 py-4 text-left text-sm font-bold text-gray-200">Policy No</th>
+                                            <th class="px-6 py-4 text-left text-sm font-bold text-gray-200">Name</th>
+                                            <th class="px-6 py-4 text-left text-sm font-bold text-gray-200">Type</th>
+                                            <th class="px-6 py-4 text-left text-sm font-bold text-gray-200">Completed Date</th>
+                                            <th class="px-6 py-4 text-left text-sm font-bold text-gray-200">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="completedDeathClaimsTable">
+                                        <tr>
+                                            <td colspan="5" class="px-6 py-12 text-center text-gray-400 font-medium text-lg">— No completed death claims</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Completed Special Cases -->
+
+                <div class="matte-card rounded-2xl">
+                    <button class="collapsible-header w-full text-left p-6 font-medium bg-gray-900/40 text-gray-200 hover:bg-gray-900/60 rounded-2xl transition-all duration-300 flex items-center justify-between backdrop-blur-sm" data-target="completedSpecialCases">
+
+                        <span class="text-lg flex items-center gap-3">✅ Completed Special Cases</span>
+                        <span class="transform transition-transform text-gray-300 text-xl">▼</span>
+                    </button>
+                    <div id="completedSpecialCases" class="collapsible-content">
+                        <div class="p-6 pt-0">
+                            <div class="dark-table rounded-2xl overflow-hidden shadow-2xl">
+                                <table class="w-full">
+                                    <thead class="dark-table-header">
+                                        <tr>
+                                            <th class="px-6 py-4 text-left text-sm font-bold text-gray-200">Policy No</th>
+                                            <th class="px-6 py-4 text-left text-sm font-bold text-gray-200">Name</th>
+                                            <th class="px-6 py-4 text-left text-sm font-bold text-gray-200">Type</th>
+                                            <th class="px-6 py-4 text-left text-sm font-bold text-gray-200">Issue</th>
+                                            <th class="px-6 py-4 text-left text-sm font-bold text-gray-200">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="completedSpecialCasesTable">
+                                        <tr>
+                                            <td colspan="5" class="px-6 py-12 text-center text-gray-400 font-medium text-lg">— No completed special cases</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div> <!-- end of space-y-6 -->
+        </div> <!-- end of glass-header -->
+            </div> <!-- end of dash-left -->
+        </div> <!-- end of dash-grid -->
+    </div>
+
+    <div id="toast" class="fixed bottom-4 right-4 bg-gray-800 text-white px-4 py-2 rounded-lg shadow-lg hidden"></div>
+
+    <!-- IMPORTANT: You may need to remove the old particle animation logic from assets/script.js to prevent conflicts. -->
+    <!-- Cache-busting query to ensure latest script is fetched by the browser/CDN -->
+    <script src="assets/script.js?v=20250925" defer></script>
+    
+</body>
+</html>

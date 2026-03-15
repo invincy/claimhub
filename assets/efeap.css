@@ -1,0 +1,545 @@
+/* LIC eFEAP Theme */
+
+html.theme-efeap,
+body.theme-efeap {
+    background: #fffbe8; /* very light yellow/white */
+    color: #1a237e; /* dark blue for headings */
+    font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+/* Increase global font size for better readability */
+html { font-size: 18px; }
+body { font-size: 1rem; }
+
+/* Ensure inputs and primary buttons use a readable font size */
+.dark-input,
+input,
+select,
+textarea,
+.btn-primary,
+.btn-danger,
+.btn-ghost,
+button {
+    font-size: 1rem !important;
+}
+
+/* Make small utility font sizes slightly larger for readability */
+.text-sm { font-size: 1rem !important; }
+.text-xs  { font-size: 0.95rem !important; }
+
+/* Panels and Cards */
+.glass-header,
+.matte-card,
+.matte-form,
+.tools-panel-container {
+    background: #fff;
+    border: 1px solid #dbeafe; /* thin soft blue border */
+    box-shadow: none;
+    border-radius: 16px;
+}
+
+/* Accent: Thin yellow stripe or accent */
+.glass-header {
+    border-top: 4px solid #ffe066; /* thin yellow accent */
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+    color: #1a237e; /* dark blue */
+    font-weight: bold;
+    text-shadow: none;
+}
+
+/* Subtext, labels */
+.text-gray-300,
+.text-gray-400,
+.text-gray-500,
+.text-gray-200,
+label,
+.option-card span,
+.counter-badge {
+    color: #6b7280 !important; /* muted gray */
+}
+
+/* Buttons */
+.btn-primary, .btn-danger, .btn-ghost {
+    background: #e3f2fd;
+    color: #1a237e;
+    border: 1px solid #b3c6e6;
+    box-shadow: none;
+    text-shadow: none;
+}
+
+.btn-primary:hover, .btn-danger:hover, .btn-ghost:hover {
+    background: #bbdefb;
+}
+
+/* Inputs */
+.dark-input, select, textarea {
+    background: #f6faff;
+    color: #1a237e;
+    border: 1px solid #b3c6e6;
+    box-shadow: none;
+}
+
+.dark-input:focus, select:focus, textarea:focus {
+    border-color: #ffe066;
+    outline: none;
+}
+
+/* Ensure all input, textarea, and select fields have readable text */
+input,
+textarea,
+select {
+    background: #f6faff !important;
+    color: #1a237e !important;
+    border: 1px solid #b3c6e6 !important;
+    box-shadow: none !important;
+}
+
+input::placeholder,
+textarea::placeholder {
+    color: #6b7280 !important; /* muted gray for placeholder */
+    opacity: 1;
+}
+
+/* For disabled fields */
+input:disabled,
+textarea:disabled,
+select:disabled {
+    background: #f0f0f0 !important;
+    color: #b0b0b0 !important;
+}
+
+/* Table */
+.dark-table, .dark-table-header, .dark-table-row {
+    background: #fff;
+    color: #1a237e;
+    border-color: #dbeafe;
+    box-shadow: none;
+}
+
+.dark-table-header th, .dark-table-row td {
+    border-bottom: 1px solid #ffe066;
+}
+
+/* Collapsible headers */
+.collapsible-header, .workflow-header {
+    background: #e3f2fd;
+    color: #1a237e;
+    border: none;
+    box-shadow: none;
+}
+
+/* Flat icons in pale circles */
+.quick-link-item span,
+.counter-badge,
+.radio-modern,
+.checkbox-modern {
+    background: #e3f2fd;
+    color: #1a237e;
+    border-radius: 50%;
+    padding: 4px 8px;
+    box-shadow: none;
+    border: 1px solid #dbeafe;
+}
+
+/* Remove glow and gradients */
+.glow-text,
+.shadow-2xl,
+.backdrop-blur-sm {
+    text-shadow: none !important;
+    box-shadow: none !important;
+    filter: none !important;
+}
+
+/* Hide dark theme backgrounds */
+.bg-gray-900,
+.bg-gray-900\/40,
+.bg-gray-900\/60 {
+    background: #fff !important;
+}
+
+/* Accent yellow for highlights */
+.border-yellow-400,
+.text-yellow-400 {
+    border-color: #ffe066 !important;
+    color: #ffe066 !important;
+}
+
+/* Tab active */
+.active-tab {
+    background: #ffe066;
+    color: #1a237e;
+    border-bottom: 2px solid #ffe066;
+}
+
+/* Misc */
+.rounded-2xl, .rounded-xl, .rounded-lg {
+    border-radius: 16px !important;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* Toast */
+#toast {
+    background: #1a237e;
+    color: #fff;
+    box-shadow: none;
+}
+
+/* Remove backdrop blur everywhere */
+.backdrop-blur-sm {
+    backdrop-filter: none !important;
+}
+
+/* Remove glass effect */
+.glass-header {
+    background: #fff !important;
+    backdrop-filter: none !important;
+    box-shadow: none !important;
+}
+
+.page-header {
+    display: flex !important;
+    grid-template-columns: none !important;
+    justify-content: center !important;
+    align-items: center !important;
+    min-height: auto !important;
+}
+
+.page-header h1 {
+    width: 100%;
+    text-align: center !important;
+}
+
+/* Remove any neon-specific classes */
+.theme-neon {
+    background: none !important;
+    color: inherit !important;
+}
+
+/* Fix neon font colors to LIC blue */
+.text-cyan-300,
+.text-cyan-400,
+.text-cyan-500,
+.text-cyan-200,
+.glow-text {
+    color: #1a237e !important;
+    text-shadow: none !important;
+}
+
+/* Main heading style */
+h1 {
+    color: #1a237e !important;
+    text-shadow: none !important;
+}
+
+/* Space out links */
+a, .quick-link-item {
+    margin-right: 16px;
+    margin-bottom: 8px;
+    color: #1a237e;
+    text-decoration: none;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+}
+
+a:last-child, .quick-link-item:last-child {
+    margin-right: 0;
+}
+
+/* To-Do items: make text white inside the task block */
+.todo-item,
+.todo-list li,
+.todo-list .completed {
+    color: #fff !important;
+    background: #6b7280 !important;
+    border: 1px solid #dbeafe !important;
+    font-size: 1.1rem !important;
+    font-weight: 500 !important;
+}
+
+/* Main action buttons and their children */
+#deathClaimBtn,
+#specialCaseBtn,
+#deathClaimBtn *,
+#specialCaseBtn * {
+    font-size: 1.35rem !important;
+    font-weight: 700 !important;
+    color: #1a237e !important;
+    background: #e3f2fd !important;
+    border: 2px solid #b3c6e6 !important;
+}
+
+/* To-Do blocks and claim type options: white background, blue text, thin border */
+.todo-item,
+.todo-list li,
+.todo-list .completed,
+.claim-type-option,
+.claim-type-block {
+    background: #fff !important;
+    color: #1a237e !important;
+    border: 1px solid #dbeafe !important;
+    font-size: 1.1rem !important;
+    font-weight: 500 !important;
+    border-radius: 16px !important;
+    box-shadow: none !important;
+}
+
+/* If your claim type options use spans or labels inside, target those too */
+.claim-type-option span,
+.claim-type-block span,
+.todo-item span,
+.todo-list li span {
+    color: #1a237e !important;
+    background: transparent !important;
+    font-weight: 500 !important;
+}
+
+/* Fix all dark blocks to white, blue border, blue text */
+.option-card,
+.todo-item,
+.workflow-section,
+.workflow-content,
+.collapsible-header,
+.matte-form,
+.matte-card,
+#todoList li,
+#workflowSections,
+#queryText,
+#premiumResult,
+#durationDisplay,
+#suggestionBox,
+#investigationDetails,
+#daysSinceAllotted,
+#daysSinceSent {
+    background: #fff !important;
+    color: #1a237e !important;
+    border: 1px solid #dbeafe !important;
+    font-weight: 500 !important;
+    box-shadow: none !important;
+}
+
+/* To-Do and option-card spans/buttons */
+.option-card span,
+.todo-item span,
+#todoList li span {
+    color: #1a237e !important;
+    background: transparent !important;
+    font-weight: 500 !important;
+}
+
+/* Tools & Requirements heading: blue, bold, readable */
+.tools-panel-container h3,
+.tools-panel-container h2,
+.tools-panel-container .panel-title {
+    color: #1a237e !important;
+    font-weight: bold !important;
+    font-size: 2rem !important;
+    text-shadow: none !important;
+    letter-spacing: 0.5px;
+}
+
+/* Remove any leftover dark backgrounds */
+.bg-gray-900,
+.bg-gray-900\/40,
+.bg-gray-900\/60,
+.backdrop-blur-sm {
+    background: #fff !important;
+    backdrop-filter: none !important;
+    box-shadow: none !important;
+}
+
+/* Buttons: bigger, blue, bold */
+#deathClaimBtn,
+#specialCaseBtn,
+#deathClaimBtn *
+#specialCaseBtn * {
+    font-size: 1.35rem !important;
+    font-weight: 700 !important;
+    color: #1a237e !important;
+    background: #e3f2fd !important;
+    border: 2px solid #b3c6e6 !important;
+}
+
+/* Form labels and headings: blue, readable */
+.matte-form label,
+.matte-form h3,
+.matte-form h4,
+.matte-form h2,
+.matte-form h1 {
+    color: #1a237e !important;
+    font-weight: 600 !important;
+}
+
+/* Inputs: blue text, white background */
+.matte-form input,
+.matte-form textarea,
+.matte-form select {
+    background: #fff !important;
+    color: #1a237e !important;
+    border: 1px solid #b3c6e6 !important;
+    font-weight: 500 !important;
+}
+
+/* Table headers and cells: blue text, white background */
+.dark-table-header th,
+.dark-table-row td {
+    color: #1a237e !important;
+    background: #fff !important;
+    border-bottom: 1px solid #ffe066 !important;
+}
+
+/* Misc: ensure all text is readable */
+.text-gray-300,
+.text-gray-400,
+.text-gray-500,
+.text-gray-200,
+label,
+.option-card span,
+.counter-badge {
+    color: #1a237e !important;
+}
+
+/* Make all workflow, option, and form boxes white with blue text */
+.workflow-section,
+.workflow-content,
+.option-card,
+.matte-form,
+.matte-card,
+.collapsible-header,
+.dark-table,
+.dark-table-header,
+.dark-table-row,
+#queryText,
+#premiumResult,
+#daysSinceAllotted,
+#daysSinceSent,
+#investigationDetails {
+    background: #fff !important;
+    color: #1a237e !important;
+    border: 1px solid #dbeafe !important;
+    box-shadow: none !important;
+}
+
+/* Layout: make left column (tools) 60% and right column (claims) 40% on desktop */
+.dash-grid {
+    display: grid;
+    grid-template-columns: 60% 40%;
+    gap: 1rem;
+}
+
+@media (max-width: 767px) {
+    .dash-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Requirements type buttons */
+.requirements-btn {
+    background: #fff;
+    color: #1a237e;
+    border: 1px solid #dbeafe;
+}
+.requirements-btn.active {
+    background: #ffe066;
+    color: #042856;
+    border-color: #ffe066;
+}
+
+/* Make tool tabs and top nav more readable */
+.tools-panel-container .tool-tab,
+.flex.border-b .tool-tab {
+    font-size: 1.125rem !important;
+    padding: 0.6rem 0.9rem !important;
+    margin-right: 0.5rem !important;
+    color: #0b3d91 !important;
+}
+.tools-panel-container .tool-tab.active-tab,
+.flex.border-b .tool-tab.active-tab {
+    font-weight: 700 !important;
+    background: #ffe066 !important;
+    border-bottom: 2px solid #ffe066 !important;
+}
+
+/* Top nav spacing (tabs row) */
+.flex.border-b { padding-bottom: 0.25rem; }
+
+/* Maturity result sizing / emphasis */
+#maturityResult { line-height: 1.25; }
+#maturityResult p { margin: 0 0 0.35rem 0; }
+#maturityResult .text-sm { font-size: 1rem !important; color: #475569 !important; }
+#maturityAmount { font-size: 2.25rem !important; font-weight: 800 !important; color: #1a237e !important; }
+#maturityTotalPaid { font-size: 1.6rem !important; font-weight: 600 !important; color: #1a237e !important; }
+#maturitySurvival { font-size: 1.05rem !important; font-weight: 600 !important; color: #334155 !important; }
+#maturityBreakdown { font-size: 0.95rem !important; color: #6b7280 !important; }
+
+/* Increase plan/mode control visibility */
+input.radio-modern {
+    width: 1.25rem !important;
+    height: 1.25rem !important;
+    margin-right: 0.5rem !important;
+    vertical-align: middle;
+}
+
+.tools-panel-container .flex.items-center label,
+.premium-calculator .flex.items-center label,
+.maturity-calculator .flex.items-center label {
+    font-size: 1.05rem !important;
+    padding: 0.35rem 0.5rem !important;
+    border-radius: 8px !important;
+}
+
+.tools-panel-container .flex.items-center label span,
+.premium-calculator .flex.items-center label span,
+.maturity-calculator .flex.items-center label span {
+    font-size: 1.05rem !important;
+}
+
+/* Make primary controls larger and more tappable */
+.btn-primary, .btn-ghost, .btn-danger {
+    padding: 0.9rem 1.5rem !important;
+    font-size: 1.05rem !important;
+    border-radius: 12px !important;
+}
+
+/* Increase input height for better touch targets */
+.dark-input, input, select, textarea {
+    padding-top: 0.85rem !important;
+    padding-bottom: 0.85rem !important;
+    font-size: 1.02rem !important;
+}
+
+/* Make text inside those boxes blue */
+.workflow-section *,
+.workflow-content *,
+.option-card *,
+.matte-form *,
+.matte-card *,
+.collapsible-header *,
+.dark-table *,
+.dark-table-header *,
+.dark-table-row *,
+#queryText *,
+#premiumResult *,
+#daysSinceAllotted *,
+#daysSinceSent *,
+#investigationDetails * {
+    color: #1a237e !important;
+    background: transparent !important;
+}
+
+/* Headings in workflow and tools panels: blue, bold */
+.workflow-header,
+.tools-panel-container h3,
+.tools-panel-container h2,
+.tools-panel-container .panel-title {
+    color: #1a237e !important;
+    font-weight: bold !important;
+    font-size: 2rem !important;
+    text-shadow: none !important;
+    letter-spacing: 0.5px;
+}
