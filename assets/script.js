@@ -163,6 +163,7 @@ document.addEventListener('DOMContentLoaded', function() {
             var panels = {
                 todo: document.getElementById('todoPanel'),
                 requirements: document.getElementById('requirementsPanel'),
+                duration: document.getElementById('durationPanel'),
                 calculator: document.getElementById('calculatorPanel'),
                 maturity: document.getElementById('maturityPanel'),
                 links: document.getElementById('linksPanel'),
@@ -277,6 +278,18 @@ document.addEventListener('DOMContentLoaded', function() {
         deathDate?.addEventListener('input', function() {
             formatDateInput(this);
             calculateDuration();
+        });
+
+        // Duration Counter Tool listeners (DOC/DOR -> DoD and DoD -> DOI)
+        var durationDocDor = document.getElementById('durationDocDor');
+        var durationDod = document.getElementById('durationDod');
+        var durationDoi = document.getElementById('durationDoi');
+
+        [durationDocDor, durationDod, durationDoi].forEach(function(input) {
+            input?.addEventListener('input', function() {
+                formatDateInput(this);
+                calculateDurationCounter();
+            });
         });
 
         // To-Do List Logic (now safe to run)
@@ -685,6 +698,79 @@ function calculateDuration() {
             timeBarWarning.textContent = '';
             timeBarWarning.classList.add('hidden');
         }
+    }
+}
+
+function parseDdMmYyyy(value) {
+    const clean = (value || '').replace(/\//g, '');
+    if (clean.length !== 8) return null;
+
+    const day = parseInt(clean.substring(0, 2), 10);
+    const month = parseInt(clean.substring(2, 4), 10);
+    const year = parseInt(clean.substring(4, 8), 10);
+
+    if (Number.isNaN(day) || Number.isNaN(month) || Number.isNaN(year)) return null;
+    const date = new Date(year, month - 1, day);
+
+    // Reject invalid calendar dates like 31/02/2026
+    if (date.getFullYear() !== year || date.getMonth() !== month - 1 || date.getDate() !== day) {
+        return null;
+    }
+
+    return date;
+}
+
+function formatDurationBetweenDates(fromDate, toDate) {
+    if (!fromDate || !toDate) return '';
+
+    const start = fromDate <= toDate ? fromDate : toDate;
+    const end = fromDate <= toDate ? toDate : fromDate;
+
+    let years = end.getFullYear() - start.getFullYear();
+    let months = end.getMonth() - start.getMonth();
+    let days = end.getDate() - start.getDate();
+
+    if (days < 0) {
+        months -= 1;
+        const daysInPrevMonth = new Date(end.getFullYear(), end.getMonth(), 0).getDate();
+        days += daysInPrevMonth;
+    }
+
+    if (months < 0) {
+        years -= 1;
+        months += 12;
+    }
+
+    const totalDays = Math.round((end - start) / (1000 * 60 * 60 * 24));
+    return `${years} years, ${months} months, ${days} days (${totalDays} days)`;
+}
+
+function calculateDurationCounter() {
+    const docDorInput = document.getElementById('durationDocDor');
+    const dodInput = document.getElementById('durationDod');
+    const doiInput = document.getElementById('durationDoi');
+    const resultBox = document.getElementById('durationToolResult');
+    const docToDodText = document.getElementById('durationDocToDod');
+    const dodToDoiText = document.getElementById('durationDodToDoi');
+
+    if (!docDorInput || !dodInput || !doiInput || !resultBox || !docToDodText || !dodToDoiText) {
+        return;
+    }
+
+    const docDorDate = parseDdMmYyyy(docDorInput.value);
+    const dodDate = parseDdMmYyyy(dodInput.value);
+    const doiDate = parseDdMmYyyy(doiInput.value);
+
+    const firstDuration = docDorDate && dodDate ? formatDurationBetweenDates(docDorDate, dodDate) : '';
+    const secondDuration = dodDate && doiDate ? formatDurationBetweenDates(dodDate, doiDate) : '';
+
+    docToDodText.textContent = firstDuration || 'Enter valid DOC/DOR and DoD dates';
+    dodToDoiText.textContent = secondDuration || 'Enter valid DoD and DOI dates';
+
+    if (firstDuration || secondDuration) {
+        resultBox.classList.remove('hidden');
+    } else {
+        resultBox.classList.add('hidden');
     }
 }
 
