@@ -284,12 +284,24 @@ document.addEventListener('DOMContentLoaded', function() {
         var durationDocDor = document.getElementById('durationDocDor');
         var durationDod = document.getElementById('durationDod');
         var durationDoi = document.getElementById('durationDoi');
+        var calculateDurationBtn = document.getElementById('calculateDurationBtn');
 
         [durationDocDor, durationDod, durationDoi].forEach(function(input) {
             input?.addEventListener('input', function() {
                 formatDateInput(this);
                 calculateDurationCounter();
             });
+
+            input?.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    calculateDurationCounter(true);
+                }
+            });
+        });
+
+        calculateDurationBtn?.addEventListener('click', function() {
+            calculateDurationCounter(true);
         });
 
         // To-Do List Logic (now safe to run)
@@ -745,7 +757,7 @@ function formatDurationBetweenDates(fromDate, toDate) {
     return `${years} years, ${months} months, ${days} days (${totalDays} days)`;
 }
 
-function calculateDurationCounter() {
+function calculateDurationCounter(forceShow) {
     const docDorInput = document.getElementById('durationDocDor');
     const dodInput = document.getElementById('durationDod');
     const doiInput = document.getElementById('durationDoi');
@@ -763,11 +775,12 @@ function calculateDurationCounter() {
 
     const firstDuration = docDorDate && dodDate ? formatDurationBetweenDates(docDorDate, dodDate) : '';
     const secondDuration = dodDate && doiDate ? formatDurationBetweenDates(dodDate, doiDate) : '';
+    const hasAnyInput = !!(docDorInput.value || dodInput.value || doiInput.value);
 
     docToDodText.textContent = firstDuration || 'Enter valid DOC/DOR and DoD dates';
     dodToDoiText.textContent = secondDuration || 'Enter valid DoD and DOI dates';
 
-    if (firstDuration || secondDuration) {
+    if (firstDuration || secondDuration || hasAnyInput || forceShow) {
         resultBox.classList.remove('hidden');
     } else {
         resultBox.classList.add('hidden');
