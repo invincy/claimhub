@@ -546,9 +546,30 @@ label,
     letter-spacing: 0.3px;
 }
 
+/* Left mode card to mirror the sidebar */
+.mode-card {
+    display: inline-block;
+    background: #ffffff;
+    border: 1px solid rgba(11,61,145,0.06);
+    border-radius: 12px;
+    padding: 8px 12px;
+    box-shadow: 0 4px 18px rgba(11,61,145,0.03);
+    margin-bottom: 18px;
+}
+
+.mode-card .main-mode-bar { padding: 0; }
+.mode-card .main-mode-tabs { justify-content: flex-start; }
+.mode-card .main-mode-tab { padding: 8px 16px; font-size: 0.95rem; border-radius: 8px; }
+.mode-card .main-mode-tab.active-main-tab { box-shadow: none; }
+
 /* Sidebar: body */
 .side-tasks-body {
     padding: 14px 14px 10px;
+}
+
+.side-tasks-body {
+    background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+    border-radius: 0 0 12px 12px;
 }
 
 .side-tasks-title {
