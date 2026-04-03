@@ -511,7 +511,9 @@ label,
    Right: app-sidebar (fixed 300px)
    =========================================== */
 .app-body {
-    display: flex;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 280px;
+    grid-template-rows: auto minmax(0, 1fr);
     gap: 20px;
     align-items: stretch;
     width: 100%;
@@ -522,32 +524,52 @@ label,
 }
 
 .app-main {
-    flex: 1 1 0;
-    min-width: 0;
-    display: flex;
-    flex-direction: column;
+    display: contents;
 }
 
 .app-sidebar {
-    flex: 0 0 280px;
-    width: 280px;
-    position: relative;
-    top: auto;
-    max-height: none;
-    overflow: visible;
-    align-self: stretch;
-    min-height: 100%;
-    background: transparent;
-    border: none;
-    border-radius: 0;
-    box-shadow: none;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
+    display: contents;
 }
 
-.app-sidebar > * {
+.main-mode-bar {
+    grid-column: 1;
+    grid-row: 1;
+    height: 100%;
+}
+
+.side-tasks-header {
+    grid-column: 2;
+    grid-row: 1;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.main-module {
+    grid-column: 1;
+    grid-row: 2;
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    height: 100%;
+}
+
+.side-tasks-body {
+    grid-column: 2;
+    grid-row: 2;
+    height: 100%;
+}
+
+.glass-header.tools-panel-container {
+    flex: 1 1 auto;
+}
+
+.side-tasks-header,
+.side-tasks-body {
     width: 100%;
     box-sizing: border-box;
 }
@@ -684,20 +706,23 @@ label,
 
 @media (max-width: 1024px) {
     .app-body {
-        flex-direction: column;
+        display: block;
         padding: 0 8px 24px;
     }
-    .app-main { width: 100%; }
+    .app-main {
+        display: block;
+        width: 100%;
+    }
     .app-sidebar {
+        display: block;
         position: static;
         width: 100%;
-        flex: 0 0 auto;
-        max-height: none;
-        gap: 10px;
+        margin-top: 10px;
     }
 
     .side-tasks-body {
         min-height: 0;
+        height: auto;
     }
 
     #todoList {
