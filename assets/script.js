@@ -217,21 +217,29 @@ document.addEventListener('DOMContentLoaded', function() {
             // 4. Premium Calculator Logic is handled further down
         }
 
-        // Main mode tab switching (Tools ⇔ Death Claims)
+        // Main mode tab switching (Tools ⇔ Death Claims ⇔ Monthly Tasks)
         var mainModeTabs = document.querySelectorAll('.main-mode-tab');
         var mainToolsPanel = document.getElementById('mainToolsPanel');
         var mainClaimsPanel = document.getElementById('mainClaimsPanel');
+        var mainTasksPanel = document.getElementById('mainTasksPanel');
         if (mainModeTabs.length) {
             mainModeTabs.forEach(function(tab) {
                 tab.addEventListener('click', function() {
                     mainModeTabs.forEach(function(t) { t.classList.remove('active-main-tab'); });
                     this.classList.add('active-main-tab');
-                    if (this.dataset.main === 'tools') {
+                    var which = this.dataset.main;
+                    if (which === 'tools') {
                         if (mainToolsPanel) mainToolsPanel.classList.remove('hidden');
                         if (mainClaimsPanel) mainClaimsPanel.classList.add('hidden');
-                    } else {
+                        if (mainTasksPanel) mainTasksPanel.classList.add('hidden');
+                    } else if (which === 'claims') {
                         if (mainClaimsPanel) mainClaimsPanel.classList.remove('hidden');
                         if (mainToolsPanel) mainToolsPanel.classList.add('hidden');
+                        if (mainTasksPanel) mainTasksPanel.classList.add('hidden');
+                    } else if (which === 'tasks') {
+                        if (mainTasksPanel) mainTasksPanel.classList.remove('hidden');
+                        if (mainToolsPanel) mainToolsPanel.classList.add('hidden');
+                        if (mainClaimsPanel) mainClaimsPanel.classList.add('hidden');
                     }
                 });
             });
@@ -314,7 +322,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
 
-        todoList?.addEventListener('click', async function(e) {
+                todoList?.addEventListener('click', async function(e) {
             var id = e.target.dataset.id;
             if (e.target.closest('button')) { // Delete
                 await idbDelete(STORE.todos, Number(id));
@@ -329,6 +337,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
         });
+
+                // Add timestamp when creating todos
+                addTodoBtn?.addEventListener('click', async function() {
+                    var text = todoInput.value.trim();
+                    if (text) {
+                        const createdAt = Date.now();
+                        await idbPut(STORE.todos, { text, completed: false, createdAt });
+                        todoInput.value = '';
+                        renderTodos();
+                    }
+                });
 
         // Initial render calls
         renderTodos();
@@ -348,6 +367,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
 });
 
+// Side clock updater
+function updateSideClock() {
+    const sideClock = document.getElementById('sideClock');
+    const sideDate = document.getElementById('sideDate');
+    if (!sideClock || !sideDate) return;
+    const now = new Date();
+    const time = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+    const date = now.toLocaleDateString();
+    sideClock.textContent = time;
+    sideDate.textContent = date;
+}
+setInterval(updateSideClock, 1000);
+updateSideClock();
+
 // --- Main Application Functions ---
 
 async function renderTodos() {
@@ -361,15 +394,21 @@ async function renderTodos() {
     }
     todos.forEach(todo => {
         const li = document.createElement('li');
-        li.className = `flex items-center justify-between p-3 rounded-lg ${todo.completed ? 'bg-gray-700' : 'bg-gray-800'}`;
+        li.className = `todo-item`;
+        const dateLabel = todo.createdAt ? (new Date(todo.createdAt)).toLocaleString() : '';
         li.innerHTML = `
-            <div class="flex items-center">
-                <input type="checkbox" data-id="${todo.id}" class="form-checkbox h-5 w-5 text-blue-500 rounded-md border-gray-600 bg-gray-900 focus:ring-blue-500" ${todo.completed ? 'checked' : ''}>
-                <label for="todo-${todo.id}" class="ml-3 text-sm font-medium ${todo.completed ? 'text-gray-500 line-through' : 'text-gray-300'}">${todo.text}</label>
+            <div>
+                <div class="flex items-center gap-2">
+                    <input type="checkbox" data-id="${todo.id}" class="form-checkbox h-4 w-4 text-blue-500 rounded-md border-gray-400" ${todo.completed ? 'checked' : ''}>
+                    <span class="ml-2 text-sm font-medium ${todo.completed ? 'text-gray-400 line-through' : 'text-gray-800'}">${todo.text}</span>
+                </div>
+                <span class="todo-meta">${dateLabel}</span>
             </div>
-            <button data-id="${todo.id}" class="text-gray-500 hover:text-red-500 transition-colors">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-            </button>
+            <div class="flex items-center">
+                <button data-id="${todo.id}" class="text-gray-400 hover:text-red-600 ml-3">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
         `;
         todoList.appendChild(li);
     });

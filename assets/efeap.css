@@ -489,6 +489,33 @@ label,
     margin: 0 auto;
 }
 
+/* Side tasks panel (fixed on right) */
+.side-tasks {
+    position: fixed;
+    right: 24px;
+    top: 120px;
+    width: 320px;
+    max-height: calc(100vh - 160px);
+    background: #fff;
+    border: 1px solid #dbeafe;
+    border-radius: 12px;
+    padding: 10px;
+    box-shadow: 0 10px 30px rgba(26,35,126,0.08);
+    overflow: auto;
+    z-index: 40;
+}
+
+.side-tasks-header { text-align: center; }
+.side-tasks .dark-input { font-size: 0.95rem; }
+.side-tasks ul { list-style: none; padding: 0; margin: 0; }
+.side-tasks li { margin-bottom: 8px; }
+.side-tasks .todo-item { background: #f6fbff; padding: 8px; border-radius: 8px; border: 1px solid #e6f0ff; }
+.side-tasks .todo-meta { display: block; font-size: 0.75rem; color: #6b7280; margin-top: 4px; }
+
+@media (max-width: 1024px) {
+    .side-tasks { position: static; width: auto; max-height: none; margin: 12px 0 0; }
+}
+
 /* Make the top page header larger and more prominent */
 .page-header {
     padding-top: 12px !important;
