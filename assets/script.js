@@ -157,12 +157,13 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
 
-        var toolsPanel = document.querySelector('.dash-right');
+        var toolsPanel = document.querySelector('.tools-panel-container');
         if (toolsPanel) {
             var tabs = toolsPanel.querySelectorAll('.tool-tab');
             var panels = {
                 todo: document.getElementById('todoPanel'),
                 requirements: document.getElementById('requirementsPanel'),
+                forms: document.getElementById('formsPanel'),
                 calculator: document.getElementById('calculatorPanel'),
                 maturity: document.getElementById('maturityPanel'),
                 links: document.getElementById('linksPanel'),
@@ -214,6 +215,26 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             // 4. Premium Calculator Logic is handled further down
+        }
+
+        // Main mode tab switching (Tools ⇔ Death Claims)
+        var mainModeTabs = document.querySelectorAll('.main-mode-tab');
+        var mainToolsPanel = document.getElementById('mainToolsPanel');
+        var mainClaimsPanel = document.getElementById('mainClaimsPanel');
+        if (mainModeTabs.length) {
+            mainModeTabs.forEach(function(tab) {
+                tab.addEventListener('click', function() {
+                    mainModeTabs.forEach(function(t) { t.classList.remove('active-main-tab'); });
+                    this.classList.add('active-main-tab');
+                    if (this.dataset.main === 'tools') {
+                        if (mainToolsPanel) mainToolsPanel.classList.remove('hidden');
+                        if (mainClaimsPanel) mainClaimsPanel.classList.add('hidden');
+                    } else {
+                        if (mainClaimsPanel) mainClaimsPanel.classList.remove('hidden');
+                        if (mainToolsPanel) mainToolsPanel.classList.add('hidden');
+                    }
+                });
+            });
         }
 
         // Workflow collapsible functionality with disabled state check

@@ -26,21 +26,27 @@
             </div>
         </div>
 
-        <!-- Main Dashboard Grid -->
-        <div class="dash-grid p-4 md:p-6">
-            <!-- Left Column (Tools & Requirements) -->
-            <div class="dash-right">
-                <div class="dash-right-sticky-container">
-                    <div class="glass-header rounded-2xl p-6 tools-panel-container">
-                        <h3 class="text-2xl font-bold text-white mb-6 flex items-center gap-3">🧰 Tools & Requirements</h3>
+        <!-- Main Mode Switch Bar -->
+        <div class="main-mode-bar">
+            <div class="main-mode-tabs">
+                <button class="main-mode-tab active-main-tab" data-main="tools">🧰 Tools</button>
+                <button class="main-mode-tab" data-main="claims">📄 Death Claims</button>
+            </div>
+        </div>
+
+        <!-- Tools Module -->
+        <div id="mainToolsPanel" class="main-module p-4 md:p-6">
+            <div class="glass-header rounded-2xl p-6 tools-panel-container">
+                <h3 class="text-2xl font-bold text-white mb-6 flex items-center gap-3">🧰 Tools & Requirements</h3>
 
                         <!-- Tabs -->
-                        <div class="flex border-b border-gray-700 mb-6">
-                            <button class="tool-tab active-tab" data-tab="todo">To-Do</button>
-                            <button class="tool-tab" data-tab="requirements">Requirements</button>
-                            <button class="tool-tab" data-tab="maturity">Maturity Calculator</button>
-                            <button class="tool-tab" data-tab="calculator">Premium Calculator</button>
-                            <button class="tool-tab" data-tab="links">Links</button>
+                        <div class="flex flex-wrap border-b border-gray-700 mb-6">
+                            <button class="tool-tab active-tab" data-tab="todo">✅ To-Do</button>
+                            <button class="tool-tab" data-tab="requirements">📋 Requirements</button>
+                            <button class="tool-tab" data-tab="forms">📄 Forms & Formats</button>
+                            <button class="tool-tab" data-tab="maturity">💰 M/C Calculator</button>
+                            <button class="tool-tab" data-tab="calculator">🧮 Premium Calculator</button>
+                            <button class="tool-tab" data-tab="links">🔗 Links</button>
                         </div>
 
                         <!-- Tab Panels -->
@@ -57,13 +63,19 @@
                         </div>
 
                         <div id="requirementsPanel" class="tab-panel hidden">
-                            <div class="mb-4">
-                                <label class="block text-sm font-bold text-gray-300 mb-2">Select Type</label>
-                                <div class="flex items-center gap-3" role="tablist" aria-label="Requirements Types">
-                                    <button type="button" class="requirements-btn btn-ghost px-4 py-2 rounded-xl" data-type="LET">LET Forms</button>
-                                    <button type="button" class="requirements-btn btn-ghost px-4 py-2 rounded-xl" data-type="LOST">Lost Policy Bond</button>
-                                    <button type="button" class="requirements-btn btn-ghost px-4 py-2 rounded-xl" data-type="ACC">Accident / Suicide</button>
-                                </div>
+                            <div class="req-card-grid mb-5">
+                                <button type="button" class="req-card requirements-btn" data-type="LET">
+                                    <span class="req-card-icon">📝</span>
+                                    <span class="req-card-label">LET Forms</span>
+                                </button>
+                                <button type="button" class="req-card requirements-btn" data-type="LOST">
+                                    <span class="req-card-icon">🔑</span>
+                                    <span class="req-card-label">Lost Policy</span>
+                                </button>
+                                <button type="button" class="req-card requirements-btn" data-type="ACC">
+                                    <span class="req-card-icon">⚠️</span>
+                                    <span class="req-card-label">Accident / Suicide</span>
+                                </button>
                             </div>
                             <div id="letRequirementsTable">
                                 <div class="dark-table rounded-2xl border border-gray-600/30 shadow-2xl overflow-hidden">
@@ -129,6 +141,81 @@
                                             <li>• Post-mortem report (if applicable)</li>
                                             <li>• Medical records and doctor's certificates</li>
                                         </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="formsPanel" class="tab-panel hidden">
+                            <div class="space-y-5">
+                                <div>
+                                    <h4 class="forms-section-heading">📋 Claim Forms</h4>
+                                    <div class="forms-card-grid">
+                                        <div class="form-card">
+                                            <span class="form-card-icon">📄</span>
+                                            <strong class="form-card-name">Form 3801</strong>
+                                            <span class="form-card-desc">Claimant's Statement</span>
+                                        </div>
+                                        <div class="form-card">
+                                            <span class="form-card-icon">🏥</span>
+                                            <strong class="form-card-name">Form 3783</strong>
+                                            <span class="form-card-desc">Hospital Treatment Cert.</span>
+                                        </div>
+                                        <div class="form-card">
+                                            <span class="form-card-icon">🪦</span>
+                                            <strong class="form-card-name">Form 3784</strong>
+                                            <span class="form-card-desc">Identity &amp; Burial Cert.</span>
+                                        </div>
+                                        <div class="form-card">
+                                            <span class="form-card-icon">🏦</span>
+                                            <strong class="form-card-name">Form 5074</strong>
+                                            <span class="form-card-desc">NEFT / ECS Mandate</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <h4 class="forms-section-heading">📜 LET Forms</h4>
+                                    <div class="forms-card-grid">
+                                        <div class="form-card">
+                                            <span class="form-card-icon">📋</span>
+                                            <strong class="form-card-name">Form 3806</strong>
+                                            <span class="form-card-desc">Indemnity with Sureties</span>
+                                        </div>
+                                        <div class="form-card">
+                                            <span class="form-card-icon">📋</span>
+                                            <strong class="form-card-name">Form 3806-A</strong>
+                                            <span class="form-card-desc">Indemnity (Larger Amounts)</span>
+                                        </div>
+                                        <div class="form-card">
+                                            <span class="form-card-icon">🔏</span>
+                                            <strong class="form-card-name">Form 3805</strong>
+                                            <span class="form-card-desc">Surety Bond</span>
+                                        </div>
+                                        <div class="form-card">
+                                            <span class="form-card-icon">🔏</span>
+                                            <strong class="form-card-name">Form 3805-B</strong>
+                                            <span class="form-card-desc">Indemnity Bond (Small)</span>
+                                        </div>
+                                        <div class="form-card">
+                                            <span class="form-card-icon">👥</span>
+                                            <strong class="form-card-name">Form 3807</strong>
+                                            <span class="form-card-desc">Surety Form (LET)</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <h4 class="forms-section-heading">📁 Other Forms</h4>
+                                    <div class="forms-card-grid">
+                                        <div class="form-card">
+                                            <span class="form-card-icon">📝</span>
+                                            <strong class="form-card-name">Form 680</strong>
+                                            <span class="form-card-desc">Nomination Form</span>
+                                        </div>
+                                        <div class="form-card">
+                                            <span class="form-card-icon">🩺</span>
+                                            <strong class="form-card-name">Medical Report</strong>
+                                            <span class="form-card-desc">Medical Attendant's Cert.</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -274,10 +361,10 @@
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-            <!-- Right Column (Death Claims & Special Cases) -->
-            <div class="dash-left">
+        </div><!-- end mainToolsPanel -->
+
+        <!-- Claims Module (hidden by default) -->
+        <div id="mainClaimsPanel" class="main-module hidden p-4 md:p-6">
                 <!-- Action Buttons -->
                 <div class="glass-header rounded-2xl p-6">
                     <div class="flex gap-4">
@@ -738,8 +825,7 @@
                 </div>
             </div> <!-- end of space-y-6 -->
         </div> <!-- end of glass-header -->
-            </div> <!-- end of dash-left -->
-        </div> <!-- end of dash-grid -->
+        </div><!-- end mainClaimsPanel -->
     </div>
 
     <div id="toast" class="fixed bottom-4 right-4 bg-gray-800 text-white px-4 py-2 rounded-lg shadow-lg hidden"></div>
