@@ -32,15 +32,15 @@ button {
 .matte-card,
 .matte-form,
 .tools-panel-container {
-    background: #fff;
-    border: 1px solid #dbeafe; /* thin soft blue border */
-    box-shadow: none;
-    border-radius: 16px;
+    background: #ffffff;
+    border: 1px solid rgba(11,61,145,0.06); /* very subtle blue border */
+    box-shadow: 0 1px 6px rgba(11,61,145,0.04);
+    border-radius: 12px;
 }
 
-/* Accent: Thin yellow stripe or accent */
+/* Accent: Thin yellow stripe or accent (softened) */
 .glass-header {
-    border-top: 4px solid #ffe066; /* thin yellow accent */
+    border-top: 3px solid #fff3cc; /* softened yellow accent */
 }
 
 /* Headings */
@@ -251,15 +251,17 @@ a:last-child, .quick-link-item:last-child {
     margin-right: 0;
 }
 
-/* To-Do items: make text white inside the task block */
+/* To-Do items: lighter card treatment for sidebar tasks */
 .todo-item,
 .todo-list li,
 .todo-list .completed {
-    color: #fff !important;
-    background: #6b7280 !important;
-    border: 1px solid #dbeafe !important;
-    font-size: 1.1rem !important;
-    font-weight: 500 !important;
+    color: #0b3d91 !important;
+    background: #ffffff !important;
+    border: 1px solid rgba(11,61,145,0.06) !important;
+    font-size: 1.05rem !important;
+    font-weight: 600 !important;
+    border-radius: 10px !important;
+    box-shadow: 0 1px 4px rgba(11,61,145,0.03) !important;
 }
 
 /* Main action buttons and their children */
@@ -280,13 +282,13 @@ a:last-child, .quick-link-item:last-child {
 .todo-list .completed,
 .claim-type-option,
 .claim-type-block {
-    background: #fff !important;
-    color: #1a237e !important;
-    border: 1px solid #dbeafe !important;
-    font-size: 1.1rem !important;
-    font-weight: 500 !important;
-    border-radius: 16px !important;
-    box-shadow: none !important;
+    background: #ffffff !important;
+    color: #0b3d91 !important;
+    border: 1px solid rgba(11,61,145,0.06) !important;
+    font-size: 1.05rem !important;
+    font-weight: 600 !important;
+    border-radius: 12px !important;
+    box-shadow: 0 1px 4px rgba(11,61,145,0.03) !important;
 }
 
 /* If your claim type options use spans or labels inside, target those too */
@@ -432,12 +434,6 @@ label,
     gap: 1rem;
 }
 
-@media (max-width: 767px) {
-    .dash-grid {
-        grid-template-columns: 1fr;
-    }
-}
-
 /* ---- Main Mode Tabs (Tools / Death Claims switcher) ---- */
 .main-mode-bar {
     padding: 8px 24px 6px;
@@ -471,7 +467,8 @@ label,
 
 .main-mode-tab:hover {
     background: #dbeafe;
-    transform: translateY(-2px);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(11,61,145,0.06);
 }
 
 .main-mode-tab.active-main-tab {
@@ -485,35 +482,147 @@ label,
 
 .main-module {
     width: 100%;
-    max-width: 1100px;
+    max-width: none;
+    margin: 0;
+}
+
+/* ===========================================
+   Two-column app layout
+   Left:  app-main  (fills remaining space)
+   Right: app-sidebar (fixed 300px)
+   =========================================== */
+.app-body {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    width: 100%;
+    max-width: 1400px;
     margin: 0 auto;
+    padding: 0 16px 40px;
+    box-sizing: border-box;
 }
 
-/* Side tasks panel (fixed on right) */
-.side-tasks {
-    position: fixed;
-    right: 24px;
-    top: 120px;
-    width: 320px;
-    max-height: calc(100vh - 160px);
-    background: #fff;
-    border: 1px solid #dbeafe;
-    border-radius: 12px;
-    padding: 10px;
-    box-shadow: 0 10px 30px rgba(26,35,126,0.08);
-    overflow: auto;
-    z-index: 40;
+.app-main {
+    flex: 1 1 0;
+    min-width: 0;
 }
 
-.side-tasks-header { text-align: center; }
-.side-tasks .dark-input { font-size: 0.95rem; }
-.side-tasks ul { list-style: none; padding: 0; margin: 0; }
-.side-tasks li { margin-bottom: 8px; }
-.side-tasks .todo-item { background: #f6fbff; padding: 8px; border-radius: 8px; border: 1px solid #e6f0ff; }
-.side-tasks .todo-meta { display: block; font-size: 0.75rem; color: #6b7280; margin-top: 4px; }
+.app-sidebar {
+    flex: 0 0 280px;
+    width: 280px;
+    position: sticky;
+    top: 16px;
+    max-height: calc(100vh - 32px);
+    overflow-y: auto;
+    background: #ffffff;
+    border: 1px solid rgba(11,61,145,0.07);
+    border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(11,61,145,0.05);
+    padding: 0;
+}
+
+/* Sidebar: clock header */
+.side-tasks-header {
+    text-align: center;
+    padding: 18px 16px 12px;
+    border-bottom: 1px solid rgba(11,61,145,0.06);
+    background: linear-gradient(135deg, #f0f7ff 0%, #ffffff 100%);
+    border-radius: 16px 16px 0 0;
+}
+
+.side-clock {
+    font-size: 1.85rem;
+    font-weight: 800;
+    color: #0b3d91;
+    letter-spacing: 1.5px;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+}
+
+.side-date {
+    font-size: 0.82rem;
+    color: #6b7280;
+    margin-top: 5px;
+    letter-spacing: 0.3px;
+}
+
+/* Sidebar: body */
+.side-tasks-body {
+    padding: 14px 14px 10px;
+}
+
+.side-tasks-title {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #0b3d91;
+    margin: 0 0 10px;
+    letter-spacing: 0.3px;
+}
+
+.side-todo-input {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 12px;
+}
+
+.side-todo-input .dark-input {
+    flex: 1;
+    font-size: 0.87rem !important;
+    padding: 7px 9px !important;
+    border-radius: 8px !important;
+    min-width: 0;
+}
+
+.side-todo-input .btn-primary {
+    padding: 7px 11px !important;
+    font-size: 0.85rem !important;
+    border-radius: 8px !important;
+    white-space: nowrap;
+}
+
+.app-sidebar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.app-sidebar li {
+    margin-bottom: 8px;
+}
+
+/* Todo items in sidebar */
+.app-sidebar .todo-item {
+    background: #f8faff !important;
+    border: 1px solid rgba(11,61,145,0.06) !important;
+    border-radius: 10px !important;
+    padding: 9px 11px !important;
+    color: #0b3d91 !important;
+    font-size: 0.9rem !important;
+    font-weight: 500 !important;
+    box-shadow: none !important;
+    line-height: 1.4;
+}
+
+.app-sidebar .todo-meta {
+    display: block;
+    font-size: 0.72rem;
+    color: #9ca3af;
+    margin-top: 3px;
+}
 
 @media (max-width: 1024px) {
-    .side-tasks { position: static; width: auto; max-height: none; margin: 12px 0 0; }
+    .app-body {
+        flex-direction: column;
+        padding: 0 8px 24px;
+    }
+    .app-main { width: 100%; }
+    .app-sidebar {
+        position: static;
+        width: 100%;
+        flex: 0 0 auto;
+        max-height: none;
+        border-radius: 12px;
+    }
 }
 
 /* Make the top page header larger and more prominent */
@@ -550,28 +659,28 @@ label,
     justify-content: center;
     gap: 7px;
     padding: 18px 8px;
-    background: #f0f7ff;
-    border: 2px solid #dbeafe;
-    border-radius: 14px;
+    background: #ffffff;
+    border: 1px solid rgba(11,61,145,0.06);
+    border-radius: 12px;
     cursor: pointer;
-    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s;
-    box-shadow: 0 2px 6px rgba(26,35,126,0.06);
-    color: #1a237e;
+    transition: transform 0.16s ease, box-shadow 0.16s ease, background 0.12s;
+    box-shadow: 0 1px 6px rgba(11,61,145,0.03);
+    color: #0b3d91;
     outline: none;
 }
 
 .req-card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 10px 24px rgba(26,35,126,0.14);
-    background: #dbeafe;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 18px rgba(11,61,145,0.06);
+    background: #f7fbff;
 }
 
 .req-card.active {
-    background: #ffe066 !important;
-    border-color: #f0c000 !important;
-    color: #1a237e !important;
-    transform: translateY(-3px);
-    box-shadow: 0 6px 16px rgba(240,192,0,0.20);
+    background: #fff7e6 !important;
+    border-color: rgba(240,192,0,0.12) !important;
+    color: #0b3d91 !important;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 14px rgba(240,192,0,0.08);
 }
 
 .req-card-icon {

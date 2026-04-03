@@ -26,32 +26,18 @@
             </div>
         </div>
 
-        <!-- Main Mode Switch Bar -->
-        <div class="main-mode-bar">
-            <div class="main-mode-tabs">
-                <button class="main-mode-tab active-main-tab" data-main="tools">🧰 Tools</button>
-                <button class="main-mode-tab" data-main="claims">📄 Death Claims</button>
-                <button class="main-mode-tab" data-main="tasks">🗓️ Monthly Tasks</button>
-            </div>
-        </div>
-
-        <!-- Right-side persistent Tasks panel (always visible) -->
-        <aside id="sideTasks" class="side-tasks" aria-label="Tasks sidebar">
-            <div class="side-tasks-header p-3 rounded-lg">
-                <div id="sideClock" class="text-lg font-bold text-trueblue">--:--</div>
-                <div id="sideDate" class="text-xs text-gray-500">Loading date...</div>
-            </div>
-            <div class="side-tasks-body mt-3 p-3 rounded-lg">
-                <div class="mb-3">
-                    <div class="flex gap-2">
-                        <input type="text" id="todoInput" class="dark-input w-full px-3 py-2 rounded-md font-medium" placeholder="Add a new to-do...">
-                        <button id="addTodoBtn" class="btn-primary px-3 py-2 rounded-md font-semibold text-sm">Add</button>
+        <!-- Two-column app layout: main (70%) + sidebar (30%) -->
+        <div class="app-body">
+            <!-- Left: all main module panels -->
+            <div class="app-main">
+                <!-- Main Mode Switch Bar -->
+                <div class="main-mode-bar">
+                    <div class="main-mode-tabs">
+                        <button class="main-mode-tab active-main-tab" data-main="tools">🧰 Tools</button>
+                        <button class="main-mode-tab" data-main="claims">📄 Death Claims</button>
+                        <button class="main-mode-tab" data-main="tasks">🗓️ Monthly Tasks</button>
                     </div>
                 </div>
-                <ul id="todoList" class="space-y-2"> <!-- To-do items injected here -->
-                </ul>
-            </div>
-        </aside>
 
         <!-- Tools Module -->
         <div id="mainToolsPanel" class="main-module p-4 md:p-6">
@@ -60,11 +46,11 @@
 
                         <!-- Tabs -->
                         <div class="flex flex-wrap border-b border-gray-700 mb-6">
-                            <button class="tool-tab active-tab" data-tab="requirements">📋 Requirements</button>
+                            <button class="tool-tab" data-tab="requirements">📋 Requirements</button>
                             <button class="tool-tab" data-tab="forms">📄 Forms & Formats</button>
                             <button class="tool-tab" data-tab="maturity">💰 M/C Calculator</button>
                             <button class="tool-tab" data-tab="calculator">🧮 Premium Calculator</button>
-                            <button class="tool-tab" data-tab="links">🔗 Links</button>
+                            <button class="tool-tab active-tab" data-tab="links">🔗 Links</button>
                         </div>
 
                         <div id="requirementsPanel" class="tab-panel hidden">
@@ -349,7 +335,7 @@
                             </div>
                         </div>
 
-                        <div id="linksPanel" class="tab-panel hidden">
+                        <div id="linksPanel" class="tab-panel">
                             <h4 class="text-lg font-bold text-white mb-4">Quick Links</h4>
                             <div class="grid grid-cols-2 gap-4">
                                 <div><a href="#" target="_blank" rel="noopener noreferrer" class="quick-link-item text-gray-300 font-medium hover:text-cyan-400 transition-colors duration-200"><span class="mr-3">🔍</span> IPP Inquiry</a></div>
@@ -847,7 +833,27 @@
                     </ul>
                 </div>
             </div>
-        </div>
+        </div><!-- end mainTasksPanel -->
+
+            </div><!-- end app-main -->
+
+            <!-- Right: persistent tasks sidebar (30%) -->
+            <aside id="sideTasks" class="app-sidebar" aria-label="Tasks sidebar">
+                <div class="side-tasks-header">
+                    <div id="sideClock" class="side-clock">--:-- --</div>
+                    <div id="sideDate" class="side-date"></div>
+                </div>
+                <div class="side-tasks-body">
+                    <h4 class="side-tasks-title">📝 To-Do</h4>
+                    <div class="side-todo-input">
+                        <input type="text" id="todoInput" class="dark-input" placeholder="Add a to-do...">
+                        <button id="addTodoBtn" class="btn-primary">Add</button>
+                    </div>
+                    <ul id="todoList"></ul>
+                </div>
+            </aside>
+
+        </div><!-- end app-body -->
     </div>
 
     <div id="toast" class="fixed bottom-4 right-4 bg-gray-800 text-white px-4 py-2 rounded-lg shadow-lg hidden"></div>
