@@ -389,7 +389,7 @@ async function renderTodos() {
     if (!todoList) return;
     todoList.innerHTML = '';
     if (todos.length === 0) {
-        todoList.innerHTML = '<li class="text-gray-500 text-center p-4">No to-do items yet.</li>';
+        todoList.innerHTML = '<li class="todo-empty">No to-do items yet.</li>';
         return;
     }
     todos.forEach(todo => {
