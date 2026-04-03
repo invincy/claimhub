@@ -5,6 +5,8 @@ body.theme-efeap {
     background: #fffbe8; /* very light yellow/white */
     color: #1a237e; /* dark blue for headings */
     font-family: 'Segoe UI', Arial, sans-serif;
+    height: 100%;
+    overflow: hidden;
 }
 
 /* Increase global font size for better readability */
@@ -15,7 +17,6 @@ body { font-size: 1rem; }
 .dark-input,
 input,
 select,
-    align-items: stretch;
 .btn-primary,
 .btn-danger,
 .btn-ghost,
@@ -26,6 +27,13 @@ button {
 /* Make small utility font sizes slightly larger for readability */
 .text-sm { font-size: 1rem !important; }
 .text-xs  { font-size: 0.95rem !important; }
+.app-shell {
+    height: 100vh;
+    display: grid;
+    grid-template-rows: auto 1fr;
+    overflow: hidden;
+}
+
 .app-main {
     flex: 1 1 0;
     min-width: 0;
@@ -519,8 +527,11 @@ label,
     width: 100%;
     max-width: 1400px;
     margin: 0 auto;
-    padding: 0 16px 40px;
+    padding: 0 16px 16px;
     box-sizing: border-box;
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
 }
 
 .app-main {
@@ -535,6 +546,7 @@ label,
     grid-column: 1;
     grid-row: 1;
     height: 100%;
+    min-height: 0;
 }
 
 .side-tasks-header {
@@ -556,16 +568,21 @@ label,
     flex-direction: column;
     min-height: 0;
     height: 100%;
+    overflow: hidden;
 }
 
 .side-tasks-body {
     grid-column: 2;
     grid-row: 2;
     height: 100%;
+    min-height: 0;
+    overflow: hidden;
 }
 
 .glass-header.tools-panel-container {
     flex: 1 1 auto;
+    min-height: 0;
+    overflow: hidden;
 }
 
 .side-tasks-header,
@@ -616,6 +633,17 @@ label,
     margin-top: 0;
 }
 
+.tools-panel-container > .flex.flex-wrap.border-b {
+    flex: 0 0 auto;
+}
+
+.tools-panel-container > .tab-panel:not(.hidden) {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: auto;
+    padding-right: 4px;
+}
+
 .side-tasks-title {
     font-size: 1rem;
     font-weight: 800;
@@ -636,6 +664,8 @@ label,
     flex-direction: column;
     gap: 8px;
     min-height: 0;
+    overflow: auto;
+    padding-right: 4px;
 }
 
 .side-todo-input .dark-input {
@@ -705,9 +735,22 @@ label,
 }
 
 @media (max-width: 1024px) {
+    html.theme-efeap,
+    body.theme-efeap {
+        overflow: auto;
+    }
+
+    .app-shell {
+        height: auto;
+        display: block;
+        overflow: visible;
+    }
+
     .app-body {
         display: block;
         padding: 0 8px 24px;
+        height: auto;
+        overflow: visible;
     }
     .app-main {
         display: block;
