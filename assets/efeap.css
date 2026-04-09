@@ -578,7 +578,8 @@ label,
 .app-body {
     display: grid;
     grid-template-columns: minmax(0, 1fr) 320px;
-    grid-template-rows: minmax(0, 1fr) minmax(0, 1fr);
+    /* Give the lower row a larger share so bottom panels are taller */
+    grid-template-rows: minmax(0, 1fr) minmax(0, 1.6fr);
     gap: 16px;
     align-items: stretch;
     width: 100%;
