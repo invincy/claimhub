@@ -195,7 +195,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
             var durationInputs = [
                 document.getElementById('docDateTool'),
-                document.getElementById('dorDateTool'),
                 document.getElementById('dodDateTool'),
                 document.getElementById('doiDateTool')
             ];
@@ -329,11 +328,16 @@ document.addEventListener('DOMContentLoaded', function() {
         var todoList = document.getElementById('todoList');
 
         todoList?.addEventListener('click', async function(e) {
-            var id = e.target.dataset.id;
-            if (e.target.closest('button')) {
-                await idbDelete(STORE.todos, Number(id));
-                renderTodos();
+            const deleteButton = e.target.closest('button[data-id]');
+            if (deleteButton) {
+                const id = Number(deleteButton.dataset.id);
+                if (!Number.isNaN(id)) {
+                    await idbDelete(STORE.todos, id);
+                    renderTodos();
+                }
             } else if (e.target.type === 'checkbox') {
+                const id = Number(e.target.dataset.id);
+                if (Number.isNaN(id)) return;
                 const todos = await idbGetAll(STORE.todos);
                 const todo = todos.find(t => t.id == id);
                 if (todo) {
@@ -346,13 +350,22 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
 
-        addTodoBtn?.addEventListener('click', async function() {
+        async function addTodoItem() {
             var text = todoInput.value.trim();
             if (text) {
                 const createdAt = Date.now();
                 await idbPut(STORE.todos, { text, completed: false, createdAt });
                 todoInput.value = '';
+                todoInput.focus();
                 renderTodos();
+            }
+        }
+
+        addTodoBtn?.addEventListener('click', addTodoItem);
+        todoInput?.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                addTodoItem();
             }
         });
 
@@ -768,14 +781,12 @@ async function cleanUpTodos() {
 
 function updateDurationResults() {
     const docInput = document.getElementById('docDateTool');
-    const dorInput = document.getElementById('dorDateTool');
     const dodInput = document.getElementById('dodDateTool');
     const doiInput = document.getElementById('doiDateTool');
     const resultsEl = document.getElementById('durationResults');
     if (!resultsEl) return;
 
     const docDate = parseToolDate(docInput?.value);
-    const dorDate = parseToolDate(dorInput?.value);
     const dodDate = parseToolDate(dodInput?.value);
     const doiDate = parseToolDate(doiInput?.value);
 
@@ -790,12 +801,6 @@ function updateDurationResults() {
         rows.push({
             label: 'DOD → DOI',
             value: formatDurationDiff(dodDate, doiDate)
-        });
-    }
-    if (docDate && dorDate) {
-        rows.push({
-            label: 'DOC → DOR',
-            value: formatDurationDiff(docDate, dorDate)
         });
     }
 
