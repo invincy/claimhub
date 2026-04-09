@@ -30,7 +30,8 @@ button {
 .app-shell {
     height: 100vh;
     display: grid;
-    grid-template-rows: auto 1fr;
+        /* Make header take only its content height to free more space for panels */
+        grid-template-rows: min-content 1fr;
     overflow: hidden;
     width: 100%;
     margin: 0;
@@ -41,7 +42,7 @@ button {
     display: flex;
     flex-direction: column;
     gap: 10px;
-}
+        grid-template-rows: minmax(0, 0.9fr) minmax(0, 1.4fr);
 .duration-card {
     background: rgba(15,23,42,0.05);
     border: 1px solid rgba(15,23,42,0.12);
