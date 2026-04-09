@@ -1,290 +1,49 @@
-/* LIC eFEAP Theme */
+/* ============================================
+   LIC eFEAP Theme — Clean
+   ============================================ */
 
+/* === 1. Base === */
 html.theme-efeap,
 body.theme-efeap {
-    background: #fffbe8; /* very light yellow/white */
-    color: #1a237e; /* dark blue for headings */
+    background: #fffbe8;
+    color: #1a237e;
     font-family: 'Segoe UI', Arial, sans-serif;
     height: 100%;
     overflow: hidden;
 }
 
-/* Increase global font size for better readability */
 html { font-size: 14px; }
 body { font-size: 0.9rem; zoom: 0.8; }
 
-/* Ensure inputs and primary buttons use a readable font size */
-.dark-input,
-input,
-select,
-.btn-primary,
-.btn-danger,
-.btn-ghost,
-button {
-    font-size: 1rem !important;
-}
-
-/* Make small utility font sizes slightly larger for readability */
-.text-sm { font-size: 1rem !important; }
-.text-xs  { font-size: 0.95rem !important; }
-.app-shell {
-    height: 100vh;
-    display: grid;
-        /* Make header take only its content height to free more space for panels */
-        grid-template-rows: min-content 1fr;
-    overflow: hidden;
-    width: 100%;
-    margin: 0;
-    padding: 0;
-}
-
-.duration-results {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-        grid-template-rows: minmax(0, 0.9fr) minmax(0, 1.4fr);
-.duration-card {
-    background: rgba(15,23,42,0.05);
-    border: 1px solid rgba(15,23,42,0.12);
-    border-radius: 12px;
-    padding: 16px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 12px;
-}
-.duration-card span {
-    font-weight: 700;
-}
-
-.app-main {
-    flex: 1 1 0;
-    min-width: 0;
-    display: flex;
-    flex-direction: column;
-}
-/* Panels and Cards */
-.glass-header,
-.matte-card,
-.matte-form,
-.tools-panel-container {
-    background: #ffffff;
-    border: 1px solid rgba(11,61,145,0.06); /* very subtle blue border */
-    box-shadow: 0 1px 6px rgba(11,61,145,0.04);
-    border-radius: 12px;
-}
-
-/* Accent: Thin yellow stripe or accent (softened) */
-.glass-header {
-    border-top: 3px solid #fff3cc; /* softened yellow accent */
-}
-
-/* Headings */
+/* === 2. Typography === */
 h1, h2, h3, h4, h5, h6 {
-    color: #1a237e; /* dark blue */
+    color: #1a237e !important;
     font-weight: bold;
-    text-shadow: none;
+    text-shadow: none !important;
 }
 
-/* Subtext, labels */
-.side-tasks-body {
-    padding: 14px 14px 12px;
-    background: linear-gradient(180deg, #ffffff 0%, #fcfdff 100%);
-    border: 1.5px solid #d3def4;
-    border-radius: 16px;
-    box-shadow: 0 8px 20px rgba(11,61,145,0.06);
-    display: flex;
-    flex-direction: column;
-    flex: 1 1 auto;
-    min-height: 0;
-}
+.text-sm { font-size: 1rem !important; }
+.text-xs { font-size: 0.95rem !important; }
+
+.text-gray-200,
 .text-gray-300,
 .text-gray-400,
 .text-gray-500,
-.text-gray-200,
 label,
 .option-card span,
 .counter-badge {
-    color: #6b7280 !important; /* muted gray */
-}
-
-/* Buttons */
-.btn-primary, .btn-danger, .btn-ghost {
-    background: #e3f2fd;
-    color: #1a237e;
-    border: 1px solid #b3c6e6;
-    box-shadow: none;
-    text-shadow: none;
-}
-
-.btn-primary:hover, .btn-danger:hover, .btn-ghost:hover {
-    background: #bbdefb;
-}
-
-/* Inputs */
-.dark-input, select, textarea {
-    background: #f6faff;
-    color: #1a237e;
-    border: 1px solid #b3c6e6;
-    box-shadow: none;
-}
-
-.dark-input:focus, select:focus, textarea:focus {
-    border-color: #ffe066;
-    outline: none;
-}
-
-/* Ensure all input, textarea, and select fields have readable text */
-input,
-textarea,
-select {
-    background: #f6faff !important;
     color: #1a237e !important;
-    border: 1px solid #b3c6e6 !important;
-    box-shadow: none !important;
 }
 
-input::placeholder,
-textarea::placeholder {
-    color: #6b7280 !important; /* muted gray for placeholder */
-    opacity: 1;
-}
-
-/* For disabled fields */
-input:disabled,
-textarea:disabled,
-select:disabled {
-    background: #f0f0f0 !important;
-    color: #b0b0b0 !important;
-}
-
-/* Table */
-.dark-table, .dark-table-header, .dark-table-row {
-    background: #fff;
-    color: #1a237e;
-    border-color: #dbeafe;
-    box-shadow: none;
-}
-
-.dark-table-header th, .dark-table-row td {
-    border-bottom: 1px solid #ffe066;
-}
-
-/* Collapsible headers */
-.collapsible-header, .workflow-header {
-    background: #e3f2fd;
-    color: #1a237e;
-    border: none;
-    box-shadow: none;
-}
-
-/* Flat icons in pale circles */
-.quick-link-item span,
-.counter-badge,
-.radio-modern,
-.checkbox-modern {
-    background: #e3f2fd;
-    color: #1a237e;
-    border-radius: 50%;
-    padding: 4px 8px;
-    box-shadow: none;
-    border: 1px solid #dbeafe;
-}
-
-/* Remove glow and gradients */
-.glow-text,
-.shadow-2xl,
-.backdrop-blur-sm {
-    text-shadow: none !important;
-    box-shadow: none !important;
-    filter: none !important;
-}
-
-/* Hide dark theme backgrounds */
-.bg-gray-900,
-.bg-gray-900\/40,
-.bg-gray-900\/60 {
-    background: #fff !important;
-}
-
-/* Accent yellow for highlights */
-.border-yellow-400,
-.text-yellow-400 {
-    border-color: #ffe066 !important;
-    color: #ffe066 !important;
-}
-
-/* Tab active */
-.active-tab {
-    background: #ffe066;
-    color: #1a237e;
-    border-bottom: 2px solid #ffe066;
-}
-
-/* Misc */
-.rounded-2xl, .rounded-xl, .rounded-lg {
-    border-radius: 16px !important;
-}
-
-.hidden {
-    display: none !important;
-}
-
-/* Toast */
-#toast {
-    background: #1a237e;
-    color: #fff;
-    box-shadow: none;
-}
-
-/* Remove backdrop blur everywhere */
-.backdrop-blur-sm {
-    backdrop-filter: none !important;
-}
-
-/* Remove glass effect */
-.glass-header {
-    background: #fff !important;
-    backdrop-filter: none !important;
-    box-shadow: none !important;
-}
-
-.page-header {
-    display: flex !important;
-    grid-template-columns: none !important;
-    justify-content: center !important;
-    align-items: center !important;
-    min-height: auto !important;
-}
-
-.page-header h1 {
-    width: 100%;
-    text-align: center !important;
-}
-
-/* Remove any neon-specific classes */
-.theme-neon {
-    background: none !important;
-    color: inherit !important;
-}
-
-/* Fix neon font colors to LIC blue */
+.text-cyan-200,
 .text-cyan-300,
 .text-cyan-400,
 .text-cyan-500,
-.text-cyan-200,
 .glow-text {
     color: #1a237e !important;
     text-shadow: none !important;
 }
 
-/* Main heading style */
-h1 {
-    color: #1a237e !important;
-    text-shadow: none !important;
-}
-
-/* Space out links */
 a, .quick-link-item {
     margin-right: 16px;
     margin-bottom: 8px;
@@ -293,77 +52,114 @@ a, .quick-link-item {
     font-weight: 500;
     letter-spacing: 0.5px;
 }
+a:last-child, .quick-link-item:last-child { margin-right: 0; }
 
-a:last-child, .quick-link-item:last-child {
-    margin-right: 0;
+/* === 3. Inputs & Forms === */
+.dark-input, input, select, .btn-primary, .btn-danger, .btn-ghost, button {
+    font-size: 1rem !important;
 }
 
-.tools-panel-container h3 {
-    line-height: 1.05;
-    font-size: 1.2rem !important;
-}
-
-.links-wrap {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-}
-
-.quick-link-pill {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex: 1 1 calc(33.333% - 12px);
-    min-width: 180px;
-    margin: 0 !important;
-    padding: 14px 16px;
-    border-radius: 14px;
-    background: #f8fbff;
-    border: 1px solid #dbeafe;
-    box-shadow: 0 1px 6px rgba(11,61,145,0.04);
-}
-
-.quick-link-pill:hover {
-    background: #eef6ff;
-    border-color: #bfd4f7;
-}
-
-.quick-link-pill span {
-    margin-right: 0 !important;
-    flex: 0 0 auto;
-}
-
-/* To-Do items: lighter card treatment for sidebar tasks */
-.todo-item,
-.todo-list li,
-.todo-list .completed {
-    color: #0b3d91 !important;
-    background: #ffffff !important;
-    border: 1px solid rgba(11,61,145,0.06) !important;
-    font-size: 1.05rem !important;
-    font-weight: 600 !important;
-    border-radius: 10px !important;
-    box-shadow: 0 1px 4px rgba(11,61,145,0.03) !important;
-}
-
-/* Main action buttons and their children */
-#deathClaimBtn,
-#specialCaseBtn,
-#deathClaimBtn *,
-#specialCaseBtn * {
-    font-size: 1.35rem !important;
-    font-weight: 700 !important;
+input, textarea, select {
+    background: #f6faff !important;
     color: #1a237e !important;
-    background: #e3f2fd !important;
-    border: 2px solid #b3c6e6 !important;
+    border: 1px solid #b3c6e6 !important;
+    box-shadow: none !important;
+    padding-top: 0.85rem !important;
+    padding-bottom: 0.85rem !important;
+    font-size: 1.02rem !important;
 }
 
-/* To-Do blocks and claim type options: white background, blue text, thin border */
-.todo-item,
-.todo-list li,
-.todo-list .completed,
-.claim-type-option,
-.claim-type-block {
+input::placeholder, textarea::placeholder {
+    color: #6b7280 !important;
+    opacity: 1;
+}
+
+input:disabled, textarea:disabled, select:disabled {
+    background: #f0f0f0 !important;
+    color: #b0b0b0 !important;
+}
+
+input:focus, select:focus, textarea:focus {
+    border-color: #ffe066 !important;
+    outline: none;
+}
+
+.matte-form label, .matte-form h3, .matte-form h4, .matte-form h2, .matte-form h1 {
+    color: #1a237e !important;
+    font-weight: 600 !important;
+}
+
+.matte-form input, .matte-form textarea, .matte-form select {
+    background: #fff !important;
+    color: #1a237e !important;
+    border: 1px solid #b3c6e6 !important;
+    font-weight: 500 !important;
+}
+
+input.radio-modern {
+    width: 1.25rem !important;
+    height: 1.25rem !important;
+    margin-right: 0.5rem !important;
+    vertical-align: middle;
+}
+
+/* === 4. Buttons === */
+.btn-primary, .btn-danger, .btn-ghost {
+    background: #e3f2fd;
+    color: #1a237e;
+    border: 1px solid #b3c6e6;
+    box-shadow: none;
+    text-shadow: none;
+    padding: 0.9rem 1.5rem !important;
+    font-size: 1.05rem !important;
+    border-radius: 12px !important;
+}
+
+.btn-primary:hover, .btn-danger:hover, .btn-ghost:hover {
+    background: #bbdefb;
+}
+
+/* === 5. Panels & Cards === */
+.glass-header, .matte-card, .matte-form, .tools-panel-container {
+    background: #fff !important;
+    border: 1px solid rgba(11,61,145,0.06);
+    box-shadow: none !important;
+    border-radius: 12px;
+    backdrop-filter: none !important;
+}
+
+.glass-header { border-top: 3px solid #fff3cc; }
+
+.option-card, .todo-item, .workflow-section, .workflow-content,
+.collapsible-header, .matte-form, .matte-card,
+#todoList li, #workflowSections, #queryText, #premiumResult,
+#durationDisplay, #suggestionBox, #investigationDetails,
+#daysSinceAllotted, #daysSinceSent {
+    background: #fff !important;
+    color: #1a237e !important;
+    border: 1px solid #dbeafe !important;
+    font-weight: 500 !important;
+    box-shadow: none !important;
+}
+
+.workflow-section *, .workflow-content *, .option-card *,
+.matte-form *, .matte-card *, .collapsible-header *,
+.dark-table *, .dark-table-header *, .dark-table-row *,
+#queryText *, #premiumResult *,
+#daysSinceAllotted *, #daysSinceSent *, #investigationDetails * {
+    color: #1a237e !important;
+    background: transparent !important;
+}
+
+.collapsible-header, .workflow-header {
+    background: #e3f2fd !important;
+    color: #1a237e !important;
+    border: none;
+    box-shadow: none;
+}
+
+.todo-item, .todo-list li, .todo-list .completed,
+.claim-type-option, .claim-type-block {
     background: #ffffff !important;
     color: #0b3d91 !important;
     border: 1px solid rgba(11,61,145,0.06) !important;
@@ -373,155 +169,202 @@ a:last-child, .quick-link-item:last-child {
     box-shadow: 0 1px 4px rgba(11,61,145,0.03) !important;
 }
 
-/* If your claim type options use spans or labels inside, target those too */
-.claim-type-option span,
-.claim-type-block span,
-.todo-item span,
-.todo-list li span {
+.claim-type-option span, .claim-type-block span,
+.todo-item span, .todo-list li span,
+.option-card span, #todoList li span {
     color: #1a237e !important;
     background: transparent !important;
     font-weight: 500 !important;
 }
 
-/* Fix all dark blocks to white, blue border, blue text */
-.option-card,
-.todo-item,
-.workflow-section,
-.workflow-content,
-.collapsible-header,
-.matte-form,
-.matte-card,
-#todoList li,
-#workflowSections,
-#queryText,
-#premiumResult,
-#durationDisplay,
-#suggestionBox,
-#investigationDetails,
-#daysSinceAllotted,
-#daysSinceSent {
+.quick-link-item span, .counter-badge, .radio-modern, .checkbox-modern {
+    background: #e3f2fd;
+    color: #1a237e;
+    border-radius: 50%;
+    padding: 4px 8px;
+    box-shadow: none;
+    border: 1px solid #dbeafe;
+}
+
+/* === 6. Tables === */
+.dark-table, .dark-table-header, .dark-table-row {
     background: #fff !important;
     color: #1a237e !important;
     border: 1px solid #dbeafe !important;
-    font-weight: 500 !important;
     box-shadow: none !important;
 }
 
-/* To-Do and option-card spans/buttons */
-.option-card span,
-.todo-item span,
-#todoList li span {
-    color: #1a237e !important;
-    background: transparent !important;
-    font-weight: 500 !important;
-}
-
-/* Tools & Requirements heading: blue, bold, readable */
-.tools-panel-container h3,
-.tools-panel-container h2,
-.tools-panel-container .panel-title {
-    color: #1a237e !important;
-    font-weight: bold !important;
-    font-size: 2rem !important;
-    text-shadow: none !important;
-    letter-spacing: 0.5px;
-}
-
-/* Remove any leftover dark backgrounds */
-.bg-gray-900,
-.bg-gray-900\/40,
-.bg-gray-900\/60,
-.backdrop-blur-sm {
-    background: #fff !important;
-    backdrop-filter: none !important;
-    box-shadow: none !important;
-}
-
-/* Buttons: bigger, blue, bold */
-#deathClaimBtn,
-#specialCaseBtn,
-#deathClaimBtn *
-#specialCaseBtn * {
-    font-size: 1.35rem !important;
-    font-weight: 700 !important;
-    color: #1a237e !important;
-    background: #e3f2fd !important;
-    border: 2px solid #b3c6e6 !important;
-}
-
-/* Form labels and headings: blue, readable */
-.matte-form label,
-.matte-form h3,
-.matte-form h4,
-.matte-form h2,
-.matte-form h1 {
-    color: #1a237e !important;
-    font-weight: 600 !important;
-}
-
-/* Inputs: blue text, white background */
-.matte-form input,
-.matte-form textarea,
-.matte-form select {
-    background: #fff !important;
-    color: #1a237e !important;
-    border: 1px solid #b3c6e6 !important;
-    font-weight: 500 !important;
-}
-
-/* Table headers and cells: blue text, white background */
-.dark-table-header th,
-.dark-table-row td {
+.dark-table-header th, .dark-table-row td {
     color: #1a237e !important;
     background: #fff !important;
     border-bottom: 1px solid #ffe066 !important;
 }
 
-/* Misc: ensure all text is readable */
-.text-gray-300,
-.text-gray-400,
-.text-gray-500,
-.text-gray-200,
-label,
-.option-card span,
-.counter-badge {
-    color: #1a237e !important;
-}
-
-/* Make all workflow, option, and form boxes white with blue text */
-.workflow-section,
-.workflow-content,
-.option-card,
-.matte-form,
-.matte-card,
-.collapsible-header,
-.dark-table,
-.dark-table-header,
-.dark-table-row,
-#queryText,
-#premiumResult,
-#daysSinceAllotted,
-#daysSinceSent,
-#investigationDetails {
+/* === 7. Dark BG / Effects Overrides === */
+.bg-gray-900, .bg-gray-900\/40, .bg-gray-900\/60, .backdrop-blur-sm {
     background: #fff !important;
-    color: #1a237e !important;
-    border: 1px solid #dbeafe !important;
+    backdrop-filter: none !important;
     box-shadow: none !important;
 }
 
-/* Layout: make left column (tools) 60% and right column (claims) 40% on desktop */
-.dash-grid {
-    display: grid;
-    grid-template-columns: 60% 40%;
-    gap: 1rem;
+.glow-text, .shadow-2xl {
+    text-shadow: none !important;
+    box-shadow: none !important;
+    filter: none !important;
 }
 
-/* ---- Main Mode Tabs (Tools / Death Claims switcher) ---- */
-.main-mode-bar {
-    padding: 4px 24px 4px;
+.theme-neon { background: none !important; color: inherit !important; }
+
+.border-yellow-400, .text-yellow-400 {
+    border-color: #ffe066 !important;
+    color: #ffe066 !important;
+}
+
+.active-tab {
+    background: #ffe066;
+    color: #1a237e;
+    border-bottom: 2px solid #ffe066;
+}
+
+.rounded-2xl, .rounded-xl, .rounded-lg { border-radius: 16px !important; }
+.hidden { display: none !important; }
+
+/* === 8. App Shell Layout === */
+.app-shell {
+    height: 100vh;
+    display: grid;
+    grid-template-rows: auto 1fr;
+    overflow: hidden;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.app-body {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 320px;
+    grid-template-rows: auto 1fr;
+    gap: 16px;
+    align-items: stretch;
+    width: 100%;
+    margin: 0;
+    padding: 0 16px 16px;
+    box-sizing: border-box;
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.app-main {
+    grid-column: 1;
+    grid-row: 1 / span 2;
     display: flex;
-    justify-content: center; /* center tabs under header */
+    min-height: 0;
+}
+
+.app-sidebar { display: contents; }
+
+.main-workspace-shell {
+    width: 100%;
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+    border: 1.5px solid #d3def4;
+    border-radius: 16px;
+    box-shadow: 0 8px 20px rgba(11,61,145,0.06);
+    padding: 20px;
+    overflow: hidden;
+    gap: 10px;
+}
+
+.main-workspace-content {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.main-module {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: auto;
+}
+
+.main-workspace-shell .main-module.hidden { display: none !important; }
+
+.glass-header.tools-panel-container {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%) !important;
+    border: 1.5px solid #d3def4 !important;
+    box-shadow: 0 8px 20px rgba(11,61,145,0.06) !important;
+    border-radius: 16px;
+    padding: 20px;
+}
+
+.glass-header.tools-panel-container h3 {
+    color: #0b3d91 !important;
+    margin-top: 0;
+    line-height: 1.05;
+    font-size: 1.2rem !important;
+}
+
+.tools-panel-container > .flex.flex-wrap.border-b {
+    flex: 0 0 auto;
+    padding-bottom: 0.25rem;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.tools-panel-container > .flex.flex-wrap.border-b::-webkit-scrollbar { display: none; }
+
+.tools-panel-container > .tab-panel:not(.hidden) {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: auto;
+    padding-right: 4px;
+}
+
+/* === 9. Page Header === */
+.page-header {
+    display: flex !important;
+    grid-template-columns: none !important;
+    justify-content: center !important;
+    align-items: center !important;
+    min-height: auto !important;
+    padding-top: 12px !important;
+    padding-bottom: 12px !important;
+}
+
+.page-header h1 {
+    width: 100%;
+    text-align: center !important;
+    font-size: 3rem !important;
+    font-weight: 900 !important;
+    letter-spacing: 0.5px;
+    color: #0b3d91 !important;
+}
+
+/* === 10. Main Mode Tabs === */
+.main-mode-bar {
+    padding: 0 0 4px;
+    display: flex;
+    justify-content: center;
     align-items: center;
+    flex: 0 0 auto;
 }
 
 .main-mode-tabs {
@@ -556,166 +399,37 @@ label,
 }
 
 .main-mode-tab.active-main-tab {
-    background: linear-gradient(180deg,#fff9e6 0%, #fff 40%);
+    background: linear-gradient(180deg, #fff9e6 0%, #fff 40%);
     color: #0b3d91;
     box-shadow: 0 6px 18px rgba(11,61,145,0.06);
 }
 
-.main-module {
-    width: 100%;
-    max-width: none;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    flex: 1 1 auto;
-    min-height: 0;
+/* === 11. Tool Tabs === */
+.tools-panel-container .tool-tab, .flex.border-b .tool-tab {
+    font-size: 0.98rem !important;
+    padding: 0.45rem 0.75rem !important;
+    margin-right: 0.35rem !important;
+    color: #0b3d91 !important;
+    white-space: nowrap;
 }
 
-/* ===========================================
-   Two-column app layout
-   Left:  app-main  (fills remaining space)
-   Right: app-sidebar (fixed 300px)
-   =========================================== */
-.app-body {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) 320px;
-    /* Give the lower row a larger share so bottom panels are taller */
-    grid-template-rows: minmax(0, 1fr) minmax(0, 1.6fr);
-    gap: 16px;
-    align-items: stretch;
-    width: 100%;
-    margin: 0;
-    padding: 0 16px 16px;
-    box-sizing: border-box;
-    height: 100%;
-    min-height: 0;
-    overflow: hidden;
+.tools-panel-container .tool-tab.active-tab,
+.flex.border-b .tool-tab.active-tab {
+    font-weight: 700 !important;
+    background: #ffe066 !important;
+    border-bottom: 2px solid #ffe066 !important;
 }
 
-.app-main {
-    grid-column: 1;
-    grid-row: 1 / span 2;
-    display: flex;
-    min-height: 0;
-}
-
-.app-sidebar {
-    display: contents;
-}
-
+/* === 12. Sidebar: Clock & To-Do === */
 .side-tasks-header {
     grid-column: 2;
     grid-row: 1;
-    height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: center;
     flex: 0 0 auto;
-    min-height: 110px;
-    padding: 12px 16px;
-}
-
-.main-mode-bar {
-    padding: 0 0 4px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex: 0 0 auto;
-}
-
-.main-workspace-shell {
-    width: 100%;
-    min-height: 0;
-    display: flex;
-    flex-direction: column;
-    background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
-    border: 1.5px solid #d3def4;
-    border-radius: 16px;
-    box-shadow: 0 8px 20px rgba(11,61,145,0.06);
-    padding: 20px;
-    overflow: hidden;
-    gap: 10px;
-}
-
-.main-workspace-content {
-    flex: 1 1 auto;
-    min-height: 0;
-    display: flex;
-    flex-direction: column;
-}
-
-.main-module {
-    grid-column: 1;
-    grid-row: 2;
-    width: 100%;
-    max-width: none;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    min-height: 0;
-    height: 100%;
-    overflow: auto;
-}
-
-.side-tasks-body {
-    grid-column: 2;
-    grid-row: 2;
-    height: 100%;
-    min-height: 0;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-.app-sidebar {
-    width: 100%;
-}
-
-/* Make sure the top and bottom parent blocks fill their grid cells
-   so left and right columns always have matching parent-card heights */
-.side-tasks-header,
-.side-tasks-body {
-    height: 100%;
-    min-height: 0;
-    display: flex;
-    flex-direction: column;
-}
-
-/* Ensure the main card containers inside those cells grow and allow
-   internal scrolling while keeping the outer grid static */
-.glass-header.tools-panel-container,
-.side-tasks-body,
-.glass-header.tools-panel-container > .tab-panel,
-.side-tasks-body > * {
-    flex: 1 1 auto;
-    min-height: 0;
-    display: flex;
-    flex-direction: column;
-}
-
-/* Tab panels and todo list scroll internally */
-.glass-header.tools-panel-container > .tab-panel:not(.hidden) {
-    overflow: auto;
-}
-.side-tasks-body #todoList {
-    overflow: auto;
-}
-
-.glass-header.tools-panel-container {
-    flex: 1 1 auto;
-    min-height: 0;
-    overflow: hidden;
-}
-
-.side-tasks-header,
-.side-tasks-body {
     width: 100%;
     box-sizing: border-box;
-}
-
-/* Sidebar: clock header */
-.side-tasks-header {
     text-align: center;
     padding: 12px 16px;
     background: linear-gradient(180deg, #edf4ff 0%, #ffffff 100%);
@@ -740,35 +454,20 @@ label,
     letter-spacing: 0.3px;
 }
 
-/* Sidebar: body (defined once near top of file) */
-
-/* Make the main tools card match sidebar card styling */
-.glass-header.tools-panel-container {
-    background: linear-gradient(180deg,#ffffff 0%, #fbfdff 100%);
+.side-tasks-body {
+    grid-column: 2;
+    grid-row: 2;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 14px 14px 12px;
+    background: linear-gradient(180deg, #ffffff 0%, #fcfdff 100%);
     border: 1.5px solid #d3def4;
-    box-shadow: 0 8px 20px rgba(11,61,145,0.06);
     border-radius: 16px;
-    padding: 20px;
-}
-
-.glass-header.tools-panel-container h3 {
-    color: #0b3d91 !important;
-    margin-top: 0;
-}
-
-.tools-panel-container > .flex.flex-wrap.border-b {
-    flex: 0 0 auto;
-}
-
-.tools-panel-container > .tab-panel:not(.hidden) {
-    flex: 1 1 auto;
+    box-shadow: 0 8px 20px rgba(11,61,145,0.06);
+    display: flex;
+    flex-direction: column;
     min-height: 0;
-    overflow: auto;
-    padding-right: 4px;
-}
-
-.main-workspace-shell .main-module.hidden {
-    display: none !important;
+    overflow: hidden;
 }
 
 .side-tasks-title {
@@ -783,40 +482,6 @@ label,
     display: flex;
     gap: 6px;
     margin-bottom: 12px;
-}
-
-#todoList {
-    flex: 1 1 auto;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    min-height: 0;
-    overflow: auto;
-    padding-right: 4px;
-}
-
-#todoList li {
-    padding: 10px 12px;
-    min-height: 48px;
-    border-radius: 14px;
-    min-height: 50px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-}
-
-.todo-meta {
-    font-size: 0.75rem;
-    color: #6b7280;
-}
-
-#todoList li button {
-    width: 30px;
-    height: 30px;
-    border-radius: 8px;
-    border: none;
-    background: rgba(11, 61, 145, 0.08);
 }
 
 .side-todo-input .dark-input {
@@ -838,17 +503,41 @@ label,
     background: #edf4ff !important;
 }
 
-.app-sidebar ul {
+#todoList {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-height: 0;
+    overflow: auto;
+    padding-right: 4px;
     list-style: none;
-    padding: 0;
+    padding-left: 0;
     margin: 0;
 }
 
-.app-sidebar li {
-    margin-bottom: 0;
+#todoList li {
+    padding: 10px 12px;
+    border-radius: 14px;
+    min-height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
 }
 
-/* Todo items in sidebar */
+#todoList li button {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    border: none;
+    background: rgba(11,61,145,0.08);
+}
+
+.todo-meta { font-size: 0.75rem; color: #6b7280; }
+.app-sidebar ul { list-style: none; padding: 0; margin: 0; }
+.app-sidebar li { margin-bottom: 0; }
+
 .app-sidebar .todo-item {
     background: #f8faff !important;
     border: 1px solid rgba(11,61,145,0.06) !important;
@@ -885,67 +574,7 @@ label,
     margin-top: 3px;
 }
 
-@media (max-width: 1024px) {
-    html.theme-efeap,
-    body.theme-efeap {
-        overflow: auto;
-    }
-
-    .app-shell {
-        height: auto;
-        display: block;
-        overflow: visible;
-    }
-
-    .app-body {
-        display: block;
-        padding: 0 8px 24px;
-        height: auto;
-        overflow: visible;
-    }
-    .app-main {
-        display: block;
-        width: 100%;
-    }
-    .app-sidebar {
-        display: block;
-        position: static;
-        width: 100%;
-        margin-top: 10px;
-    }
-
-    .side-tasks-body {
-        min-height: 0;
-        height: auto;
-    }
-
-    #todoList {
-        min-height: 120px;
-    }
-}
-
-/* Make the top page header larger and more prominent */
-.page-header {
-    padding-top: 12px !important;
-    padding-bottom: 12px !important;
-}
-
-.page-header h1 {
-    font-size: 3rem !important;
-    font-weight: 900 !important;
-    letter-spacing: 0.5px;
-    color: #0b3d91 !important;
-}
-
-@media (max-width: 767px) {
-    .main-mode-tab { padding: 8px 14px; font-size: 1rem; }
-    .page-header h1 { font-size: 1.8rem !important; }
-    .req-card-grid { grid-template-columns: repeat(2, 1fr); }
-    .links-wrap { gap: 10px; }
-    .quick-link-pill { flex-basis: 100%; min-width: 0; }
-}
-
-/* ---- Requirements Float Cards ---- */
+/* === 13. Requirements Cards === */
 .req-card-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -984,10 +613,7 @@ label,
     box-shadow: 0 5px 14px rgba(240,192,0,0.08);
 }
 
-.req-card-icon {
-    font-size: 2rem;
-    line-height: 1;
-}
+.req-card-icon { font-size: 2rem; line-height: 1; }
 
 .req-card-label {
     font-size: 0.88rem;
@@ -997,7 +623,10 @@ label,
     line-height: 1.2;
 }
 
-/* ---- Forms & Formats Cards ---- */
+.requirements-btn { background: #fff; color: #1a237e; border: 1px solid #dbeafe; }
+.requirements-btn.active { background: #ffe066; color: #042856; border-color: #ffe066; }
+
+/* === 14. Forms & Formats Cards === */
 .forms-section-heading {
     font-size: 0.85rem;
     font-weight: 700;
@@ -1038,86 +667,47 @@ label,
     background: #f0f7ff;
 }
 
-.form-card-icon {
-    font-size: 1.25rem;
-    line-height: 1;
-}
+.form-card-icon { font-size: 1.25rem; line-height: 1; }
+.form-card-name { font-size: 0.95rem; font-weight: 700; color: #0b3d91; }
+.form-card-desc { font-size: 0.78rem; color: #51607a; line-height: 1.2; }
 
-.form-card-name {
-    font-size: 0.95rem;
-    font-weight: 700;
-    color: #0b3d91;
-}
+/* === 15. Quick Links === */
+.links-wrap { display: flex; flex-wrap: wrap; gap: 12px; }
 
-.form-card-desc {
-    font-size: 0.78rem;
-    color: #51607a;
-    line-height: 1.2;
-}
-
-@media (min-width: 1100px) {
-    .forms-card-grid { grid-template-columns: repeat(4, 1fr); }
-}
-
-
-/* Requirements type buttons */
-.requirements-btn {
-    background: #fff;
-    color: #1a237e;
+.quick-link-pill {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1 1 calc(33.333% - 12px);
+    min-width: 180px;
+    margin: 0 !important;
+    padding: 14px 16px;
+    border-radius: 14px;
+    background: #f8fbff;
     border: 1px solid #dbeafe;
-}
-.requirements-btn.active {
-    background: #ffe066;
-    color: #042856;
-    border-color: #ffe066;
+    box-shadow: 0 1px 6px rgba(11,61,145,0.04);
 }
 
-/* Make tool tabs and top nav more readable */
-.tools-panel-container .tool-tab,
-.flex.border-b .tool-tab {
-    font-size: 0.98rem !important;
-    padding: 0.45rem 0.75rem !important;
-    margin-right: 0.35rem !important;
-    color: #0b3d91 !important;
-    white-space: nowrap;
-}
-.tools-panel-container .tool-tab.active-tab,
-.flex.border-b .tool-tab.active-tab {
-    font-weight: 700 !important;
-    background: #ffe066 !important;
-    border-bottom: 2px solid #ffe066 !important;
-}
+.quick-link-pill:hover { background: #eef6ff; border-color: #bfd4f7; }
+.quick-link-pill span { margin-right: 0 !important; flex: 0 0 auto; }
 
-/* Top nav spacing (tabs row) */
-.tools-panel-container > .flex.flex-wrap.border-b {
-    padding-bottom: 0.25rem;
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    -ms-overflow-style: none;
-    scrollbar-width: none;
+/* === 16. Duration Tool === */
+.duration-results { display: flex; flex-direction: column; gap: 10px; }
+
+.duration-card {
+    background: rgba(15,23,42,0.05);
+    border: 1px solid rgba(15,23,42,0.12);
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
 }
 
-.tools-panel-container > .flex.flex-wrap.border-b::-webkit-scrollbar {
-    display: none;
-}
+.duration-card span { font-weight: 700; }
 
-/* Maturity result sizing / emphasis */
-#maturityResult { line-height: 1.25; }
-#maturityResult p { margin: 0 0 0.35rem 0; }
-#maturityResult .text-sm { font-size: 1rem !important; color: #475569 !important; }
-#maturityAmount { font-size: 2.25rem !important; font-weight: 800 !important; color: #1a237e !important; }
-#maturityTotalPaid { font-size: 1.6rem !important; font-weight: 600 !important; color: #1a237e !important; }
-#maturitySurvival { font-size: 1.05rem !important; font-weight: 600 !important; color: #334155 !important; }
-#maturityBreakdown { font-size: 0.95rem !important; color: #6b7280 !important; }
-
-/* Increase plan/mode control visibility */
-input.radio-modern {
-    width: 1.25rem !important;
-    height: 1.25rem !important;
-    margin-right: 0.5rem !important;
-    vertical-align: middle;
-}
-
+/* === 17. Calculator Labels === */
 .tools-panel-container .flex.items-center label,
 .premium-calculator .flex.items-center label,
 .maturity-calculator .flex.items-center label {
@@ -1132,47 +722,46 @@ input.radio-modern {
     font-size: 1.05rem !important;
 }
 
-/* Make primary controls larger and more tappable */
-.btn-primary, .btn-ghost, .btn-danger {
-    padding: 0.9rem 1.5rem !important;
-    font-size: 1.05rem !important;
-    border-radius: 12px !important;
-}
+#maturityResult { line-height: 1.25; }
+#maturityResult p { margin: 0 0 0.35rem 0; }
+#maturityResult .text-sm { font-size: 1rem !important; color: #475569 !important; }
+#maturityAmount { font-size: 2.25rem !important; font-weight: 800 !important; color: #1a237e !important; }
+#maturityTotalPaid { font-size: 1.6rem !important; font-weight: 600 !important; color: #1a237e !important; }
+#maturitySurvival { font-size: 1.05rem !important; font-weight: 600 !important; color: #334155 !important; }
+#maturityBreakdown { font-size: 0.95rem !important; color: #6b7280 !important; }
 
-/* Increase input height for better touch targets */
-.dark-input, input, select, textarea {
-    padding-top: 0.85rem !important;
-    padding-bottom: 0.85rem !important;
-    font-size: 1.02rem !important;
-}
-
-/* Make text inside those boxes blue */
-.workflow-section *,
-.workflow-content *,
-.option-card *,
-.matte-form *,
-.matte-card *,
-.collapsible-header *,
-.dark-table *,
-.dark-table-header *,
-.dark-table-row *,
-#queryText *,
-#premiumResult *,
-#daysSinceAllotted *,
-#daysSinceSent *,
-#investigationDetails * {
+/* === 18. Death Claim / Special Case Buttons === */
+#deathClaimBtn, #specialCaseBtn,
+#deathClaimBtn *, #specialCaseBtn * {
+    font-size: 1.35rem !important;
+    font-weight: 700 !important;
     color: #1a237e !important;
-    background: transparent !important;
+    background: #e3f2fd !important;
+    border: 2px solid #b3c6e6 !important;
 }
 
-/* Headings in workflow and tools panels: blue, bold */
-.workflow-header,
-.tools-panel-container h3,
-.tools-panel-container h2,
-.tools-panel-container .panel-title {
-    color: #1a237e !important;
-    font-weight: bold !important;
-    font-size: 2rem !important;
-    text-shadow: none !important;
-    letter-spacing: 0.5px;
+/* === 19. Toast === */
+#toast { background: #1a237e; color: #fff; box-shadow: none; }
+
+/* === 20. Responsive === */
+@media (min-width: 1100px) {
+    .forms-card-grid { grid-template-columns: repeat(4, 1fr); }
+}
+
+@media (max-width: 1024px) {
+    html.theme-efeap, body.theme-efeap { overflow: auto; }
+    .app-shell { height: auto; display: block; overflow: visible; }
+    .app-body { display: block; padding: 0 8px 24px; height: auto; overflow: visible; }
+    .app-main { display: block; width: 100%; }
+    .app-sidebar { display: block; position: static; width: 100%; margin-top: 10px; }
+    .side-tasks-body { min-height: 0; height: auto; }
+    #todoList { min-height: 120px; }
+}
+
+@media (max-width: 767px) {
+    .main-mode-tab { padding: 8px 14px; font-size: 1rem; }
+    .page-header h1 { font-size: 1.8rem !important; }
+    .req-card-grid { grid-template-columns: repeat(2, 1fr); }
+    .links-wrap { gap: 10px; }
+    .quick-link-pill { flex-basis: 100%; min-width: 0; }
 }
