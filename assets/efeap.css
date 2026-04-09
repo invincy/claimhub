@@ -10,8 +10,8 @@ body.theme-efeap {
 }
 
 /* Increase global font size for better readability */
-html { font-size: 18px; }
-body { font-size: 1rem; }
+html { font-size: 14px; }
+body { font-size: 0.9rem; zoom: 0.8; }
 
 /* Ensure inputs and primary buttons use a readable font size */
 .dark-input,
@@ -32,6 +32,28 @@ button {
     display: grid;
     grid-template-rows: auto 1fr;
     overflow: hidden;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.duration-results {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.duration-card {
+    background: rgba(15,23,42,0.05);
+    border: 1px solid rgba(15,23,42,0.12);
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+}
+.duration-card span {
+    font-weight: 700;
 }
 
 .app-main {
@@ -275,6 +297,41 @@ a:last-child, .quick-link-item:last-child {
     margin-right: 0;
 }
 
+.tools-panel-container h3 {
+    line-height: 1.05;
+    font-size: 1.2rem !important;
+}
+
+.links-wrap {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.quick-link-pill {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1 1 calc(33.333% - 12px);
+    min-width: 180px;
+    margin: 0 !important;
+    padding: 14px 16px;
+    border-radius: 14px;
+    background: #f8fbff;
+    border: 1px solid #dbeafe;
+    box-shadow: 0 1px 6px rgba(11,61,145,0.04);
+}
+
+.quick-link-pill:hover {
+    background: #eef6ff;
+    border-color: #bfd4f7;
+}
+
+.quick-link-pill span {
+    margin-right: 0 !important;
+    flex: 0 0 auto;
+}
+
 /* To-Do items: lighter card treatment for sidebar tasks */
 .todo-item,
 .todo-list li,
@@ -460,7 +517,7 @@ label,
 
 /* ---- Main Mode Tabs (Tools / Death Claims switcher) ---- */
 .main-mode-bar {
-    padding: 8px 24px 6px;
+    padding: 4px 24px 4px;
     display: flex;
     justify-content: center; /* center tabs under header */
     align-items: center;
@@ -520,14 +577,12 @@ label,
    =========================================== */
 .app-body {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 280px;
-    /* Use two equal flexible rows so top and bottom panels match heights */
+    grid-template-columns: minmax(0, 1fr) 320px;
     grid-template-rows: minmax(0, 1fr) minmax(0, 1fr);
-    gap: 20px;
+    gap: 16px;
     align-items: stretch;
     width: 100%;
-    max-width: 1400px;
-    margin: 0 auto;
+    margin: 0;
     padding: 0 16px 16px;
     box-sizing: border-box;
     height: 100%;
@@ -536,18 +591,14 @@ label,
 }
 
 .app-main {
-    display: contents;
+    grid-column: 1;
+    grid-row: 1 / span 2;
+    display: flex;
+    min-height: 0;
 }
 
 .app-sidebar {
     display: contents;
-}
-
-.main-mode-bar {
-    grid-column: 1;
-    grid-row: 1;
-    height: 100%;
-    min-height: 0;
 }
 
 .side-tasks-header {
@@ -557,6 +608,38 @@ label,
     display: flex;
     flex-direction: column;
     justify-content: center;
+    flex: 0 0 auto;
+    min-height: 110px;
+    padding: 12px 16px;
+}
+
+.main-mode-bar {
+    padding: 0 0 4px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex: 0 0 auto;
+}
+
+.main-workspace-shell {
+    width: 100%;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+    border: 1.5px solid #d3def4;
+    border-radius: 16px;
+    box-shadow: 0 8px 20px rgba(11,61,145,0.06);
+    padding: 20px;
+    overflow: hidden;
+    gap: 10px;
+}
+
+.main-workspace-content {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
 }
 
 .main-module {
@@ -569,7 +652,7 @@ label,
     flex-direction: column;
     min-height: 0;
     height: 100%;
-    overflow: hidden;
+    overflow: auto;
 }
 
 .side-tasks-body {
@@ -578,13 +661,18 @@ label,
     height: 100%;
     min-height: 0;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.app-sidebar {
+    width: 100%;
 }
 
 /* Make sure the top and bottom parent blocks fill their grid cells
    so left and right columns always have matching parent-card heights */
-.main-mode-bar,
 .side-tasks-header,
-.main-module,
 .side-tasks-body {
     height: 100%;
     min-height: 0;
@@ -627,7 +715,7 @@ label,
 /* Sidebar: clock header */
 .side-tasks-header {
     text-align: center;
-    padding: 16px 16px 12px;
+    padding: 12px 16px;
     background: linear-gradient(180deg, #edf4ff 0%, #ffffff 100%);
     border: 1.5px solid #d3def4;
     border-radius: 16px;
@@ -635,8 +723,8 @@ label,
 }
 
 .side-clock {
-    font-size: 1.95rem;
-    font-weight: 900;
+    font-size: 1.65rem;
+    font-weight: 700;
     color: #0b3d91;
     letter-spacing: 1.5px;
     line-height: 1;
@@ -677,6 +765,10 @@ label,
     padding-right: 4px;
 }
 
+.main-workspace-shell .main-module.hidden {
+    display: none !important;
+}
+
 .side-tasks-title {
     font-size: 1rem;
     font-weight: 800;
@@ -695,10 +787,34 @@ label,
     flex: 1 1 auto;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 10px;
     min-height: 0;
     overflow: auto;
     padding-right: 4px;
+}
+
+#todoList li {
+    padding: 10px 12px;
+    min-height: 48px;
+    border-radius: 14px;
+    min-height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.todo-meta {
+    font-size: 0.75rem;
+    color: #6b7280;
+}
+
+#todoList li button {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    border: none;
+    background: rgba(11, 61, 145, 0.08);
 }
 
 .side-todo-input .dark-input {
@@ -823,6 +939,8 @@ label,
     .main-mode-tab { padding: 8px 14px; font-size: 1rem; }
     .page-header h1 { font-size: 1.8rem !important; }
     .req-card-grid { grid-template-columns: repeat(2, 1fr); }
+    .links-wrap { gap: 10px; }
+    .quick-link-pill { flex-basis: 100%; min-width: 0; }
 }
 
 /* ---- Requirements Float Cards ---- */
@@ -955,10 +1073,11 @@ label,
 /* Make tool tabs and top nav more readable */
 .tools-panel-container .tool-tab,
 .flex.border-b .tool-tab {
-    font-size: 1.125rem !important;
-    padding: 0.6rem 0.9rem !important;
-    margin-right: 0.5rem !important;
+    font-size: 0.98rem !important;
+    padding: 0.45rem 0.75rem !important;
+    margin-right: 0.35rem !important;
     color: #0b3d91 !important;
+    white-space: nowrap;
 }
 .tools-panel-container .tool-tab.active-tab,
 .flex.border-b .tool-tab.active-tab {
@@ -968,7 +1087,17 @@ label,
 }
 
 /* Top nav spacing (tabs row) */
-.flex.border-b { padding-bottom: 0.25rem; }
+.tools-panel-container > .flex.flex-wrap.border-b {
+    padding-bottom: 0.25rem;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.tools-panel-container > .flex.flex-wrap.border-b::-webkit-scrollbar {
+    display: none;
+}
 
 /* Maturity result sizing / emphasis */
 #maturityResult { line-height: 1.25; }

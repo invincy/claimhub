@@ -165,6 +165,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 requirements: document.getElementById('requirementsPanel'),
                 forms: document.getElementById('formsPanel'),
                 calculator: document.getElementById('calculatorPanel'),
+                duration: document.getElementById('durationPanel'),
                 maturity: document.getElementById('maturityPanel'),
                 links: document.getElementById('linksPanel'),
                 followups: document.getElementById('followupsPanel')
@@ -191,6 +192,20 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 });
             });
+
+            var durationInputs = [
+                document.getElementById('docDateTool'),
+                document.getElementById('dorDateTool'),
+                document.getElementById('dodDateTool'),
+                document.getElementById('doiDateTool')
+            ];
+            durationInputs.forEach(input => {
+                input?.addEventListener('input', function() {
+                    formatDateInput(this);
+                    updateDurationResults();
+                });
+            });
+            updateDurationResults();
 
             // 2. To-Do List Logic is handled further down with the rest of the app logic
 
@@ -313,41 +328,33 @@ document.addEventListener('DOMContentLoaded', function() {
         var addTodoBtn = document.getElementById('addTodoBtn');
         var todoList = document.getElementById('todoList');
 
-        addTodoBtn?.addEventListener('click', async function() {
-            var text = todoInput.value.trim();
-            if (text) {
-                await idbPut(STORE.todos, { text, completed: false });
-                todoInput.value = '';
-                renderTodos();
-            }
-        });
-
-                todoList?.addEventListener('click', async function(e) {
+        todoList?.addEventListener('click', async function(e) {
             var id = e.target.dataset.id;
-            if (e.target.closest('button')) { // Delete
+            if (e.target.closest('button')) {
                 await idbDelete(STORE.todos, Number(id));
                 renderTodos();
-            } else if (e.target.type === 'checkbox') { // Toggle complete
+            } else if (e.target.type === 'checkbox') {
                 const todos = await idbGetAll(STORE.todos);
                 const todo = todos.find(t => t.id == id);
                 if (todo) {
-                    todo.completed = e.target.checked;
+                    const checked = e.target.checked;
+                    todo.completed = checked;
+                    todo.completedAt = checked ? Date.now() : null;
                     await idbPut(STORE.todos, todo);
                     renderTodos();
                 }
             }
         });
 
-                // Add timestamp when creating todos
-                addTodoBtn?.addEventListener('click', async function() {
-                    var text = todoInput.value.trim();
-                    if (text) {
-                        const createdAt = Date.now();
-                        await idbPut(STORE.todos, { text, completed: false, createdAt });
-                        todoInput.value = '';
-                        renderTodos();
-                    }
-                });
+        addTodoBtn?.addEventListener('click', async function() {
+            var text = todoInput.value.trim();
+            if (text) {
+                const createdAt = Date.now();
+                await idbPut(STORE.todos, { text, completed: false, createdAt });
+                todoInput.value = '';
+                renderTodos();
+            }
+        });
 
         // Initial render calls
         renderTodos();
@@ -384,6 +391,7 @@ updateSideClock();
 // --- Main Application Functions ---
 
 async function renderTodos() {
+    await cleanUpTodos();
     const todos = await idbGetAll(STORE.todos);
     const todoList = document.getElementById('todoList');
     if (!todoList) return;
@@ -746,6 +754,87 @@ function calculateDuration() {
             timeBarWarning.classList.add('hidden');
         }
     }
+}
+
+async function cleanUpTodos() {
+    const todos = await idbGetAll(STORE.todos);
+    const threshold = Date.now() - 3 * 24 * 60 * 60 * 1000;
+    for (const todo of todos) {
+        if (todo.completed && todo.completedAt && todo.completedAt < threshold) {
+            await idbDelete(STORE.todos, todo.id);
+        }
+    }
+}
+
+function updateDurationResults() {
+    const docInput = document.getElementById('docDateTool');
+    const dorInput = document.getElementById('dorDateTool');
+    const dodInput = document.getElementById('dodDateTool');
+    const doiInput = document.getElementById('doiDateTool');
+    const resultsEl = document.getElementById('durationResults');
+    if (!resultsEl) return;
+
+    const docDate = parseToolDate(docInput?.value);
+    const dorDate = parseToolDate(dorInput?.value);
+    const dodDate = parseToolDate(dodInput?.value);
+    const doiDate = parseToolDate(doiInput?.value);
+
+    const rows = [];
+    if (docDate && dodDate) {
+        rows.push({
+            label: 'DOC → DOD',
+            value: formatDurationDiff(docDate, dodDate)
+        });
+    }
+    if (dodDate && doiDate) {
+        rows.push({
+            label: 'DOD → DOI',
+            value: formatDurationDiff(dodDate, doiDate)
+        });
+    }
+    if (docDate && dorDate) {
+        rows.push({
+            label: 'DOC → DOR',
+            value: formatDurationDiff(docDate, dorDate)
+        });
+    }
+
+    if (rows.length === 0) {
+        resultsEl.innerHTML = '<div class="duration-card"><span>No valid date pairs yet.</span></div>';
+        return;
+    }
+
+    resultsEl.innerHTML = rows
+        .map(row => `<div class="duration-card"><span>${row.label}</span><span>${row.value}</span></div>`)
+        .join('');
+}
+
+function parseToolDate(value) {
+    if (!value) return null;
+    const digits = value.replace(/\D/g, '');
+    if (digits.length !== 8) return null;
+    const day = parseInt(digits.slice(0, 2), 10);
+    const month = parseInt(digits.slice(2, 4), 10);
+    const year = parseInt(digits.slice(4, 8), 10);
+    if (!day || !month || !year) return null;
+    return new Date(year, month - 1, day);
+}
+
+function formatDurationDiff(startDate, endDate) {
+    const start = startDate.getTime();
+    const end = endDate.getTime();
+    if (isNaN(start) || isNaN(end)) return 'Invalid date';
+    const diffMs = Math.abs(end - start);
+    const totalDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    const years = Math.floor(totalDays / 365);
+    const months = Math.floor((totalDays % 365) / 30);
+    const days = totalDays - years * 365 - months * 30;
+    const parts = [];
+    if (years) parts.push(`${years}y`);
+    if (months) parts.push(`${months}m`);
+    if (days) parts.push(`${days}d`);
+    if (parts.length === 0) parts.push(`${totalDays}d`);
+    return parts.join(' ');
 }
 
 

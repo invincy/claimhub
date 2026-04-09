@@ -30,19 +30,21 @@
         <div class="app-body">
             <!-- Left: all main module panels -->
             <div class="app-main">
-                <!-- Main Mode Switch Bar -->
-                <div class="main-mode-bar">
-                    <div class="main-mode-tabs">
-                        <button class="main-mode-tab active-main-tab" data-main="tools">🧰 Tools</button>
-                        <button class="main-mode-tab" data-main="claims">📄 Death Claims</button>
-                        <button class="main-mode-tab" data-main="tasks">🗓️ Monthly Tasks</button>
+                <div class="main-workspace-shell">
+                    <!-- Main Mode Switch Bar -->
+                    <div class="main-mode-bar">
+                        <div class="main-mode-tabs">
+                            <button class="main-mode-tab active-main-tab" data-main="tools">🧰 Tools</button>
+                            <button class="main-mode-tab" data-main="claims">📄 Death Claims</button>
+                            <button class="main-mode-tab" data-main="tasks">🗓️ Monthly Tasks</button>
+                        </div>
                     </div>
-                </div>
 
-        <!-- Tools Module -->
-        <div id="mainToolsPanel" class="main-module p-4 md:p-6">
-            <div class="glass-header rounded-2xl p-6 tools-panel-container">
-                <h3 class="text-2xl font-bold text-white mb-6 flex items-center gap-3">🧰 Tools & Requirements</h3>
+                    <div class="main-workspace-content">
+                        <!-- Tools Module -->
+                        <div id="mainToolsPanel" class="main-module p-4 md:p-6">
+                            <div class="glass-header rounded-2xl p-6 tools-panel-container">
+                                <h3 class="text-xl md:text-2xl font-bold text-white mb-4 flex items-center gap-2 whitespace-nowrap">🧰 Tools & Requirements</h3>
 
                         <!-- Tabs -->
                         <div class="flex flex-wrap border-b border-gray-700 mb-6">
@@ -50,6 +52,7 @@
                             <button class="tool-tab" data-tab="forms">📄 Forms & Formats</button>
                             <button class="tool-tab" data-tab="maturity">💰 M/C Calculator</button>
                             <button class="tool-tab" data-tab="calculator">🧮 Premium Calculator</button>
+                            <button class="tool-tab" data-tab="duration">🕒 Duration</button>
                             <button class="tool-tab active-tab" data-tab="links">🔗 Links</button>
                         </div>
 
@@ -337,19 +340,43 @@
 
                         <div id="linksPanel" class="tab-panel">
                             <h4 class="text-lg font-bold text-white mb-4">Quick Links</h4>
-                            <div class="grid grid-cols-2 gap-4">
-                                <div><a href="#" target="_blank" rel="noopener noreferrer" class="quick-link-item text-gray-300 font-medium hover:text-cyan-400 transition-colors duration-200"><span class="mr-3">🔍</span> IPP Inquiry</a></div>
-                                <div><a href="#" target="_blank" rel="noopener noreferrer" class="quick-link-item text-gray-300 font-medium hover:text-cyan-400 transition-colors duration-200"><span class="mr-3">✉️</span> Webmail</a></div>
-                                <div><a href="#" target="_blank" rel="noopener noreferrer" class="quick-link-item text-gray-300 font-medium hover:text-cyan-400 transition-colors duration-200"><span class="mr-3">✍️</span> D.O. Decision</a></div>
-                                <div><a href="#" target="_blank" rel="noopener noreferrer" class="quick-link-item text-gray-300 font-medium hover:text-cyan-400 transition-colors duration-200"><span class="mr-3">📋</span> Claim D.O.</a></div>
-                                <div><a href="#" target="_blank" rel="noopener noreferrer" class="quick-link-item text-gray-300 font-medium hover:text-cyan-400 transition-colors duration-200"><span class="mr-3">📚</span> VVPedia</a></div>
-                                <div><a href="#" target="_blank" rel="noopener noreferrer" class="quick-link-item text-gray-300 font-medium hover:text-cyan-400 transition-colors duration-200"><span class="mr-3">💻</span> JS</a></div>
-                                <div><a href="#" target="_blank" rel="noopener noreferrer" class="quick-link-item text-gray-300 font-medium hover:text-cyan-400 transition-colors duration-200"><span class="mr-3">🤖</span> LISA</a></div>
-                                <div><a href="#" target="_blank" rel="noopener noreferrer" class="quick-link-item text-gray-300 font-medium hover:text-cyan-400 transition-colors duration-200"><span class="mr-3">📜</span> Premium History</a></div>
-                                <div><a href="#" target="_blank" rel="noopener noreferrer" class="quick-link-item text-gray-300 font-medium hover:text-cyan-400 transition-colors duration-200"><span class="mr-3">💼</span> C.O.CRM</a></div>
-                                <div><a href="#" target="_blank" rel="noopener noreferrer" class="quick-link-item text-gray-300 font-medium hover:text-cyan-400 transition-colors duration-200"><span class="mr-3">📝</span> SDC Feedback</a></div>
-                                <div><a href="#" target="_blank" rel="noopener noreferrer" class="quick-link-item text-gray-300 font-medium hover:text-cyan-400 transition-colors duration-200"><span class="mr-3">📍</span> Claim Tracker</a></div>
+                            <div class="links-wrap">
+                                <a href="#" target="_blank" rel="noopener noreferrer" class="quick-link-item quick-link-pill text-gray-300 font-medium hover:text-cyan-400 transition-colors duration-200"><span class="mr-3">🔍</span> IPP Inquiry</a>
+                                <a href="#" target="_blank" rel="noopener noreferrer" class="quick-link-item quick-link-pill text-gray-300 font-medium hover:text-cyan-400 transition-colors duration-200"><span class="mr-3">✉️</span> Webmail</a>
+                                <a href="#" target="_blank" rel="noopener noreferrer" class="quick-link-item quick-link-pill text-gray-300 font-medium hover:text-cyan-400 transition-colors duration-200"><span class="mr-3">✍️</span> D.O. Decision</a>
+                                <a href="#" target="_blank" rel="noopener noreferrer" class="quick-link-item quick-link-pill text-gray-300 font-medium hover:text-cyan-400 transition-colors duration-200"><span class="mr-3">📋</span> Claim D.O.</a>
+                                <a href="#" target="_blank" rel="noopener noreferrer" class="quick-link-item quick-link-pill text-gray-300 font-medium hover:text-cyan-400 transition-colors duration-200"><span class="mr-3">📚</span> VVPedia</a>
+                                <a href="#" target="_blank" rel="noopener noreferrer" class="quick-link-item quick-link-pill text-gray-300 font-medium hover:text-cyan-400 transition-colors duration-200"><span class="mr-3">💻</span> JS</a>
+                                <a href="#" target="_blank" rel="noopener noreferrer" class="quick-link-item quick-link-pill text-gray-300 font-medium hover:text-cyan-400 transition-colors duration-200"><span class="mr-3">🤖</span> LISA</a>
+                                <a href="#" target="_blank" rel="noopener noreferrer" class="quick-link-item quick-link-pill text-gray-300 font-medium hover:text-cyan-400 transition-colors duration-200"><span class="mr-3">📜</span> Premium History</a>
+                                <a href="#" target="_blank" rel="noopener noreferrer" class="quick-link-item quick-link-pill text-gray-300 font-medium hover:text-cyan-400 transition-colors duration-200"><span class="mr-3">💼</span> C.O.CRM</a>
+                                <a href="#" target="_blank" rel="noopener noreferrer" class="quick-link-item quick-link-pill text-gray-300 font-medium hover:text-cyan-400 transition-colors duration-200"><span class="mr-3">📝</span> SDC Feedback</a>
+                                <a href="#" target="_blank" rel="noopener noreferrer" class="quick-link-item quick-link-pill text-gray-300 font-medium hover:text-cyan-400 transition-colors duration-200"><span class="mr-3">📍</span> Claim Tracker</a>
                             </div>
+                        </div>
+                    </div>
+                    <div id="durationPanel" class="tab-panel hidden">
+                        <div class="space-y-4">
+                            <p class="text-sm text-gray-300">Enter each date as DDMMYYYY (e.g., 23112021) and it will format automatically. The tool reports durations between the selected/date fields.</p>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <label class="block">
+                                    <span class="text-xs font-semibold text-gray-500 uppercase">DOC / DOR</span>
+                                    <input id="docDateTool" class="dark-input mt-2 w-full px-4 py-3 rounded-xl" maxlength="10" placeholder="23112021">
+                                </label>
+                                <label class="block">
+                                    <span class="text-xs font-semibold text-gray-500 uppercase">Date of Death (DOD)</span>
+                                    <input id="dodDateTool" class="dark-input mt-2 w-full px-4 py-3 rounded-xl" maxlength="10" placeholder="05122021">
+                                </label>
+                                <label class="block">
+                                    <span class="text-xs font-semibold text-gray-500 uppercase">Date of Intimation (DOI)</span>
+                                    <input id="doiDateTool" class="dark-input mt-2 w-full px-4 py-3 rounded-xl" maxlength="10" placeholder="10122021">
+                                </label>
+                                <label class="block">
+                                    <span class="text-xs font-semibold text-gray-500 uppercase">Revival Date (if any)</span>
+                                    <input id="dorDateTool" class="dark-input mt-2 w-full px-4 py-3 rounded-xl" maxlength="10" placeholder="27112022">
+                                </label>
+                            </div>
+                            <div id="durationResults" class="grid grid-cols-1 gap-3"></div>
                         </div>
                     </div>
         </div><!-- end mainToolsPanel -->
@@ -835,6 +862,9 @@
             </div>
         </div><!-- end mainTasksPanel -->
 
+                    </div><!-- end main-workspace-content -->
+                </div><!-- end main-workspace-shell -->
+
             </div><!-- end app-main -->
 
             <!-- Right: persistent tasks sidebar (30%) -->
@@ -847,7 +877,7 @@
                     <h4 class="side-tasks-title">📝 To-Do</h4>
                     <div class="side-todo-input">
                         <input type="text" id="todoInput" class="dark-input" placeholder="Add a to-do...">
-                        <button id="addTodoBtn" class="btn-primary">Add</button>
+                        <button id="addTodoBtn" type="button" class="btn-primary">Add</button>
                     </div>
                     <ul id="todoList"></ul>
                 </div>
