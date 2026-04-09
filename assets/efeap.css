@@ -230,10 +230,21 @@ input.radio-modern {
 .hidden { display: none !important; }
 
 /* === 8. App Shell Layout === */
+html.theme-efeap,
+body.theme-efeap {
+    height: 100%;
+    overflow: hidden !important;
+}
+
+body.theme-efeap {
+    min-height: 100vh;
+}
+
 .app-shell {
-    height: 100vh;
+    position: fixed;
+    inset: 0 0 0 0;
     display: grid;
-    grid-template-rows: auto 1fr;
+    grid-template-rows: auto minmax(0, 1fr);
     overflow: hidden;
     width: 100%;
     margin: 0;
@@ -243,12 +254,12 @@ input.radio-modern {
 .app-body {
     display: grid;
     grid-template-columns: minmax(0, 1fr) 320px;
-    grid-template-rows: auto 1fr;
+    grid-template-rows: auto minmax(0, 1fr);
     gap: 16px;
     align-items: stretch;
     width: 100%;
     margin: 0;
-    padding: 0 16px 16px;
+    padding: 0 16px 0;
     box-sizing: border-box;
     height: 100%;
     min-height: 0;
@@ -259,15 +270,21 @@ input.radio-modern {
     grid-column: 1;
     grid-row: 1 / span 2;
     display: flex;
+    flex-direction: column;
     min-height: 0;
+    height: 100%;
+    flex: 1 1 0;
 }
 
-.app-sidebar { display: contents; }
+.app-sidebar {
+    display: contents;
+}
 
 .main-workspace-shell {
     width: 100%;
     flex: 1 1 auto;
     min-height: 0;
+    height: 100%;
     display: flex;
     flex-direction: column;
     background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
@@ -280,11 +297,12 @@ input.radio-modern {
 }
 
 .main-workspace-content {
-    flex: 1 1 auto;
-    min-height: 0;
     display: flex;
     flex-direction: column;
+    flex: 1 1 auto;
+    min-height: 0;
     overflow: hidden;
+    height: 100%;
 }
 
 .main-module {
@@ -295,17 +313,17 @@ input.radio-modern {
     flex-direction: column;
     flex: 1 1 auto;
     min-height: 0;
-    overflow: auto;
+    overflow: hidden;
 }
 
 .main-workspace-shell .main-module.hidden { display: none !important; }
 
 .glass-header.tools-panel-container {
+    display: flex;
+    flex-direction: column;
     flex: 1 1 auto;
     min-height: 0;
     overflow: hidden;
-    display: flex;
-    flex-direction: column;
     background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%) !important;
     border: 1.5px solid #d3def4 !important;
     box-shadow: 0 8px 20px rgba(11,61,145,0.06) !important;
@@ -321,7 +339,6 @@ input.radio-modern {
 }
 
 .tools-panel-container > .flex.flex-wrap.border-b {
-    flex: 0 0 auto;
     padding-bottom: 0.25rem;
     flex-wrap: nowrap;
     overflow-x: auto;
@@ -427,7 +444,6 @@ input.radio-modern {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    flex: 0 0 auto;
     width: 100%;
     box-sizing: border-box;
     text-align: center;
@@ -505,11 +521,11 @@ input.radio-modern {
 
 #todoList {
     flex: 1 1 auto;
+    min-height: 0;
+    overflow: auto;
     display: flex;
     flex-direction: column;
     gap: 10px;
-    min-height: 0;
-    overflow: auto;
     padding-right: 4px;
     list-style: none;
     padding-left: 0;
