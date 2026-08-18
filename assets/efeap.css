@@ -840,60 +840,76 @@ body.theme-efeap {
 #maturityBreakdown { font-size: 0.95rem !important; color: #6b7280 !important; }
 
 /* === 18. Death Claim / Special Case Buttons === */
-#mainClaimsPanel > .glass-header {
+.claim-actions-shell {
     padding: 18px !important;
 }
 
-#mainClaimsPanel > .glass-header > .flex.gap-4 {
+.claim-actions-bar {
+    display: flex;
     flex-wrap: wrap;
-    gap: 16px !important;
     justify-content: center;
+    gap: 16px;
     max-width: 760px;
     margin: 0 auto;
 }
 
-#deathClaimBtn,
-#specialCaseBtn {
-    flex: 0 1 320px;
+.claim-action-btn {
+    appearance: none;
+    border: 1.5px solid #cfe0fb !important;
+    border-radius: 26px !important;
+    min-height: 88px;
+    padding: 20px 30px !important;
     width: 100%;
     max-width: 340px;
-    min-height: 84px;
-    padding: 20px 28px !important;
-    border-radius: 26px !important;
-    border: 1.5px solid #cfe0fb !important;
-    background: linear-gradient(180deg, #ffffff 0%, #eef5ff 100%) !important;
-    color: #0b3d91 !important;
-    box-shadow: 0 12px 26px rgba(11,61,145,0.09) !important;
-    font-size: 1.2rem !important;
+    flex: 1 1 320px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    box-sizing: border-box;
+    font-size: 1.15rem !important;
     font-weight: 800 !important;
     letter-spacing: 0.15px;
+    line-height: 1.15;
+    text-align: center;
+    white-space: nowrap;
+    box-shadow: 0 12px 26px rgba(11,61,145,0.09) !important;
     transition: transform 0.16s ease, box-shadow 0.16s ease, background 0.16s ease, border-color 0.16s ease;
 }
 
-#deathClaimBtn:hover,
-#specialCaseBtn:hover {
+.claim-action-btn:hover {
     transform: translateY(-2px);
     box-shadow: 0 16px 32px rgba(11,61,145,0.14) !important;
-    border-color: #b9cdf5 !important;
-    background: linear-gradient(180deg, #fff9e6 0%, #ffeaa3 100%) !important;
 }
 
-#deathClaimBtn:focus-visible,
-#specialCaseBtn:focus-visible {
+.claim-action-btn:focus-visible {
     outline: 3px solid rgba(243, 212, 95, 0.55);
     outline-offset: 2px;
 }
 
-#deathClaimBtn {
+.claim-action-btn-danger {
     color: #103c83 !important;
+    background: linear-gradient(180deg, #ffffff 0%, #eef5ff 100%) !important;
 }
 
-#specialCaseBtn {
-    color: #103c83 !important;
+.claim-action-btn-danger:hover {
+    border-color: #b9cdf5 !important;
+    background: linear-gradient(180deg, #fff9e6 0%, #ffeaa3 100%) !important;
 }
 
-#deathClaimBtn *,
-#specialCaseBtn * {
+.claim-action-btn-primary {
+    color: #103c83 !important;
+    background: linear-gradient(180deg, #ffffff 0%, #eef5ff 100%) !important;
+}
+
+.claim-action-btn-primary:hover {
+    border-color: #b9cdf5 !important;
+    background: linear-gradient(180deg, #fff9e6 0%, #ffeaa3 100%) !important;
+}
+
+.claim-action-btn *,
+.claim-action-btn *::before,
+.claim-action-btn *::after {
     color: inherit !important;
     background: transparent !important;
     font-size: inherit !important;
