@@ -158,7 +158,7 @@ input.radio-modern {
     box-shadow: none;
 }
 
-a .todo-item, .todo-list li, .todo-list .completed,
+.todo-item, .todo-list li, .todo-list .completed,
 .claim-type-option, .claim-type-block {
     background: #ffffff !important;
     color: #0b3d91 !important;
@@ -840,13 +840,59 @@ body.theme-efeap {
 #maturityBreakdown { font-size: 0.95rem !important; color: #6b7280 !important; }
 
 /* === 18. Death Claim / Special Case Buttons === */
-#deathClaimBtn, #specialCaseBtn,
-#deathClaimBtn *, #specialCaseBtn * {
-    font-size: 1.35rem !important;
-    font-weight: 700 !important;
-    color: #1a237e !important;
-    background: #e3f2fd !important;
-    border: 2px solid #b3c6e6 !important;
+#mainClaimsPanel > .glass-header {
+    padding: 18px !important;
+}
+
+#mainClaimsPanel > .glass-header > .flex.gap-4 {
+    flex-wrap: wrap;
+    gap: 14px !important;
+}
+
+#deathClaimBtn,
+#specialCaseBtn {
+    flex: 1 1 240px;
+    min-height: 68px;
+    padding: 16px 22px !important;
+    border-radius: 22px !important;
+    border: 1.5px solid #cfe0fb !important;
+    background: linear-gradient(180deg, #ffffff 0%, #eef5ff 100%) !important;
+    color: #0b3d91 !important;
+    box-shadow: 0 10px 24px rgba(11,61,145,0.08) !important;
+    font-size: 1.05rem !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.2px;
+    transition: transform 0.16s ease, box-shadow 0.16s ease, background 0.16s ease, border-color 0.16s ease;
+}
+
+#deathClaimBtn:hover,
+#specialCaseBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 28px rgba(11,61,145,0.12) !important;
+    border-color: #b9cdf5 !important;
+    background: linear-gradient(180deg, #fff9e6 0%, #ffeaa3 100%) !important;
+}
+
+#deathClaimBtn:focus-visible,
+#specialCaseBtn:focus-visible {
+    outline: 3px solid rgba(243, 212, 95, 0.55);
+    outline-offset: 2px;
+}
+
+#deathClaimBtn {
+    color: #103c83 !important;
+}
+
+#specialCaseBtn {
+    color: #103c83 !important;
+}
+
+#deathClaimBtn *,
+#specialCaseBtn * {
+    color: inherit !important;
+    background: transparent !important;
+    font-size: inherit !important;
+    font-weight: inherit !important;
 }
 
 /* === 19. Toast === */
@@ -874,3 +920,4 @@ body.theme-efeap {
     .links-wrap { gap: 10px; }
     .quick-link-pill { flex-basis: 100%; min-width: 0; }
 }
+
