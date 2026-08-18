@@ -174,6 +174,15 @@ document.addEventListener('DOMContentLoaded', function() {
             var letRequirementsTable = document.getElementById('letRequirementsTable');
             var lostPolicyTable = document.getElementById('lostPolicyTable');
             var accidentTable = document.getElementById('accidentTable');
+            var heirsRequirementsTable = document.getElementById('heirsRequirementsTable');
+            var deathReqRequirementsTable = document.getElementById('deathReqRequirementsTable');
+            var fpspRequirementsTable = document.getElementById('fpspRequirementsTable');
+            var heirsTablesMount = document.getElementById('heirsTablesMount');
+            var heirsTablesTemplate = document.getElementById('heirsTablesTemplate');
+            var deathReqTablesMount = document.getElementById('deathReqTablesMount');
+            var deathReqTablesTemplate = document.getElementById('deathReqTablesTemplate');
+            var fpspTablesMount = document.getElementById('fpspTablesMount');
+            var fpspTablesTemplate = document.getElementById('fpspTablesTemplate');
 
             // 1. Tab Switching Logic
             tabs.forEach(tab => {
@@ -213,6 +222,21 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (letRequirementsTable) letRequirementsTable.classList.toggle('hidden', type !== 'LET');
                 if (lostPolicyTable) lostPolicyTable.classList.toggle('hidden', type !== 'LOST');
                 if (accidentTable) accidentTable.classList.toggle('hidden', type !== 'ACC');
+                if (heirsRequirementsTable) heirsRequirementsTable.classList.toggle('hidden', type !== 'HEIRS');
+                if (deathReqRequirementsTable) deathReqRequirementsTable.classList.toggle('hidden', type !== 'DEATHREQ');
+                if (fpspRequirementsTable) fpspRequirementsTable.classList.toggle('hidden', type !== 'FPSO');
+                if (type === 'HEIRS' && heirsTablesMount && heirsTablesTemplate && !heirsTablesMount.dataset.mounted) {
+                    heirsTablesMount.innerHTML = heirsTablesTemplate.innerHTML;
+                    heirsTablesMount.dataset.mounted = '1';
+                }
+                if (type === 'DEATHREQ' && deathReqTablesMount && deathReqTablesTemplate && !deathReqTablesMount.dataset.mounted) {
+                    deathReqTablesMount.innerHTML = deathReqTablesTemplate.innerHTML;
+                    deathReqTablesMount.dataset.mounted = '1';
+                }
+                if (type === 'FPSO' && fpspTablesMount && fpspTablesTemplate && !fpspTablesMount.dataset.mounted) {
+                    fpspTablesMount.innerHTML = fpspTablesTemplate.innerHTML;
+                    fpspTablesMount.dataset.mounted = '1';
+                }
             }
 
             if (requirementsBtns && requirementsBtns.length) {
@@ -450,10 +474,8 @@ calculateBtn?.addEventListener('click', async function() {
     }
     const saThousands = parseFloat(saInput.value);
     const age = parseInt(ageInput.value, 10);
-    // `policyTermInput` was relabeled to "Paid Years" (may be fractional)
-    // `premiumPaidTermInput` was relabeled to "Policy term" (may be fractional)
-    const paidYears = parseFloat(policyTermInput.value);
-    const policyTerm = parseFloat(premiumPaidTermInput.value);
+    const paidYears = parseFloat(premiumPaidTermInput.value);
+    const policyTerm = parseFloat(policyTermInput.value);
     if (!plan || !mode || Number.isNaN(saThousands) || Number.isNaN(age) || Number.isNaN(paidYears) || Number.isNaN(policyTerm)) {
         showToast('Please fill all calculator fields with valid numbers.');
         return;
@@ -462,7 +484,7 @@ calculateBtn?.addEventListener('click', async function() {
     // Fetch tabular premium per 1000 SA (annual)
     // Tabular premiums are keyed by whole-year term values (e.g. 12, 16, 20).
     // Use the integer part of paid years (floor) when looking up tabular rates.
-    const tabularPremium = await getTabularPremium(plan, age, Math.floor(paidYears));
+    const tabularPremium = await getTabularPremium(plan, age, Math.floor(policyTerm));
     if (!tabularPremium) {
         showToast('No tabular premium found for this age/term/plan.');
         return;
@@ -704,34 +726,34 @@ function calculateDuration() {
         return;
     }
 
-    var commDate = commencementDate.value.replace(/\//g, '');
-    var deathDateVal = deathDate.value.replace(/\//g, '');
+    const commDateObj = parseSlashDate(commencementDate.value);
+    const deathDateObj = parseSlashDate(deathDate.value);
 
-    if (commDate.length === 8 && deathDateVal.length === 8) {
-        var commYear = parseInt(commDate.substring(4, 8));
-        var commMonth = parseInt(commDate.substring(2, 4));
-        var commDay = parseInt(commDate.substring(0, 2));
+    if (commDateObj && deathDateObj) {
+        if (deathDateObj < commDateObj) {
+            durationText.textContent = 'Death date cannot be earlier than commencement date.';
+            durationDisplay.classList.remove('hidden');
+            suggestionText.textContent = '';
+            suggestionBox.classList.add('hidden');
+            timeBarWarning.textContent = '';
+            timeBarWarning.classList.add('hidden');
+            manualSelection.classList.add('hidden');
+            return;
+        }
 
-       var deathYear = parseInt(deathDateVal.substring(4, 8));
-        var deathMonth = parseInt(deathDateVal.substring(2, 4));
-        var deathDay = parseInt(deathDateVal.substring(0, 2));
+        const diff = getDateDifference(commDateObj, deathDateObj);
+        const diffLabel = formatDateDifference(diff);
 
-        var commDateObj = new Date(commYear, commMonth - 1, commDay);
-        var deathDateObj = new Date(deathYear, deathMonth - 1, deathDay);
-
-        var diffTime = Math.abs(deathDateObj - commDateObj);
-        var diffYears = diffTime / (1000 * 60 * 60 * 24 * 365.25);
-
-        durationText.textContent = `${diffYears.toFixed(2)} years`;
+        durationText.textContent = diffLabel;
         durationDisplay.classList.remove('hidden');
 
         // Show suggestion
         let suggestion = '';
         let bgColor = '';
-        if (diffYears < 3) {
+        if (diff.totalDays < (3 * 365)) {
             suggestion = '🟥 Suggested: Early Claim';
             bgColor = 'suggestion-early';
-        } else if (diffYears >= 3 && diffYears <= 5) {
+        } else if (diff.totalDays <= (5 * 365)) {
             suggestion = '🟦 Suggested: Non-Early (4–5 Yrs)';
             bgColor = 'suggestion-medium';
         } else {
@@ -822,23 +844,62 @@ function parseToolDate(value) {
     const month = parseInt(digits.slice(2, 4), 10);
     const year = parseInt(digits.slice(4, 8), 10);
     if (!day || !month || !year) return null;
-    return new Date(year, month - 1, day);
+    return validateLocalDate(year, month, day);
 }
 
 function formatDurationDiff(startDate, endDate) {
-    const start = startDate.getTime();
-    const end = endDate.getTime();
-    if (isNaN(start) || isNaN(end)) return 'Invalid date';
-    const diffMs = Math.abs(end - start);
-    const totalDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-    const years = Math.floor(totalDays / 365);
-    const months = Math.floor((totalDays % 365) / 30);
-    const days = totalDays - years * 365 - months * 30;
+    const diff = getDateDifference(startDate, endDate);
+    return formatDateDifference(diff);
+}
+
+function validateLocalDate(year, month, day) {
+    const date = new Date(year, month - 1, day);
+    if (
+        date.getFullYear() !== year ||
+        date.getMonth() !== month - 1 ||
+        date.getDate() !== day
+    ) {
+        return null;
+    }
+    return date;
+}
+
+function getDateDifference(startDate, endDate) {
+    const start = startDate?.getTime();
+    const end = endDate?.getTime();
+    if (!Number.isFinite(start) || !Number.isFinite(end)) {
+        return null;
+    }
+
+    const earlier = startDate <= endDate ? new Date(startDate) : new Date(endDate);
+    const later = startDate <= endDate ? new Date(endDate) : new Date(startDate);
+
+    let years = later.getFullYear() - earlier.getFullYear();
+    let months = later.getMonth() - earlier.getMonth();
+    let days = later.getDate() - earlier.getDate();
+
+    if (days < 0) {
+        months -= 1;
+        const prevMonthDays = new Date(later.getFullYear(), later.getMonth(), 0).getDate();
+        days += prevMonthDays;
+    }
+
+    if (months < 0) {
+        years -= 1;
+        months += 12;
+    }
+
+    const totalDays = Math.round(Math.abs(end - start) / (1000 * 60 * 60 * 24));
+    return { years, months, days, totalDays };
+}
+
+function formatDateDifference(diff) {
+    if (!diff) return 'Invalid date';
     const parts = [];
-    if (years) parts.push(`${years}y`);
-    if (months) parts.push(`${months}m`);
-    if (days) parts.push(`${days}d`);
-    if (parts.length === 0) parts.push(`${totalDays}d`);
+    if (diff.years) parts.push(`${diff.years}y`);
+    if (diff.months) parts.push(`${diff.months}m`);
+    if (diff.days) parts.push(`${diff.days}d`);
+    if (!parts.length) parts.push(`${diff.totalDays}d`);
     return parts.join(' ');
 }
 
