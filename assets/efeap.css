@@ -158,7 +158,7 @@ input.radio-modern {
     box-shadow: none;
 }
 
-.todo-item, .todo-list li, .todo-list .completed,
+a .todo-item, .todo-list li, .todo-list .completed,
 .claim-type-option, .claim-type-block {
     background: #ffffff !important;
     color: #0b3d91 !important;
@@ -190,14 +190,42 @@ input.radio-modern {
 .dark-table, .dark-table-header, .dark-table-row {
     background: #fff !important;
     color: #1a237e !important;
-    border: 1px solid #dbeafe !important;
+    border: 1.5px solid #8fb2f3 !important;
     box-shadow: none !important;
 }
 
 .dark-table-header th, .dark-table-row td {
     color: #1a237e !important;
     background: #fff !important;
-    border-bottom: 1px solid #ffe066 !important;
+    border-bottom: 1.5px solid #8fb2f3 !important;
+}
+
+.dark-table {
+    overflow: hidden;
+}
+
+.dark-table table {
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.dark-table th,
+.dark-table td {
+    border-right: 1.5px solid #c8d9f9 !important;
+}
+
+.dark-table th:last-child,
+.dark-table td:last-child {
+    border-right: 0 !important;
+}
+
+.fpso-table {
+    table-layout: fixed;
+}
+
+.fpso-nature-col {
+    width: 34%;
+    word-break: break-word;
 }
 
 /* === 7. Dark BG / Effects Overrides === */
@@ -362,17 +390,19 @@ body.theme-efeap {
     justify-content: center !important;
     align-items: center !important;
     min-height: auto !important;
-    padding-top: 12px !important;
-    padding-bottom: 12px !important;
+    padding-top: 6px !important;
+    padding-bottom: 6px !important;
 }
 
 .page-header h1 {
     width: 100%;
     text-align: center !important;
-    font-size: 3rem !important;
-    font-weight: 900 !important;
-    letter-spacing: 0.5px;
+    font-size: 2rem !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.4px;
     color: #0b3d91 !important;
+    font-family: "Segoe UI", "Trebuchet MS", Arial, sans-serif !important;
+    line-height: 1.1 !important;
 }
 
 /* === 10. Main Mode Tabs === */
@@ -424,17 +454,31 @@ body.theme-efeap {
 /* === 11. Tool Tabs === */
 .tools-panel-container .tool-tab, .flex.border-b .tool-tab {
     font-size: 0.98rem !important;
-    padding: 0.45rem 0.75rem !important;
-    margin-right: 0.35rem !important;
-    color: #0b3d91 !important;
+    padding: 0.72rem 1.05rem !important;
+    margin: 0 0.35rem 0.6rem 0 !important;
+    color: #0f2f6b !important;
     white-space: nowrap;
+    border-radius: 999px !important;
+    background: linear-gradient(180deg, #ffffff 0%, #edf4ff 100%);
+    border: 1px solid #cfe0fb !important;
+    box-shadow: 0 6px 16px rgba(11,61,145,0.06);
+    transition: transform 0.16s ease, box-shadow 0.16s ease, background 0.16s ease, color 0.16s ease;
+}
+
+.tools-panel-container .tool-tab:hover, .flex.border-b .tool-tab:hover {
+    transform: translateY(-2px);
+    background: linear-gradient(180deg, #fef8dc 0%, #ffe986 100%);
+    color: #042856 !important;
+    box-shadow: 0 10px 20px rgba(11,61,145,0.1);
 }
 
 .tools-panel-container .tool-tab.active-tab,
 .flex.border-b .tool-tab.active-tab {
     font-weight: 700 !important;
-    background: #ffe066 !important;
-    border-bottom: 2px solid #ffe066 !important;
+    background: linear-gradient(180deg, #ffeaa3 0%, #ffd75e 100%) !important;
+    border: 1px solid #f4cf50 !important;
+    color: #042856 !important;
+    box-shadow: 0 10px 22px rgba(234, 179, 8, 0.18);
 }
 
 /* === 12. Sidebar: Clock & To-Do === */
@@ -593,9 +637,9 @@ body.theme-efeap {
 /* === 13. Requirements Cards === */
 .req-card-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
-    margin-bottom: 16px;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 14px;
+    margin-bottom: 18px;
 }
 
 .req-card {
@@ -603,44 +647,46 @@ body.theme-efeap {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 7px;
-    padding: 18px 8px;
-    background: #ffffff;
-    border: 1px solid rgba(11,61,145,0.06);
-    border-radius: 12px;
+    gap: 8px;
+    padding: 20px 14px;
+    background: linear-gradient(180deg, #ffffff 0%, #f7fbff 100%);
+    border: 1px solid #d7e6fb;
+    border-radius: 22px;
     cursor: pointer;
-    transition: transform 0.16s ease, box-shadow 0.16s ease, background 0.12s;
-    box-shadow: 0 1px 6px rgba(11,61,145,0.03);
-    color: #0b3d91;
+    transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease, border-color 0.18s ease;
+    box-shadow: 0 10px 24px rgba(11,61,145,0.08);
+    color: #103c83;
     outline: none;
+    min-height: 92px;
 }
 
 .req-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 6px 18px rgba(11,61,145,0.06);
-    background: #f7fbff;
+    transform: translateY(-4px);
+    box-shadow: 0 14px 26px rgba(11,61,145,0.12);
+    background: linear-gradient(180deg, #fef8dc 0%, #fff2ad 100%);
+    border-color: #f3d45f;
 }
 
 .req-card.active {
-    background: #fff7e6 !important;
-    border-color: rgba(240,192,0,0.12) !important;
-    color: #0b3d91 !important;
+    background: linear-gradient(180deg, #ffeaa3 0%, #ffd65c 100%) !important;
+    border-color: #f1c84a !important;
+    color: #042856 !important;
     transform: translateY(-2px);
-    box-shadow: 0 5px 14px rgba(240,192,0,0.08);
+    box-shadow: 0 14px 24px rgba(234,179,8,0.18);
 }
 
 .req-card-icon { font-size: 2rem; line-height: 1; }
 
 .req-card-label {
-    font-size: 0.88rem;
-    font-weight: 700;
+    font-size: 0.95rem;
+    font-weight: 800;
     text-align: center;
-    color: #1a237e;
+    color: inherit;
     line-height: 1.2;
 }
 
-.requirements-btn { background: #fff; color: #1a237e; border: 1px solid #dbeafe; }
-.requirements-btn.active { background: #ffe066; color: #042856; border-color: #ffe066; }
+.requirements-btn { background: transparent; color: #1a237e; border: 1px solid #dbeafe; }
+.requirements-btn.active { background: linear-gradient(180deg, #ffeaa3 0%, #ffd65c 100%); color: #042856; border-color: #f1c84a; }
 
 /* === 14. Forms & Formats Cards === */
 .forms-section-heading {
@@ -655,6 +701,7 @@ body.theme-efeap {
 .forms-card-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    align-items: stretch;
     gap: 12px;
     margin: 0 auto 12px;
     max-width: 960px;
@@ -666,27 +713,67 @@ body.theme-efeap {
     align-items: center;
     justify-content: center;
     gap: 6px;
-    padding: 10px 12px;
-    background: #ffffff;
-    border: 1px solid #e6f0ff;
-    border-radius: 10px;
+    width: 100%;
+    min-height: 104px;
+    padding: 14px 16px;
+    background: linear-gradient(180deg, #ffffff 0%, #f7fbff 100%);
+    border: 1px solid #dbeafe;
+    border-radius: 22px;
+    box-sizing: border-box;
+    color: inherit;
+    text-decoration: none;
     cursor: pointer;
-    transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s;
-    box-shadow: 0 2px 6px rgba(26,35,126,0.04);
+    transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+    box-shadow: 0 8px 20px rgba(26,35,126,0.08);
     text-align: center;
-    min-height: 84px;
 }
 
 .form-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 10px 24px rgba(26,35,126,0.10);
-    background: #f0f7ff;
+    transform: translateY(-3px);
+    box-shadow: 0 14px 28px rgba(26,35,126,0.14);
+    background: linear-gradient(180deg, #fef8dc 0%, #fff2ad 100%);
+    border-color: #f3d45f;
+}
+
+.form-card:focus-visible {
+    outline: 3px solid rgba(96,165,250,0.85);
+    outline-offset: 2px;
 }
 
 .form-card-icon { font-size: 1.25rem; line-height: 1; }
 .form-card-name { font-size: 0.95rem; font-weight: 700; color: #0b3d91; }
 .form-card-desc { font-size: 0.78rem; color: #51607a; line-height: 1.2; }
 
+.premium-calculator .dark-input,
+.maturity-calculator .dark-input {
+    border-radius: 18px !important;
+    border: 1px solid #cfe0fb !important;
+    background: linear-gradient(180deg, #ffffff 0%, #f7fbff 100%) !important;
+    box-shadow: 0 4px 12px rgba(11,61,145,0.06);
+}
+
+.premium-calculator .dark-input:focus,
+.maturity-calculator .dark-input:focus {
+    border-color: #f3d45f !important;
+    box-shadow: 0 0 0 4px rgba(243,212,95,0.2) !important;
+}
+
+.premium-calculator .flex.items-center label,
+.maturity-calculator .flex.items-center label {
+    border: 1px solid #dbeafe !important;
+    background: linear-gradient(180deg, #ffffff 0%, #f7fbff 100%);
+    margin-right: 0.75rem !important;
+    margin-bottom: 0.5rem !important;
+    padding: 0.55rem 0.9rem !important;
+    border-radius: 999px !important;
+    box-shadow: 0 6px 14px rgba(11,61,145,0.05);
+}
+
+.premium-calculator .flex.items-center label:hover,
+.maturity-calculator .flex.items-center label:hover {
+    background: linear-gradient(180deg, #fef8dc 0%, #fff2ad 100%);
+    border-color: #f3d45f !important;
+}
 /* === 15. Quick Links === */
 .links-wrap { display: flex; flex-wrap: wrap; gap: 12px; }
 
@@ -702,11 +789,17 @@ body.theme-efeap {
     background: #f8fbff;
     border: 1px solid #dbeafe;
     box-shadow: 0 1px 6px rgba(11,61,145,0.04);
+    color: inherit;
+    text-decoration: none;
+    box-sizing: border-box;
 }
 
 .quick-link-pill:hover { background: #eef6ff; border-color: #bfd4f7; }
+.quick-link-pill:focus-visible {
+    outline: 3px solid rgba(96,165,250,0.85);
+    outline-offset: 2px;
+}
 .quick-link-pill span { margin-right: 0 !important; flex: 0 0 auto; }
-
 /* === 16. Duration Tool === */
 .duration-results { display: flex; flex-direction: column; gap: 10px; }
 
