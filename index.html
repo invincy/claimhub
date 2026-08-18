@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LIC Claims Hub</title>
     <link rel="stylesheet" href="assets/style.css">
-    <link id="themeStylesheet" rel="stylesheet" href="assets/efeap.css">
+    <link id="themeStylesheet" rel="stylesheet" href="assets/efeap.css?v=20260816">
     <style>
         /* Make tools title and tab labels more visible (dark blue) */
         .tools-panel-container h3 { color: #0b3d91 !important; }
@@ -70,6 +70,18 @@
                                     <span class="req-card-icon">⚠️</span>
                                     <span class="req-card-label">Accident / Suicide</span>
                                 </button>
+                                <button type="button" class="req-card requirements-btn" data-type="HEIRS">
+                                    <span class="req-card-icon">📚</span>
+                                    <span class="req-card-label">Heirs</span>
+                                </button>
+                                <button type="button" class="req-card requirements-btn" data-type="DEATHREQ">
+                                    <span class="req-card-icon">🪦</span>
+                                    <span class="req-card-label">Death Claim Requirement</span>
+                                </button>
+                                <button type="button" class="req-card requirements-btn" data-type="FPSO">
+                                    <span class="req-card-icon">📎</span>
+                                    <span class="req-card-label">FPSO</span>
+                                </button>
                             </div>
                             <div id="letRequirementsTable">
                                 <div class="dark-table rounded-2xl border border-gray-600/30 shadow-2xl overflow-hidden">
@@ -116,10 +128,11 @@
                                         <h4 class="font-bold text-white text-lg flex items-center gap-2">Lost Policy Bond - Typical Requirements</h4>
                                     </div>
                                     <div class="p-6">
-                                        <ul class="text-gray-600">
-                                            <li>• FIR / Affidavit as applicable</li>
-                                            <li>• Original policy bond (if available)</li>
-                                            <li>• Indemnity bond / Surety as per branch guidelines</li>
+                                        <ul class="text-gray-300 space-y-2">
+                                            <li>• Form 3815-B or 3815-A</li>
+                                            <li>• Questionnaire form</li>
+                                            <li>• KYC documents</li>
+                                            <li>• Old receipt / old policy receipt</li>
                                         </ul>
                                     </div>
                                 </div>
@@ -138,8 +151,190 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
+                            <div id="heirsRequirementsTable" class="hidden mt-5">
+                                <div class="flex items-center justify-between gap-3 mb-3">
+                                    <div>
+                                        <h4 class="font-bold text-white text-lg">Heirs</h4>
+                                        <p class="text-sm text-gray-400">Class I heirs extracted from the reference screenshots.</p>
+                                    </div>
+                                </div>
+                                <div id="heirsTablesMount" class="max-w-full"></div>
+                            </div>
+                            <div id="deathReqRequirementsTable" class="hidden mt-5">
+                                <div class="flex items-center justify-between gap-3 mb-3">
+                                    <div>
+                                        <h4 class="font-bold text-white text-lg">Death Claim Requirement</h4>
+                                        <p class="text-sm text-gray-400">Claim processing checklist and supporting documents.</p>
+                                    </div>
+                                </div>
+                                <div id="deathReqTablesMount" class="max-w-full"></div>
+                            </div>
+                            <div id="fpspRequirementsTable" class="hidden mt-2">
+                                <div class="flex items-center justify-between gap-3 mb-2">
+                                    <div>
+                                        <h4 class="font-bold text-white text-base">FPSO</h4>
+                                        <p class="text-xs text-gray-400">Chapter II – Payments to Policyholders, Annexure-I.</p>
+                                    </div>
+                                </div>
+                                <div id="fpspTablesMount" class="max-w-full"></div>
+                            </div>
+                            <template id="fpspTablesTemplate">
+                                <section class="space-y-3 max-w-full">
+                                    <div class="dark-table rounded-2xl border border-gray-600/30 shadow-2xl overflow-hidden max-w-full">
+                                        <div class="bg-gray-900/60 px-5 py-3 border-b border-gray-600/30">
+                                            <h4 class="font-bold text-white text-base">Admission and Payment of Claims</h4>
+                                        </div>
+                                        <div class="overflow-x-auto max-w-full">
+                                            <table class="w-full text-sm fpso-table">
+                                                <thead class="dark-table-header">
+                                                    <tr>
+                                                        <th class="px-4 py-3 text-left font-bold text-gray-200 border-b border-gray-600/30 w-24">Item No.</th>
+                                                        <th class="px-4 py-3 text-left font-bold text-gray-200 border-b border-gray-600/30 fpso-nature-col">Nature of Power</th>
+                                                        <th class="px-4 py-3 text-left font-bold text-gray-200 border-b border-gray-600/30 w-56">Authority</th>
+                                                        <th class="px-4 py-3 text-left font-bold text-gray-200 border-b border-gray-600/30 w-56">Extent of Financial Powers</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody class="divide-y divide-gray-600/20">
+                                                    <tr>
+                                                        <td class="px-4 py-3 font-semibold text-gray-300 align-top" rowspan="5">1</td>
+                                                        <td class="px-4 py-3 text-gray-300 align-top fpso-nature-col" rowspan="5">Admission and payment of claims by Maturity (Sum Assured)</td>
+                                                        <td class="px-4 py-3 text-gray-300">HGA</td>
+                                                        <td class="px-4 py-3 text-gray-300">2,00,000 SA</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="px-4 py-3 text-gray-300">AAO</td>
+                                                        <td class="px-4 py-3 text-gray-300">15,00,000 SA</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="px-4 py-3 text-gray-300">AO</td>
+                                                        <td class="px-4 py-3 text-gray-300">20,00,000 SA</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="px-4 py-3 text-gray-300">Manager (Admn) BO</td>
+                                                        <td class="px-4 py-3 text-gray-300">Full Sum Assured</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="px-4 py-3 text-gray-300">BM (I/C), Sr. Branch Manager, Chief Manager</td>
+                                                        <td class="px-4 py-3 text-gray-300">Full Sum Assured</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="px-4 py-3 font-semibold text-gray-300 align-top" rowspan="5">2</td>
+                                                        <td class="px-4 py-3 text-gray-300 align-top fpso-nature-col" rowspan="5">Admission and payment of claims by Survival Benefit (Amount of Survival Benefit)</td>
+                                                        <td class="px-4 py-3 text-gray-300">HGA</td>
+                                                        <td class="px-4 py-3 text-gray-300">2,00,000 per installment</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="px-4 py-3 text-gray-300">AAO</td>
+                                                        <td class="px-4 py-3 text-gray-300">15,00,000 per installment</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="px-4 py-3 text-gray-300">AO</td>
+                                                        <td class="px-4 py-3 text-gray-300">20,00,000 per installment</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="px-4 py-3 text-gray-300">Manager (Admn) BO</td>
+                                                        <td class="px-4 py-3 text-gray-300">Full survival benefit amount per installment</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="px-4 py-3 text-gray-300">BM (I/C), Sr. Branch Manager, Chief Manager</td>
+                                                        <td class="px-4 py-3 text-gray-300">Full survival benefit amount per installment</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="px-4 py-3 font-semibold text-gray-300 align-top" rowspan="6">3</td>
+                                                        <td class="px-4 py-3 text-gray-300 align-top fpso-nature-col" rowspan="6">Admission and payment of Non-early death claims (Policy duration 3 years or more to be reckoned from date of risk / revival / reinstatement whichever is later)</td>
+                                                        <td class="px-4 py-3 text-gray-300">HGA</td>
+                                                        <td class="px-4 py-3 text-gray-300">1,00,000 SA</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="px-4 py-3 text-gray-300">AAO/AO</td>
+                                                        <td class="px-4 py-3 text-gray-300">6,00,000 SA</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="px-4 py-3 text-gray-300">SBM, BM (I/C), Manager (Admn) BO</td>
+                                                        <td class="px-4 py-3 text-gray-300">10,00,000 SA</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="px-4 py-3 text-gray-300">BMC, Chief Manager</td>
+                                                        <td class="px-4 py-3 text-gray-300">15,00,000 SA</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="px-4 py-3 text-gray-300">Manager (Claims)<br>ADM<br>DM</td>
+                                                        <td class="px-4 py-3 text-gray-300">20,00,000 SA<br>25,00,000 SA</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="px-4 py-3 text-gray-300">SDM (In-charge)</td>
+                                                        <td class="px-4 py-3 text-gray-300">Full Sum Assured</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </section>
+                            </template>
+                            <template id="heirsTablesTemplate">
+                                    <section class="space-y-5 max-w-full">
+                                        <div class="dark-table rounded-2xl border border-gray-600/30 shadow-2xl overflow-hidden max-w-full">
+                                            <div class="bg-gray-900/60 px-6 py-4 border-b border-gray-600/30">
+                                                <h4 class="font-bold text-white text-lg">Class I Heirs - Hindu Female</h4>
+                                            </div>
+                                            <div class="p-6 text-gray-300 space-y-2">
+                                                <p>1. Husband</p>
+                                                <p>2. Sons</p>
+                                                <p>3. Daughters</p>
+                                                <p>4. Children of a predeceased son or daughter</p>
+                                                <p class="text-sm text-gray-400">If unmarried, the succession follows Class II heirs.</p>
+                                            </div>
+                                        </div>
+                                        <div class="dark-table rounded-2xl border border-gray-600/30 shadow-2xl overflow-hidden max-w-full">
+                                            <div class="bg-gray-900/60 px-6 py-4 border-b border-gray-600/30">
+                                                <h4 class="font-bold text-white text-lg">Class I Heirs - Hindu Male</h4>
+                                            </div>
+                                            <div class="p-6 text-gray-300 space-y-2">
+                                                <p>1. Wife</p>
+                                                <p>2. Mother</p>
+                                                <p>3. Sons</p>
+                                                <p>4. Daughters</p>
+                                                <p>5. Children of a predeceased son</p>
+                                                <p>6. Children of a predeceased daughter</p>
+                                                <p>7. Children of a predeceased son of a predeceased son</p>
+                                            </div>
+                                        </div>
+                                    </section>
+                            </template>
+                            <template id="deathReqTablesTemplate">
+                                    <section class="space-y-5 max-w-full">
+                                        <div class="dark-table rounded-2xl border border-gray-600/30 shadow-2xl overflow-hidden max-w-full">
+                                            <div class="bg-gray-900/60 px-6 py-4 border-b border-gray-600/30">
+                                                <h4 class="font-bold text-white text-lg">Death Claim Requirement</h4>
+                                            </div>
+                                            <div class="overflow-x-auto max-w-full">
+                                                <table class="w-full text-sm">
+                                                    <thead class="dark-table-header">
+                                                        <tr>
+                                                            <th class="px-6 py-4 text-left font-bold text-gray-200 border-b border-gray-600/30">Document</th>
+                                                            <th class="px-6 py-4 text-left font-bold text-gray-200 border-b border-gray-600/30">Status</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody class="divide-y divide-gray-600/20">
+                                                        <tr><td class="px-6 py-4 font-semibold text-gray-300">Policy holder's death certificate</td><td class="px-6 py-4 text-gray-300">Original for verification</td></tr>
+                                                        <tr><td class="px-6 py-4 font-semibold text-gray-300">Policy holder's original policy bond</td><td class="px-6 py-4 text-gray-300">Required</td></tr>
+                                                        <tr><td class="px-6 py-4 font-semibold text-gray-300">Death intimation letter from nominee</td><td class="px-6 py-4 text-gray-300">Required</td></tr>
+                                                        <tr><td class="px-6 py-4 font-semibold text-gray-300">Nominee photo ID and residence proof</td><td class="px-6 py-4 text-gray-300">Required</td></tr>
+                                                        <tr><td class="px-6 py-4 font-semibold text-gray-300">Nominee PAN</td><td class="px-6 py-4 text-gray-300">Only if TDS is deducted</td></tr>
+                                                        <tr><td class="px-6 py-4 font-semibold text-gray-300">Nominee bank passbook or cheque</td><td class="px-6 py-4 text-gray-300">Required</td></tr>
+                                                        <tr><td class="px-6 py-4 font-semibold text-gray-300">If nominee is minor</td><td class="px-6 py-4 text-gray-300">Appointee PAN, KYC, bank details, guardianship proof</td></tr>
+                                                        <tr><td class="px-6 py-4 font-semibold text-gray-300">Accidental death</td><td class="px-6 py-4 text-gray-300">FIR / PIR / PMR, chemical analysis, newspaper cutting, DL, statement, panchnama, investigation report</td></tr>
+                                                        <tr><td class="px-6 py-4 font-semibold text-gray-300">Suicide</td><td class="px-6 py-4 text-gray-300">FIR / PIR / PMR, chemical analysis, statement, panchnama, investigation report</td></tr>
+                                                        <tr><td class="px-6 py-4 font-semibold text-gray-300">Hospital death</td><td class="px-6 py-4 text-gray-300">Discharge summary + applicable claim forms</td></tr>
+                                                        <tr><td class="px-6 py-4 font-semibold text-gray-300">Lost policy bond</td><td class="px-6 py-4 text-gray-300">Nominee letter, notarized indemnity bond, claimant ID and residence proof</td></tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </section>
+                            </template>
+                        </div>
                         <div id="formsPanel" class="tab-panel hidden">
                             <div class="space-y-5">
                                 <div>
@@ -887,7 +1082,7 @@
 
     <!-- IMPORTANT: You may need to remove the old particle animation logic from assets/script.js to prevent conflicts. -->
     <!-- Cache-busting query to ensure latest script is fetched by the browser/CDN -->
-    <script src="assets/script.js?v=20250925" defer></script>
+    <script src="assets/script.js?v=20260816" defer></script>
     
 </body>
 </html>
