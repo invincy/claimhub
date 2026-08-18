@@ -576,12 +576,12 @@
         <!-- Claims Module (hidden by default) -->
         <div id="mainClaimsPanel" class="main-module hidden p-4 md:p-6">
                 <!-- Action Buttons -->
-                <div class="glass-header rounded-2xl p-6">
-                    <div class="flex gap-4">
-                        <button id="deathClaimBtn" class="btn-danger w-full px-8 py-4 rounded-xl font-semibold text-sm flex items-center justify-center gap-2">
+                <div class="glass-header rounded-2xl p-6 claim-actions-shell">
+                    <div class="claim-actions-bar">
+                        <button id="deathClaimBtn" class="claim-action-btn claim-action-btn-danger" type="button">
                             📄 New Death Claim
                         </button>
-                        <button id="specialCaseBtn" class="btn-primary w-full px-8 py-4 rounded-xl font-semibold text-sm flex items-center justify-center gap-2">
+                        <button id="specialCaseBtn" class="claim-action-btn claim-action-btn-primary" type="button">
                             ⭐ New Special Case
                         </button>
                     </div>
